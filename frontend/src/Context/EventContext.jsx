@@ -7,25 +7,27 @@ const EventContext = (props) => {
     const [register, setRegister] = useState(false)
     const [token, settoken] = useState("")
     const url = "http://localhost:3000"
-    const [username,setusername]=useState("")
+    const [username, setusername] = useState("")
 
-    const fetchUserDetails=async (token)=>{
-        try{
-            const response=await axios.get(url+"/Festofy/user/user_details",{headers:{Authorization:`Bearer ${token}`}})
-        setusername(response.data.user.username)
-        }catch(err){
+    const fetchUserDetails = async (token) => {
+        try {
+            const response = await axios.get(url + "/Festofy/user/user_details", { headers: { Authorization: `Bearer ${token}` } })
+            setusername(response.data.user.username)
+        } catch (err) {
             console.log(err)
         }
     }
 
 
-    useEffect(()=>{
-        const storedtoken=localStorage.getItem("token")
-        settoken(storedtoken)
-        fetchUserDetails(storedtoken)
-    },[])
+    useEffect(() => {
+        const storedtoken = localStorage.getItem("token")
+        if (storedtoken) {
+            settoken(storedtoken)
+            fetchUserDetails(storedtoken)
+        }
+    }, [])
     const contextvalue = {
-        register, setRegister, url, token, settoken,username,setusername
+        register, setRegister, url, token, settoken, username, setusername
     }
     return (
         <EventAppContext.Provider value={contextvalue}>
