@@ -6,7 +6,7 @@ const E_Navbar = () => {
   const {username}=useContext(EventAppContext)
   
   return (
-    <div className='bg-white dark:bg-black rounded-[0.8rem] mt-7'>
+    <div className='bg-white rounded-[0.8rem] mt-7'>
       <div className='flex justify-between items-center p-5 min-w-[50px] max-w-[100%] mx-auto'>
         <p className='text-black  text-shadow:0 2px 4px rgba(0,0,0,0.5) font-extrabold text-4xl font-[Fredoka]'>FestoFy</p>
         <ul className='list-none flex w-[20%] justify-between font-semibold items-center gap-4 text-black text-shadow:0 2px 4px rgba(0,0,0,0.5)'>
