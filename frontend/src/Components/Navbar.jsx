@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import faqicon from "../assets/FaqIcon.png"
-import festofy_logo from "../assets/FestoFy_Logo.png";
 import { EventAppContext } from '../Context/EventContext';
 import Header from './Header';
 import { Link } from "react-router-dom"
