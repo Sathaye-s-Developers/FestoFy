@@ -1,0 +1,29 @@
+const express = require('express');
+const app = express();
+const dotenv = require('dotenv');
+dotenv.config();
+
+const cors = require('cors');
+const connectDB = require('./configure/database');
+
+// Connect to MongoDB
+connectDB();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+// Routes
+const homeRoutes = require('./routes/home.router');
+const userRoutes = require('./routes/user.router');
+
+app.use('/', homeRoutes);
+app.use('/Festofy/user', userRoutes);
+
+// Start Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(` Server started on http://localhost:${PORT}`);
+});
