@@ -3,7 +3,7 @@ import CrossIcon from "../assets/close.png"
 import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 const Login_PopUp = () => {
-    const { setRegister, url,settoken } = useContext(EventAppContext)
+    const { setRegister, url,settoken,setusername} = useContext(EventAppContext)
     const [login, setlogin] = useState("logout")
     const [errorMsg, seterrorMsg] = useState("")
 
@@ -32,6 +32,7 @@ const Login_PopUp = () => {
             if (response.data.success) {
                 localStorage.setItem("token", response.data.token)
                 settoken(response.data.token)
+                setusername(response.data.username)
                 setRegister(false)
                 setdata({ "username": "", "email": "", "password": "", "college_code": "" })
             }
