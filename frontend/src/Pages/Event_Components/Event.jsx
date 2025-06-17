@@ -2,8 +2,9 @@ import React from 'react'
 import E_Navbar from './Components/E_Navbar'
 
 const Event = () => {
+
     return (
-        <div className=''>
+        <div>
             <E_Navbar/>
             
         </div>

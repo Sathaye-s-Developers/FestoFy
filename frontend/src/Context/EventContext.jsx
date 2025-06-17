@@ -7,12 +7,13 @@ const EventContext = (props) => {
     const [register, setRegister] = useState(false)
     const [token, settoken] = useState("")
     const url = "http://localhost:3000"
-    const [username, setusername] = useState("")
+    const [details, setdetails] = useState("")
 
     const fetchUserDetails = async (token) => {
         try {
             const response = await axios.get(url + "/Festofy/user/user_details", { headers: { Authorization: `Bearer ${token}` } })
-            setusername(response.data.user.username)
+            const { username } = response.data.user
+            setdetails(username)
         } catch (err) {
             console.log(err)
         }
@@ -24,10 +25,11 @@ const EventContext = (props) => {
         if (storedtoken) {
             settoken(storedtoken)
             fetchUserDetails(storedtoken)
+            console.log(details)
         }
     }, [])
     const contextvalue = {
-        register, setRegister, url, token, settoken, username, setusername
+        register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails
     }
     return (
         <EventAppContext.Provider value={contextvalue}>

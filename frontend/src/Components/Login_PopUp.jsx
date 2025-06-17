@@ -32,12 +32,11 @@ const Login_PopUp = () => {
             if (response.data.success) {
                 localStorage.setItem("token", response.data.token)
                 settoken(response.data.token)
-                setusername(response.data.username)
                 setRegister(false)
                 setdata({ "username": "", "email": "", "password": "", "college_code": "" })
             }
         } catch (err) {
-            if (err.response && err.response.status === 409) {
+            if (err.response && (err.response.status === 409 || err.response.status===401)) {
                 seterrorMsg(err.response.data.message);
             }
         }
@@ -58,7 +57,7 @@ const Login_PopUp = () => {
 
                             <input type="password" placeholder='Your Password' name='password' onChange={onchangehandler} value={data.password} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' required />
 
-                            <input type="text" placeholder='Your College-Code' name='college_code' onChange={onchangehandler} value={data.college_code} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' required />
+                            <input type="text" placeholder='Your College-Code' name='college_code' onChange={onchangehandler} value={data.college_code} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' />
 
                             {errorMsg && (<div className='w-[80%] mb-3'><p className='text-red-600'>{errorMsg}</p></div>)}
                             <div className='flex items-center w-[80%] mb-4'>

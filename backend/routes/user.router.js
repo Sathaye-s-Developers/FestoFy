@@ -32,10 +32,8 @@ router.post("/signUp", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = new User({ username, email, password: hashedPassword, college_code });
     await newUser.save();
-    const token = jwt.sign({ id: newUser._id, email: newUser.email, password: newUser.password }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    res.status(201).json({success:true, message: "User registered successfully.", token ,username:newUser.username});
+    const token = jwt.sign({ id: newUser._id, email: newUser.email, password: newUser.password }, JWT_SECRET);
+    res.status(201).json({success:true, message: "User registered successfully.", token});
   } catch (err) {
     res.status(401).json({ success: false, message: "Error" })
   }
@@ -47,17 +45,15 @@ router.post("/login", async (req, res) => {
     const { email, password, college_code } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: "Invalid Credentials" });
+    if (!user) return res.status(401).json({suceess:false, message: "Invalid Credentials" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: "Invalid Credentials" });
+    const isMatch =await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({suceess:false, message: "Invalid Credentials" });
 
     // Create JWT token
-    const token = jwt.sign({ id: user._id, email: user.email, password: user.password }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ id: user._id, email: user.email, password: user.password }, JWT_SECRET);
 
-    res.json({success:true, message: "Login successfully", token,username:user.email });
+    res.json({success:true, message: "Login successfully", token });
   } catch (err) {
     console.log(err)
     res.status(401).json({ success: false, message: "Error" })
