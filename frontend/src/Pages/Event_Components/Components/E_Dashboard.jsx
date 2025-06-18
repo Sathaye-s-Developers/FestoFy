@@ -6,9 +6,10 @@ const E_Dashboard = () => {
     return (
         <div className='absolute top-[57px] right-5 w-full grid z-50'>
             <div className='place-self-end p-5 rounded-[10px] w-[50%] sm:w-[34%] md:w-[30%] lg:w-[26%] xl:w-[22%] bg-black'>
-                <h1 className='text-white text-center font-bold mb-2'>Dashboard</h1>
+                <h1 className='text-white text-center font-bold mb-2 text-[20px]'>Dashboard</h1>
                 <div className='rounded-[5px] bg-[#3b3a3a] text-white p-2 text-center'>
-                    <p>Welcome , {details.charAt(0).toUpperCase() + details.slice(1)}</p>
+                    <p className='text-[15px]'>Welcome , {details.charAt(0).toUpperCase() + details.slice(1)}</p>
+                    <p></p>
                 </div>
             </div>
         </div>
