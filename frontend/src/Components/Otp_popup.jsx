@@ -3,7 +3,7 @@ import { IoArrowBackCircleSharp } from "react-icons/io5";
 import { EventAppContext } from '../Context/EventContext';
 import axios from 'axios';
 
-const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}) => {
+const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken,isAuth}) => {
     const { url, setRegister, settoken } = useContext(EventAppContext)
 
     const [minutes, setminutes] = useState(2)
@@ -42,6 +42,7 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
                 localStorage.setItem("token",savetoken.token)
                 settoken(savetoken.token)
                 setdata({ "username": "", "email": "", "password": "", "college_code": "" })
+                isAuth(true)
                 setRegister(false)
             }
         } catch (err) {

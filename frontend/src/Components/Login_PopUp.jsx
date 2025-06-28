@@ -4,7 +4,7 @@ import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 import Otp_popup from './Otp_popup'
 const Login_PopUp = () => {
-    const { setRegister, url, settoken, setusername } = useContext(EventAppContext)
+    const { setRegister, url, settoken, setusername} = useContext(EventAppContext)
     const [login, setlogin] = useState("logout")
     const [otp, setotp] = useState(false)
     const [errorMsg, seterrorMsg] = useState("")
