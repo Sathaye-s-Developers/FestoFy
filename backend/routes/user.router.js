@@ -7,10 +7,13 @@ const verifyToken = require("../middlewares/token_varification");
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 const { sendConfirmationEmail } = require("../email_services/EmailService");
 
+//Admin secreate code
+const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
+
 //  Register
 router.post("/signUp", async (req, res) => {
   try {
-    const { username, email, password, college_code } = req.body;
+    const { username, email, password, college_code, adminCode } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
@@ -38,23 +41,34 @@ router.post("/signUp", async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
+    //check admincode match or not
+    let role = "user";
+    if (adminCode && adminCode === ADMIN_SECRET_CODE) {
+      role = "admin";
+    }
+
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       college_code,
+      role,
     });
-    // await User.insertOne(newUser);
-    await newUser.save();
 
-    //send register confirmation email
+    await newUser.save(); // Save new user
+
     try {
       await sendConfirmationEmail(newUser.email, newUser.username);
     } catch (e) {
-      console.log(e);
+      console.log("Email error:", e.message);
     }
 
-    const token = jwt.sign({ id: newUser._id, email: newUser.email }, JWT_SECRET);
+    const token = jwt.sign(
+      { _id: newUser._id, email: newUser.email, role: newUser.role },
+      JWT_SECRET,
+      { expiresIn: "2d" }
+    );
 
     res.status(201).json({
       success: true,
@@ -70,7 +84,7 @@ router.post("/signUp", async (req, res) => {
   }
 });
 
-// Login
+//  Login
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -82,8 +96,14 @@ router.post("/login", async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid Credentials" });
 
+    const token = jwt.sign(
+      { _id: user._id, email: user.email, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: "2d",
+      }
+    );
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET);
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -99,10 +119,10 @@ router.post("/login", async (req, res) => {
 //  Protected Route
 router.get("/user_details", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user._id).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    res.json({ user });
+    res.json({ message: "success detial fetched", user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
