@@ -5,7 +5,7 @@ export const EventAppContext = createContext(null)
 
 const EventContext = (props) => {
     const [register, setRegister] = useState(false)
-    const [token, settoken] = useState("")
+    const [token, settoken] = useState(() => localStorage.getItem("token") || "");
     const url = "http://localhost:3000"
     const [details, setdetails] = useState("")
 
@@ -26,7 +26,7 @@ const EventContext = (props) => {
             settoken(storedtoken)
             fetchUserDetails(storedtoken)
         }
-    }, [])
+    }, [token])
     const contextvalue = {
         register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails
     }

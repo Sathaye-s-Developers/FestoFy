@@ -43,11 +43,7 @@ const Login_PopUp = () => {
                         seterrorMsg(err.response.data.message);
                     }
                 }
-
-                // localStorage.setItem("token", response.data.token)
                 setsavetoken({token:response.data.token})
-                // setRegister(false)
-                // setdata({ "username": "", "email": "", "password": "", "college_code": "" })
             }
         } catch (err) {
             if (err.response && (err.response.status === 409 || err.response.status === 401)) {
