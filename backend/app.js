@@ -18,9 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 const homeRoutes = require('./routes/home.router');
 const userRoutes = require('./routes/user.router');
+const otpRoutes=require('./routes/otp.router');
 
 app.use('/', homeRoutes);
 app.use('/Festofy/user', userRoutes);
+app.use('/Festofy/user/otp',otpRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 3000;
