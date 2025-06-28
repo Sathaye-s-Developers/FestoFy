@@ -50,3 +50,8 @@ hr {
 .fade-animation {
     animation: fadein 1.5s ease-in-out;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

@@ -25,7 +25,6 @@ const EventContext = (props) => {
         if (storedtoken) {
             settoken(storedtoken)
             fetchUserDetails(storedtoken)
-            console.log(details)
         }
     }, [])
     const contextvalue = {
