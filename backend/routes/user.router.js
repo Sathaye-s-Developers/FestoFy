@@ -96,8 +96,9 @@ router.get("/user_details", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET);
 
-    res.json({ user});
+    res.json({ user,token});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
