@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import { EventAppContext } from '../Context/EventContext';
 import Header from './Header';
 import { Link } from "react-router-dom"
+import { CgProfile } from "react-icons/cg";
+
 const Navbar = () => {
   const [hover, sethover] = useState("Home")
-  const { setRegister, token, settoken} = useContext(EventAppContext)
+  const { setRegister, token, settoken } = useContext(EventAppContext)
 
   const logout = () => {
     localStorage.removeItem("token")
@@ -28,7 +30,7 @@ const Navbar = () => {
 
 
         </ul>
-        {token?
+        {token ?
           <div className='list-none flex justify-between items-center m-3'>
             <li className={`sm:hidden block text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) font-semibold cursor-pointer `}><Link to="/Event">Events</Link></li>
           </div>
@@ -37,11 +39,23 @@ const Navbar = () => {
             <li className='sm:hidden block text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) font-semibold cursor-pointer'>Pricing</li>
           </div>}
 
-        <div className='flex justify-center gap-2'>
-          {token?
-            <button className='bg-white text-black w-[80px] rounded-[20px] p-[5px] cursor-pointer' onClick={logout}>Logout</button>
+        <div >
+          {token ?
+            <button
+              className="bg-transparent text-white w-[120px] sm:w-[100px] rounded-full  border-none flex items-center justify-center gap-1 sm:gap-2  "
+              onClick={logout}
+            >
+              <CgProfile className="text-white w-6 h-6" />
+              <span className="font-bold text-30px">Logout</span>
+            </button>
             :
-            <button className='bg-white text-black w-[80px] rounded-[20px] p-[5px] cursor-pointer' onClick={() => { setRegister(true) }}>SignUp</button>
+            <button
+              className="bg-transparent text-white w-[120px] sm:w-[100px] rounded-full  border-none flex items-center justify-center gap-1 sm:gap-2 "
+              onClick={() => setRegister(true)}
+            >
+              <CgProfile className="text-white w-6 h-6" />
+              <span className="font-bold text-30px">LogIn</span>
+            </button>
           }
         </div>
       </div>
