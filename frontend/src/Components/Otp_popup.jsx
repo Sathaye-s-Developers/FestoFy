@@ -3,7 +3,7 @@ import { IoArrowBackCircleSharp } from "react-icons/io5";
 import { EventAppContext } from '../Context/EventContext';
 import axios from 'axios';
 
-const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken,isAuth}) => {
+const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}) => {
     const { url, setRegister, settoken } = useContext(EventAppContext)
 
     const [minutes, setminutes] = useState(2)
@@ -37,12 +37,11 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken,
 
         //logic for login and signup 
         try {
-            const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp })
+            const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp },{headers:{Authorization: `Bearer ${savetoken.token}`}})
             if (response.data.success) {
                 localStorage.setItem("token",savetoken.token)
                 settoken(savetoken.token)
                 setdata({ "username": "", "email": "", "password": "", "college_code": "" })
-                isAuth(true)
                 setRegister(false)
             }
         } catch (err) {

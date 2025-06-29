@@ -4,7 +4,7 @@ import Header from './Header';
 import { Link } from "react-router-dom"
 const Navbar = () => {
   const [hover, sethover] = useState("Home")
-  const { setRegister, token, settoken,isAuth} = useContext(EventAppContext)
+  const { setRegister, token, settoken} = useContext(EventAppContext)
 
   const logout = () => {
     localStorage.removeItem("token")
@@ -16,7 +16,7 @@ const Navbar = () => {
         <p className=' text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) font-extrabold text-4xl font-[Fredoka]'>FestoFy</p>
         <ul className='list-none flex w-[20%] justify-between font-semibold items-center gap-4 text-white text-shadow:0 2px 4px rgba(0,0,0,0.5)'>
           <li className={`sm:block hidden cursor-pointer ${hover === "Home" ? "underline underline-offset-4 decoration-2" : ""}`} onClick={() => { sethover("Home") }}><Link to="/Home">Home</Link></li>
-          {isAuth ?
+          {token ?
             <li className={`sm:block hidden cursor-pointer`}><Link to="/Event">Events</Link></li>
             :
             <li className={`sm:block hidden cursor-pointer ${hover === "Pricing" ? "underline underline-offset-4 decoration-2" : ""}`} onClick={() => { sethover("Pricing") }}>Pricing</li>
@@ -28,7 +28,7 @@ const Navbar = () => {
 
 
         </ul>
-        {isAuth ?
+        {token?
           <div className='list-none flex justify-between items-center m-3'>
             <li className={`sm:hidden block text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) font-semibold cursor-pointer `}><Link to="/Event">Events</Link></li>
           </div>
@@ -38,7 +38,7 @@ const Navbar = () => {
           </div>}
 
         <div className='flex justify-center gap-2'>
-          {isAuth ?
+          {token?
             <button className='bg-white text-black w-[80px] rounded-[20px] p-[5px] cursor-pointer' onClick={logout}>Logout</button>
             :
             <button className='bg-white text-black w-[80px] rounded-[20px] p-[5px] cursor-pointer' onClick={() => { setRegister(true) }}>SignUp</button>
