@@ -8,7 +8,7 @@ import { Routes, Route } from "react-router-dom"
 import AddEventpg from './Pages/Event_Components/Pages/AddEventpg'
 
 const App = () => {
-  const { register } = useContext(EventAppContext)
+  const { register,token} = useContext(EventAppContext)
   return (
     <div>
       <div className='app'>
@@ -17,7 +17,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/Home' element={<Home />} />
-          <Route path='/Event' element={<Event />} />
+          <Route path='/Event' element={token?<Event />:<Home/>} />
           <Route path='/AddEvent' element={<AddEventpg/>}/>
         </Routes>
       </div>

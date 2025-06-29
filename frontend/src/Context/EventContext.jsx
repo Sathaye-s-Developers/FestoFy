@@ -6,15 +6,16 @@ export const EventAppContext = createContext(null)
 const EventContext = (props) => {
     const [register, setRegister] = useState(false)
     const [token, settoken] = useState(() => localStorage.getItem("token") || "");
-
+    const [authtoken, setauthtoken] = useState("")
     const url = "http://localhost:3000"
     const [details, setdetails] = useState("")
 
     const fetchUserDetails = async (token) => {
         try {
             const response = await axios.get(url + "/Festofy/user/user_details", { headers: { Authorization: `Bearer ${token}` } })
-            const { username } = response.data.user
-            setdetails(username)
+
+            setauthtoken(response.data.token)
+            setdetails(response.data.user.username)
         } catch (err) {
             console.log(err)
         }
@@ -27,7 +28,7 @@ const EventContext = (props) => {
             settoken(storedtoken)
             fetchUserDetails(storedtoken)
         }
-    }, [token,details])
+    }, [token, details])
     const contextvalue = {
         register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails
     }
