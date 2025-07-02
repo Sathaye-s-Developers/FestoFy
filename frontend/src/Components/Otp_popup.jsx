@@ -100,7 +100,7 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
                                 ref={(el) => (inputs.current[i] = el)}
                                 type="text"
                                 maxLength={1}
-                                className="border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 hover:bg-gray-100 cursor-pointer"
+                                className="border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 cursor-pointer"
                                 pattern="[0-9]*"
                                 inputMode="numeric"
                                 required
@@ -119,14 +119,14 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
                 <div className='ml-5 md:ml-6 lg:ml-11 mt-3 flex justify-between w-[85%] md:w-[80%]'>
                     <div className='flex items-center justify-center gap-1'>
                         <p className='font-semibold text-[12px] text-center'>Time Remaining : </p>
-                        <p className={`font-extrabold text-[12px] text-center ${minutes === 0 && seconds < 20 ? "text-red-500" : "text-black"}`}>{`${minutes}:${seconds < 10 ? '0' + seconds : seconds}`}</p>
+                        <p className={`font-extrabold text-[12px] text-center ${minutes === 0 && seconds < 20 ? "text-red-500" : "text-white"}`}>{`${minutes}:${seconds < 10 ? '0' + seconds : seconds}`}</p>
                     </div>
                     <div>
-                        <button onClick={onresend} disabled={minutes !== 0 && seconds !== 0} className={`text-[14px] underline ${minutes === 0 && seconds === 0 ? "text-black  cursor-pointer" : "text-[#B0B0B0] cursor-not-allowed"}`}>Resend-otp</button>
+                        <button onClick={onresend} disabled={minutes !== 0 && seconds !== 0} className={`text-[14px] underline ${minutes === 0 && seconds === 0 ? "text-white  cursor-pointer" : "text-[#B0B0B0] cursor-not-allowed"}`}>Resend-otp</button>
                     </div>
                 </div>
                 <div className='flex justify-center  mt-3'>
-                    <button type='submit' className='bg-[#f97316] w-[25%] text-white mb-2 rounded-[15px] cursor-pointer p-1 outline-none border-none'>Submit</button>
+                    <button type='submit' className='bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none'>Submit</button>
                 </div>
 
             </form>
@@ -135,21 +135,3 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
 }
 
 export default Otp_popup
-{/* <input type="text" className='border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 hover:bg-gray-100 cursor-pointer' required maxLength={1}
-                        pattern="[0-9]*"
-                        inputMode="numeric" />
-                    <input type="text" className='border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 hover:bg-gray-100 cursor-pointer' required maxLength={1}
-                        pattern="[0-9]*"
-                        inputMode="numeric" />
-                    <input type="text" className='border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 hover:bg-gray-100 cursor-pointer' required maxLength={1}
-                        pattern="[0-9]*"
-                        inputMode="numeric" />
-                    <input type="text" className='border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 hover:bg-gray-100 cursor-pointer' required maxLength={1}
-                        pattern="[0-9]*"
-                        inputMode="numeric" />
-                    <input type="text" className='border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 hover:bg-gray-100 cursor-pointer' required maxLength={1}
-                        pattern="[0-9]*"
-                        inputMode="numeric" />
-                    <input type="text" className='border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 hover:bg-gray-100 cursor-pointer' required maxLength={1}
-                        pattern="[0-9]*"
-                        inputMode="numeric" /> */}

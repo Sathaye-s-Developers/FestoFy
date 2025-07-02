@@ -1,11 +1,13 @@
 import React from 'react'
-import E_Navbar from './Components/E_Navbar'
+// import E_Navbar from './Components/E_Navbar'
+import ENavbar_design from './Components/ENavbar_design'
 
 const Event = () => {
 
     return (
         <div>
-            <E_Navbar/>
+            {/* <E_Navbar/> */}
+            <ENavbar_design/>
             
         </div>
     )

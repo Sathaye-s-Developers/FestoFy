@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { EventAppContext } from '../Context/EventContext';
 import Header from './Header';
 import { Link } from "react-router-dom"
-import { CgProfile } from "react-icons/cg";
+import { Calendar, User, Menu } from 'lucide-react';
+
 
 const Navbar = () => {
-  const [hover, sethover] = useState("Home")
   const { setRegister, token, settoken } = useContext(EventAppContext)
 
   const logout = () => {
@@ -13,52 +13,64 @@ const Navbar = () => {
     settoken("")
   }
   return (
-    <div className='background bg-white rounded-[0.8rem] mt-7'>
-      <div className='flex justify-between items-center p-5 min-w-[50px] max-w-[100%] mx-auto'>
-        <p className=' text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) font-extrabold text-4xl font-[Fredoka]'>FestoFy</p>
-        <ul className='list-none flex w-[20%] justify-between font-semibold items-center gap-4 text-white text-shadow:0 2px 4px rgba(0,0,0,0.5)'>
-          <li className={`sm:block hidden cursor-pointer ${hover === "Home" ? "underline underline-offset-4 decoration-2" : ""}`} onClick={() => { sethover("Home") }}><Link to="/Home">Home</Link></li>
-          {token ?
-            <li className={`sm:block hidden cursor-pointer`}><Link to="/Event">Events</Link></li>
-            :
-            <li className={`sm:block hidden cursor-pointer ${hover === "Pricing" ? "underline underline-offset-4 decoration-2" : ""}`} onClick={() => { sethover("Pricing") }}>Pricing</li>
-          }
-
-          <li className={`sm:block hidden cursor-pointer ${hover === "Galary" ? "underline underline-offset-4 decoration-2" : ""}`} onClick={() => { sethover("Galary") }}>Gallery</li>
-
-          <a href="#Aboutpg"><li className={`md:block hidden cursor-pointer ${hover === "About" ? "underline underline-offset-4 decoration-2" : ""}`} onClick={() => { sethover("About") }}>About</li></a>
-
-
-        </ul>
-        {token ?
-          <div className='list-none flex justify-between items-center m-3'>
-            <li className={`sm:hidden block text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) font-semibold cursor-pointer `}><Link to="/Event">Events</Link></li>
+    <div>
+      <header className="relative z-10 px-6 py-6">
+        <nav className="flex items-center justify-between max-w-7xl mx-auto">
+          {/* Logo */}
+          <div className="flex items-center space-x-3 group cursor-pointer">
+            <div className="p-2 bg-cyan-500/20 rounded-xl border border-cyan-400/40 group-hover:bg-cyan-500/30 group-hover:border-cyan-400/60 transition-all duration-300 group-hover:scale-110">
+              <Calendar className="w-7 h-7 text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300" />
+            </div>
+            <span className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">Festofy</span>
           </div>
-          :
-          <div className='list-none flex justify-between items-center m-3'>
-            <li className='sm:hidden block text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) font-semibold cursor-pointer'>Pricing</li>
-          </div>}
 
-        <div >
-          {token ?
-            <button
-              className="bg-transparent text-white w-[120px] sm:w-[100px] rounded-full  border-none flex items-center justify-center gap-1 sm:gap-2  "
-              onClick={logout}
-            >
-              <CgProfile className="text-white w-6 h-6" />
-              <span className="font-bold text-30px">Logout</span>
+          {/* Navigation Menu */}
+          <ul className="hidden md:flex items-center space-x-8">
+            <li className="text-white hover:text-cyan-400 transition-all duration-300 font-medium relative group"><Link to="/Home">Home</Link>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+            </li>
+            {token ? <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group"><Link to="/Event">Events</Link>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+            </li> :
+              <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+                Pricing
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+              </li>
+            }
+            <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+              Gallery
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+            </li>
+            <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+              About
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+            </li>
+          </ul>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button className="text-white hover:text-cyan-400 transition-colors duration-300">
+              <Menu className="w-6 h-6" />
             </button>
-            :
-            <button
-              className="bg-transparent text-white w-[120px] sm:w-[100px] rounded-full  border-none flex items-center justify-center gap-1 sm:gap-2 "
-              onClick={() => setRegister(true)}
-            >
-              <CgProfile className="text-white w-6 h-6" />
-              <span className="font-bold text-30px">LogIn</span>
+          </div>
+
+          {/* Login Button */}
+          {token ? <div className="hidden md:block">
+            <button className="flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full hover:from-cyan-400 hover:to-blue-500 transition-all duration-300 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.5" onClick={logout}>
+              <User className="w-4 h-4" />
+              <span>Logout</span>
             </button>
+          </div> :
+
+            <div className="hidden md:block">
+              <button className="flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full hover:from-cyan-400 hover:to-blue-500 transition-all duration-300 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.5" onClick={() => { setRegister(true) }}>
+                <User className="w-4 h-4" />
+                <span>Login</span>
+              </button>
+            </div>
           }
-        </div>
-      </div>
+        </nav>
+      </header>
       <Header />
     </div>
   )

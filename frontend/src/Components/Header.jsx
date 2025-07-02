@@ -4,23 +4,39 @@ import { EventAppContext } from '../Context/EventContext'
 const Header = () => {
     const { setRegister, token } = useContext(EventAppContext)
     return (
-        <div className='flex flex-col items-center m-5'>
-            <div className='header w-[80%] sm:w-[45%] md:w-[49%] lg:w-[50%] flex flex-col items-center'>
-                <h1 className='xl:text-[55px] lg:text-[45px] md:text-[36px] sm:text-[34px] text-[28px] font-extrabold text-center m-2 tracking-tight text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) fade-animation'>All-In-One <br />College Event Hub</h1>
-                <p className='text-center mt-3 mb-3 text-[15px] md:text-[20px]  text-white text-shadow:0 2px 4px rgba(0,0,0,0.5) fade-animation'>All-in-one platform to effortlessly plan, promote, and manage your college events ,Simplify the chaos, amplify the experience!</p>
-                <button
-                    className='bg-white font-semibold text-black w-[140px] rounded-[20px] p-2 mt-2 mb-2 cursor-pointer'
-                    onClick={() => {
-                        if (!token) {
-                            setRegister(true);
-                        } else {
-                            console.log("hello");
-                        }
-                    }}
-                >
-                    Get Started
-                </button>
-            </div>
+        <div>
+            <main className="relative z-10 flex flex-col items-center justify-center px-6 py-16 text-center">
+                <div className="max-w-6xl mx-auto">
+                    {/* Main Heading - Exact gradient text from image */}
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
+                        <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-white bg-clip-text text-transparent">
+                            All-In-One
+                        </span>
+                        <br />
+                        <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-blue-300 bg-clip-text text-transparent">
+                            College Event Hub
+                        </span>
+                    </h1>
+
+                    {/* Subtitle */}
+                    <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed hover:text-gray-200 transition-colors duration-300">
+                        All-in-one platform to effortlessly plan, promote, and manage your college events.
+                        Simplify the chaos, amplify the experience!
+                    </p>
+
+                    {/* CTA Button - Exact styling from image */}
+                    <button className="group px-12 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xl font-semibold rounded-full hover:from-cyan-400 hover:to-blue-500 transform hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-2xl hover:shadow-cyan-500/40 relative overflow-hidden" onClick={()=>{
+                            if(!token){
+                                setRegister(true)
+                            }else{
+                                console.log("hello")
+                            }
+                        }}>
+                        <span className="relative z-10" >Get Started</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </button>
+                </div>
+            </main>
         </div>
     )
 }

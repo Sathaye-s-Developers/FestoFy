@@ -6,12 +6,13 @@ import { EventAppContext } from './Context/EventContext'
 import Event from './Pages/Event_Components/Event'
 import { Routes, Route } from "react-router-dom"
 import AddEventpg from './Pages/Event_Components/Pages/AddEventpg'
+import NewHomepg from './Pages/NewHomepg'
 
 const App = () => {
-  const { register,token} = useContext(EventAppContext)
+  const { register, token } = useContext(EventAppContext)
   return (
     <div>
-      <div className='app'>
+      {/* <div className='app'>
         {register === true ? <Login_PopUp /> : <></>}
         
         <Routes>
@@ -21,8 +22,15 @@ const App = () => {
           <Route path='/AddEvent' element={<AddEventpg/>}/>
         </Routes>
       </div>
-      <About />
-
+      <About /> */}
+      {register===true ?<Login_PopUp/>:<></>}
+       <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/Home' element={<Home />} />
+          <Route path='/Event' element={token?<Event />:<Home/>} />
+          <Route path='/AddEvent' element={<AddEventpg/>}/>
+        </Routes>
+      {/* <NewHomepg/> */}
     </div >
   )
 }
