@@ -7,7 +7,7 @@ const EventContext = (props) => {
     const [register, setRegister] = useState(false)
     const [token, settoken] = useState(() => localStorage.getItem("token") || "");
     const [authtoken, setauthtoken] = useState("")
-    const url = "http://localhost:3000"
+    const url = "https://festofy-backend.onrender.com"
     const [details, setdetails] = useState("")
 
     const fetchUserDetails = async (token) => {
