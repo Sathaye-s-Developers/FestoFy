@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
     unique: true,
-    minlength: [3, 'uesername must be at least 3 characters long']
+    minlength: [3, "uesername must be at least 3 characters long"],
   },
   email: {
     type: String,
@@ -15,22 +15,28 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
     unique: true,
-    minlength: [13, 'email must be at least 13 characters long']
+    minlength: [13, "email must be at least 13 characters long"],
   },
   password: {
     type: String,
     require: true,
     trim: true,
-    minlength: [5, 'password must be at least 5 characters long']
+    minlength: [5, "password must be at least 5 characters long"],
   },
   college_code: {
     type: String,
     require: false,
     trim: true,
-    lowercase: true
-  }
-})
+    lowercase: true,
+  },
+  role: {
+    type: String,
+    require: true,
+    default: "user",
+    enum: ["user", "admin"],
+  },
+});
 
-const users = mongoose.model('users', userSchema);
+const users = mongoose.model("users", userSchema);
 
-module.exports = users; 
+module.exports = users;

@@ -3,26 +3,22 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
-
-  // No header?
+  if (!authHeader) return res.status(401).json({ message: "Token missing" });
+  // Check if Authorization header is present and starts with Bearer
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Token missing or badly formatted" });
+    return res.status(401).json({ message: "Token missing or invalid format" });
   }
-
   const token = authHeader.split(" ")[1];
 
-  // Check if it's a basic JWT shape (3 parts separated by .)
-  if (!token || token.split(".").length !== 3) {
-    return res.status(401).json({ message: "Malformed token" });
-  }
-
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET); // secret must match
+    //  console.log("✅ Decoded token:", decoded);
     req.user = decoded;
+
     next();
   } catch (err) {
-    console.error("❌ Token verification error:", err.message);
-    return res.status(401).json({ message: "Invalid or expired token" });
+    console.log(err);
+    return res.status(401).json({ message: "Invalid token  or expire" });
   }
 }
 
