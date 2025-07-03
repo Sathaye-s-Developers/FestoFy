@@ -7,9 +7,10 @@ import Event from './Pages/Event_Components/Event'
 import { Routes, Route } from "react-router-dom"
 import AddEventpg from './Pages/Event_Components/Pages/AddEventpg'
 import NewHomepg from './Pages/NewHomepg'
+import Mobile_Options from './Components/Mobile_Options'
 
 const App = () => {
-  const { register, token } = useContext(EventAppContext)
+  const { register, token ,options} = useContext(EventAppContext)
   return (
     <div>
       {/* <div className='app'>
@@ -24,6 +25,8 @@ const App = () => {
       </div>
       <About /> */}
       {register===true ?<Login_PopUp/>:<></>}
+      {options===true?<Mobile_Options/>:<></>}
+      {}
        <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/Home' element={<Home />} />
