@@ -3,8 +3,8 @@ const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 
-const url=``;
-const interval=30000;
+const url=process.env.Frontend_Url
+const interval=300000;
 
 function reloadWebsite(){
     axios.get(url).then((res)=>{
