@@ -3,6 +3,17 @@ const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 
+const url=``;
+const interval=30000;
+
+function reloadWebsite(){
+    axios.get(url).then((res)=>{
+      console.log("Website reloaded")
+    }).catch((err)=>{
+      console.log('error:',err)
+    })
+}
+
 const cors = require('cors');
 const connectDB = require('./configure/database');
 
@@ -19,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 const homeRoutes = require('./routes/home.router');
 const userRoutes = require('./routes/user.router');
 const otpRoutes=require('./routes/otp.router');
+const { default: axios } = require('axios');
 
 app.use('/', homeRoutes);
 app.use('/Festofy/user', userRoutes);
