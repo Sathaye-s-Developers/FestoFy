@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
+const axios = require('axios');
 
-const url=process.env.Frontend_Url
+const url=process.env.Backend_Url;
 const interval=300000;
 
 function reloadWebsite(){
@@ -21,16 +22,32 @@ const connectDB = require('./configure/database');
 connectDB();
 
 // Middleware
-app.use(cors());
+
+// const corsOptions = {
+//   origin: process.env.Frontend_Url,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true
+// };
+
+
+
+// app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions)); // ✅ same config
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+app.get('/cors-test', (req, res) => {
+  res.json({ message: "CORS works!" });
+});
 
 // Routes
 const homeRoutes = require('./routes/home.router');
 const userRoutes = require('./routes/user.router');
 const otpRoutes=require('./routes/otp.router');
-const { default: axios } = require('axios');
+
 
 app.use('/', homeRoutes);
 app.use('/Festofy/user', userRoutes);
