@@ -2,16 +2,20 @@ import React, { useContext } from 'react'
 import { House, DollarSign, Image, Calendar1, User } from 'lucide-react';
 import { X } from 'lucide-react';
 import { EventAppContext } from '../Context/EventContext';
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 
 const Mobile_Options = () => {
-    const { setoptions, token,setRegister} = useContext(EventAppContext)
+    const { setoptions, token, setRegister } = useContext(EventAppContext)
     const toggleoption = () => {
         setoptions(false)
     }
-    const toggleLogin=()=>{
+    const toggleLogin = () => {
         setoptions(false)
         setRegister(true)
+    }
+    const logout = () => {
+        localStorage.removeItem("token")
+        settoken("")
     }
     return (
         <div>
@@ -38,7 +42,7 @@ const Mobile_Options = () => {
 
                         <hr className='border-2 m-5 w-[80%]' />
 
-                        {token ? <button className='p-4 border-2 mb-5 w-[80%] ml-3 mr-3  flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xl font-semibold rounded-full hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-2xl hover:shadow-cyan-500/40 relative overflow-hidden'><User />Logout</button> :
+                        {token ? <button className='p-4 border-2 mb-5 w-[80%] ml-3 mr-3  flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xl font-semibold rounded-full hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-2xl hover:shadow-cyan-500/40 relative overflow-hidden' onClick={logout}><User />Logout</button> :
 
                             <button className='p-4 border-2 mb-5 w-[80%] ml-3 mr-3  flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xl font-semibold rounded-full hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-2xl hover:shadow-cyan-500/40 relative overflow-hidden' onClick={toggleLogin}><User />Login</button>
                         }
