@@ -1,36 +1,49 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const subEventSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   description: {
     type: String,
-    trim: true
+    trim: true,
   },
   date: {
     type: Date,
-    required: true
+    required: true,
   },
   time: {
     type: String, // optional: store as string "10:30 AM"
   },
   location: {
-    type: String
+    type: String,
   },
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Event',
-    required: true
+    ref: "Event",
+    required: true,
   },
+  volunteers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Volunteer",
+    },
+  ],
+  participants: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Participation",
+    },
+  ],
+
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-const SubEvent = mongoose.model('SubEvent', subEventSchema);
+const SubEvent = mongoose.model("SubEvent", subEventSchema);
 
 module.exports = SubEvent;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const volunteerSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
@@ -10,13 +10,18 @@ const volunteerSchema = new mongoose.Schema({
   role: { type: String },
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Event',
-    required: true
+    ref: "Event",
+    required: true,
+  },
+  SubEventId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubEvent",
+    required: true,
   },
   registeredAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model('Volunteer', volunteerSchema);
+module.exports = mongoose.model("Volunteer", volunteerSchema);

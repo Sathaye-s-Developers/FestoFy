@@ -3,6 +3,20 @@ const app = express();
 
 const dotenv = require("dotenv");
 dotenv.config();
+const url = process.env.Backend_Url;
+const axios = require("axios");
+const interval = 300000;
+function reloadWebsite() {
+  axios
+    .get(url)
+    .then((res) => {
+      console.log("Website reloaded");
+    })
+    .catch((err) => {
+      console.log("error:", err);
+    });
+}
+setInterval(reloadWebsite, interval);
 
 const cors = require("cors");
 const connectDB = require("./configure/database");
@@ -33,6 +47,7 @@ app.use("/Festofy/user/otp", otpRoutes);
 app.use("/Festofy/user/event", eventRoutes);
 app.use("/Festofy/user/event/subevent", subeventRoutes);
 app.use("/Festofy/participation/", particioationRoutes);
+
 // Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
