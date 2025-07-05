@@ -5,7 +5,7 @@ import { EventAppContext } from '../Context/EventContext';
 import { Link } from "react-router-dom"
 
 const Mobile_Options = () => {
-    const { setoptions, token, setRegister } = useContext(EventAppContext)
+    const { setoptions, token, setRegister,settoken } = useContext(EventAppContext)
     const toggleoption = () => {
         setoptions(false)
     }
