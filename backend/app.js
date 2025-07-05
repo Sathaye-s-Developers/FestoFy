@@ -23,7 +23,12 @@ connectDB();
 
 // Middleware
 
-app.use(cors({origin:process.env.Frontend_Url}))
+app.use(cors());
+cors({
+  origin: "https://festofy-frontend.onrender.com",
+  credentials: true,
+});
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
