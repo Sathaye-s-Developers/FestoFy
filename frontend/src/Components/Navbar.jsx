@@ -20,6 +20,7 @@ const Navbar = () => {
       <header className="relative z-10 px-6 py-6">
         <nav className="flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo */}
+  
           <div className="flex items-center space-x-3 group cursor-pointer">
             <div className="p-2 bg-cyan-500/20 rounded-xl border border-cyan-400/40 group-hover:bg-cyan-500/30 group-hover:border-cyan-400/60 transition-all duration-300 group-hover:scale-110">
               <Calendar className="w-7 h-7 text-cyan-400 group-hover:text-cyan-300 transition-colors duration-300" />

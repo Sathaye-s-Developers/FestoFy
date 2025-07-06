@@ -101,7 +101,9 @@ const About = () => {
                   <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
                     {value.description}
                   </p>
+                  <div>d</div>
                 </div>
+                
               );
             })}
           </div>
