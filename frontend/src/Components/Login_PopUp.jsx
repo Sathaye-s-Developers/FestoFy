@@ -38,9 +38,9 @@ const Login_PopUp = () => {
 
         let newurl = url;
         if (login === "logout") {
-            newurl += "/Festofy/user/signUp"
-        } else {
             newurl += "/Festofy/user/login"
+        } else {
+            newurl += "/Festofy/user/signUp"
         }
         try {
             const response = await axios.post(newurl, data)
