@@ -1,6 +1,6 @@
 import React from 'react'
 import Features from '../Components/Features'
-import Events from '../Components/Events'
+import Events from '../Components/EventGalary'
 import Navbar_Design from '../Components/Navbar_Design'
 
 

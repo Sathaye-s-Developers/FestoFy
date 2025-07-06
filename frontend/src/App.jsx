@@ -8,9 +8,10 @@ import { Routes, Route } from "react-router-dom"
 import AddEventpg from './Pages/Event_Components/Pages/AddEventpg'
 import NewHomepg from './Pages/NewHomepg'
 import Mobile_Options from './Components/Mobile_Options'
+import LoadingBar from "react-top-loading-bar";
 
 const App = () => {
-  const { register, token ,options} = useContext(EventAppContext)
+  const { register, token, options,setprogress,progress} = useContext(EventAppContext)
   return (
     <div>
       {/* <div className='app'>
@@ -24,15 +25,20 @@ const App = () => {
         </Routes>
       </div>
       <About /> */}
-      {register===true ?<Login_PopUp/>:<></>}
-      {options===true?<Mobile_Options/>:<></>}
-      {}
-       <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/Home' element={<Home />} />
-          <Route path='/Event' element={token?<Event />:<Home/>} />
-          <Route path='/AddEvent' element={<AddEventpg/>}/>
-        </Routes>
+      <div>
+        <LoadingBar
+          color="#ADD8E6"
+          progress={progress}
+          onLoaderFinished={() => setprogress(0)}
+        /></div>
+      {register === true ? <Login_PopUp /> : <></>}
+      {options === true ? <Mobile_Options /> : <></>}
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/Home' element={<Home />} />
+        <Route path='/Event' element={token ? <Event /> : <Home />} />
+        <Route path='/AddEvent' element={<AddEventpg />} />
+      </Routes>
       {/* <NewHomepg/> */}
     </div >
   )

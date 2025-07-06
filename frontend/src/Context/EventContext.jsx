@@ -10,6 +10,7 @@ const EventContext = (props) => {
     const url = "http://localhost:3000"
     const [details, setdetails] = useState("")
     const [options, setoptions] = useState(false)
+    const [progress,setprogress]=useState(0)
 
     const fetchUserDetails = async (token) => {
         try {
@@ -31,7 +32,7 @@ const EventContext = (props) => {
         }
     }, [token, details])
     const contextvalue = {
-        register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails,options,setoptions
+        register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails,options,setoptions,progress,setprogress
     }
     return (
         <EventAppContext.Provider value={contextvalue}>

@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { EventAppContext } from '../Context/EventContext';
-import Header from './Header';
+
 import { Link } from "react-router-dom"
-import { Calendar, User, Menu,X } from 'lucide-react';
+import { Calendar, User, Menu, X } from 'lucide-react';
 
 
 const Navbar = () => {
-  const { setRegister, token, settoken,setoptions,options} = useContext(EventAppContext)
-  const toggleoption=()=>{
+  const { setRegister, token, settoken, setoptions, options ,setprogress} = useContext(EventAppContext)
+  const toggleoption = () => {
     setoptions(true)
   }
 
@@ -32,22 +32,32 @@ const Navbar = () => {
             <li className="text-white hover:text-cyan-400 transition-all duration-300 font-medium relative group"><Link to="/Home">Home</Link>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
             </li>
-            {token ? <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group"><Link to="/Event">Events</Link>
+            {token ? <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group" onClick={()=>setprogress(100)}><Link to="/Event">Events</Link>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
-            </li> :
-              <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+            </li> : <></>
+            }
+
+            {/* Optional Future */}
+            {/* <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
                 Pricing
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
-              </li>
-            }
-            <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+              </li> */}
+
+
+            <a href="#Galary" className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
               Gallery
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
-            </li>
-            <li className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+            </a>
+            <a href="#About" className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
               About
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
-            </li>
+            </a>
+
+            {token ? <></> :
+              <a href="#Enquiry" className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+                Enquiry
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+              </a>}
           </ul>
 
           {/* Mobile Menu Button */}
@@ -55,8 +65,8 @@ const Navbar = () => {
             {/* <button className="text-white hover:text-cyan-400 transition-colors duration-300" onClick={()=>{setoptions(prev=>!prev)}}>
               <Menu className="w-6 h-6" />
             </button> */}
-            
-            <button 
+
+            <button
               onClick={toggleoption}
               className="relative p-3 bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-xl border border-cyan-400/30 hover:from-cyan-500/30 hover:to-blue-600/30 hover:border-cyan-400/50 transition-all duration-300 hover:scale-110 group"
             >
@@ -84,7 +94,8 @@ const Navbar = () => {
           }
         </nav>
       </header>
-      <Header />
+
+
     </div>
   )
 }

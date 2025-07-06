@@ -2,70 +2,111 @@ import React from 'react'
 import facebook from "../assets/facebook_icon.png"
 import linkdin from "../assets/linkedin_icon.png"
 import twitter from "../assets/twitter_icon.png"
+import { CheckCircle , Target,Heart ,Award } from "lucide-react"
+
 const About = () => {
+  const achievements = [
+    'Winner of Best EdTech Platform 2024',
+    'Trusted by 500+ Educational Institutions',
+    'Featured in TechCrunch and Forbes',
+    '4.9/5 Rating from 10,000+ Users'
+  ];
+  const stats = [
+    { number: '10K+', label: 'Events Organized' },
+    { number: '500+', label: 'Colleges Trust Us' },
+    { number: '1M+', label: 'Students Reached' },
+    { number: '99.9%', label: 'Uptime Guarantee' }
+  ];
+  const values = [
+    {
+      icon: Target,
+      title: 'Innovation',
+      description: 'We constantly evolve our platform to meet the changing needs of modern college events'
+    },
+    {
+      icon: Heart,
+      title: 'Community',
+      description: 'Building stronger campus communities through memorable and engaging events'
+    },
+    {
+      icon: Award,
+      title: 'Excellence',
+      description: 'Delivering exceptional experiences that exceed expectations every time'
+    }
+  ];
+
+
+
   return (
-    <div className='bg-[#323232] w-[100%] text-white mt-5' id='Aboutpg'>
-      <div className='md:w-[90%] w-[80%] flex flex-col md:flex-row items-center md:justify-between m-auto'>
-        <div className='md:w-1/2 md:mr-2'>
-          <h3 className='text-4xl font-bold ml-1 mt-10 mb-5 md:ml-10 text-green-400'>Festofy</h3>
-          <p className='md:ml-10 ml-1 tracking-tight'>
-            At FestoFy, we believe college life should go beyond lectures — it should be memorable. Our platform helps student communities effortlessly plan, promote, and manage events, from cultural fests to seminars. Designed to replace scattered spreadsheets and last-minute chaos, FestoFy brings clarity, collaboration, and creativity to campus event management.
-          </p>
-          <p className='mt-5 ml:5 md:ml-10 mb-2'>Features</p>
-          <ul className='md:ml-14 ml-5 list-disc'>
-            <li>Creating Events</li>
-            <li>Making Schedules</li>
-            <li>Assigning Roles</li>
-            <li>Setting Event Updates</li>
-          </ul>
-          <div className='md:ml-10 ml-1 mt-4 flex flex-col'>
-            <p>Follow Us On</p>
-            <div className='flex gap-2 mt-2'>
-              <img src={facebook} alt="facebook" className='w-[35px]' />
-              <img src={twitter} alt="twitter" className='w-[35px]' />
-              <img src={linkdin} alt="linkdin" className='w-[35px]' />
+    <div className="mb-20" id='About'>
+      <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-3xl border border-cyan-400/20 p-8 md:p-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          About <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Festofy</span>
+        </h2>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+          <div>
+            <h3 className="text-2xl font-semibold text-white mb-4">Our Story</h3>
+            <p className="text-gray-300 leading-relaxed mb-6">
+              Founded in 2022 by a team of passionate college students and tech enthusiasts, Festofy was born from the frustration of organizing campus events with outdated tools and fragmented systems. We experienced firsthand the challenges of coordinating teams, managing budgets, and engaging audiences.
+            </p>
+            <p className="text-gray-300 leading-relaxed">
+              Today, we're proud to serve over 500 educational institutions worldwide, helping them create memorable experiences that bring communities together. Our platform has facilitated over 10,000 successful events, reaching more than 1 million students globally.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-2xl font-semibold text-white mb-4">Our Mission</h3>
+            <p className="text-gray-300 leading-relaxed mb-6">
+              To revolutionize how educational institutions plan, promote, and execute events by providing an intuitive, comprehensive platform that eliminates complexity and maximizes engagement.
+            </p>
+
+            <div className="space-y-3">
+              {achievements.map((achievement, index) => (
+                <div key={index} className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-cyan-400 flex-shrink-0" />
+                  <span className="text-gray-300">{achievement}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        <div className='md:w-1/2'>
-          <div className='bg-gray-100 rounded-[10px] mt-10 p-5 md:p-10 w-full'>
-            <h1 className='text-black font-bold text-3xl mt-2'>Enquiry Form</h1>
-            <form className='text-black'>
-              <div className="sm:flex gap-4 w-full">
-                <div className='flex flex-col flex-1/2'>
-                  <label className='text-black mt-2'>Name <span className="text-red-500">*</span></label>
-                  <input type="text" className='border-2 rounded-[5px] w-full p-[5px] cursor-pointer' placeholder='Enter Name'required />
-                </div>
 
-                <div className='flex flex-col flex-1/2'>
-                  <label className='text-black mt-2'>Email <span className="text-red-500">*</span></label>
-                  <input type="email" className='border-2 rounded-[5px] w-full p-[5px] cursor-pointer' placeholder='Enter Email' required />
-                </div>
+        {/* Stats Section */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          {stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                {stat.number}
               </div>
-              <div className="sm:flex gap-4 w-full">
-                <div className='flex flex-col flex-1/2'>
-                  <label className='text-black mt-2'>Topic <span className="text-red-500">*</span></label>
-                  <input type="text" className='border-2 rounded-[5px] w-full p-[5px] cursor-pointer' placeholder='Enter Topic'required />
-                </div>
+              <div className="text-gray-400 text-sm md:text-base">{stat.label}</div>
+            </div>
+          ))}
+        </div>
 
-                <div className='flex flex-col flex-1/2'>
-                  <label className='text-black mt-2'>Date <span className="text-red-500">*</span></label>
-                  <input type="Date" className='border-2 rounded-[5px] w-full p-[2px] cursor-pointer' required />
+        {/* Values Section */}
+        <div>
+          <h3 className="text-2xl font-semibold text-white mb-8 text-center">Our Values</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {values.map((value, index) => {
+              const IconComponent = value.icon;
+              return (
+                <div key={index} className="text-center group">
+                  <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-2xl border border-cyan-400/30 w-fit mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <IconComponent className="w-8 h-8 text-cyan-400" />
+                  </div>
+                  <h4 className="text-xl font-semibold text-white mb-3 group-hover:text-cyan-300 transition-colors duration-300">
+                    {value.title}
+                  </h4>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                    {value.description}
+                  </p>
                 </div>
-              </div>
-              <div className='flex flex-col md:ml-2 mr-2'>
-                <label className='text-black mt-2'>Your Message <span className="text-red-500">*</span></label>
-                <textarea className='border-2 rounded-[5px] w-full p-[5px] h-[100px] cursor-pointer' required></textarea>
-              </div>
-              <div className='flex flex-col items-center'>
-                <button className='m-2 bg-black text-white p-2 rounded-[20px] w-[120px] mt-5 cursor-pointer'>Submit</button>
-              </div>
-            </form>
+              );
+            })}
           </div>
         </div>
       </div>
-      <hr className='mx-auto mt-8' />
-      <p className='text-center mt-5'>Copyright 2025 @ Festofy.com-All Right Reserved</p>
     </div>
   )
 }
