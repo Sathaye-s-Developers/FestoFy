@@ -1,10 +1,9 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-
 //create otp
 function generateOTP(length = 6) {
-  return [...Array(length)].map(() => Math.floor(Math.random() * 10)).join('');
+  return [...Array(length)].map(() => Math.floor(Math.random() * 10)).join("");
 }
 
 const transporter = nodemailer.createTransport({
@@ -15,16 +14,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
-
 //otp sending function
 async function sendOTP(toEmail) {
   const otp = generateOTP();
   const mailOptions = {
-  from: `"Festofy OTP Service" <${process.env.EMAIL_USER}>`,
-  to: toEmail,
-  subject: "🔐 Your Festofy OTP Code - Secure Your Access",
-  html: `
+    from: `"Festofy OTP Service" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: "🔐 Your Festofy OTP Code - Secure Your Access",
+    html: `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 500px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; background-color: #f9f9f9;">
       <h2 style="color: #4a148c; text-align: center;">🎓 Festofy - OTP Verification</h2>
       <p style="font-size: 16px; color: #333;">Dear User,</p>
@@ -49,14 +46,11 @@ async function sendOTP(toEmail) {
       </p>
     </div>
   `,
-};
-
+  };
 
   await transporter.sendMail(mailOptions);
   return otp; // you store this temporarily with expiry
 }
-
-
 
 //registration  confirm
 async function sendConfirmationEmail(email, username) {
@@ -82,7 +76,7 @@ async function sendConfirmationEmail(email, username) {
           You can now log in, browse events, and participate in activities. Stay tuned for updates!
         </p>
         <div style="text-align: center; margin: 20px 0;">
-          <a href="//    " target="_blank" style="text-decoration: none; background-color: #4a148c; color: #fff; padding: 12px 25px; border-radius: 5px; font-size: 16px;">
+          <a href="https://festofy-frontend.onrender.com/" target="_blank" style="text-decoration: none; background-color: #4a148c; color: #fff; padding: 12px 25px; border-radius: 5px; font-size: 16px;">
             Go to Dashboard
           </a>
         </div>
@@ -95,13 +89,7 @@ async function sendConfirmationEmail(email, username) {
     `,
   };
 
-
   return await transporter.sendMail(mail);
 }
 
-
-
-
-
-
-module.exports = {sendOTP,sendConfirmationEmail};
+module.exports = { sendOTP, sendConfirmationEmail };

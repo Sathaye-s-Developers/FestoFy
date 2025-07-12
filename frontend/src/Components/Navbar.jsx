@@ -2,11 +2,14 @@ import React, { useContext, useEffect, useState } from 'react'
 import { EventAppContext } from '../Context/EventContext';
 import Header from './Header';
 import { Link } from "react-router-dom"
-import { Calendar, User, Menu } from 'lucide-react';
+import { Calendar, User, Menu,X } from 'lucide-react';
 
 
 const Navbar = () => {
-  const { setRegister, token, settoken } = useContext(EventAppContext)
+  const { setRegister, token, settoken,setoptions,options} = useContext(EventAppContext)
+  const toggleoption=()=>{
+    setoptions(true)
+  }
 
   const logout = () => {
     localStorage.removeItem("token")
@@ -49,8 +52,18 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <button className="text-white hover:text-cyan-400 transition-colors duration-300">
+            {/* <button className="text-white hover:text-cyan-400 transition-colors duration-300" onClick={()=>{setoptions(prev=>!prev)}}>
               <Menu className="w-6 h-6" />
+            </button> */}
+            
+            <button 
+              onClick={toggleoption}
+              className="relative p-3 bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-xl border border-cyan-400/30 hover:from-cyan-500/30 hover:to-blue-600/30 hover:border-cyan-400/50 transition-all duration-300 hover:scale-110 group"
+            >
+              <div className="relative w-6 h-6">
+                <Menu className={`absolute inset-0 w-6 h-6 text-cyan-400 transition-all duration-300 ${options ? 'opacity-0 rotate-180 scale-75' : 'opacity-100 rotate-0 scale-100'}`} />
+                <X className={`absolute inset w-6 h-6 text-cyan-400 transition-all duration-300 ${options ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-180 scale-75'}`} />
+              </div>
             </button>
           </div>
 

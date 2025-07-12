@@ -1,38 +1,47 @@
-import React, { useContext, useState } from 'react'
-import Home from './Pages/Home'
-import About from './Pages/About'
-import Login_PopUp from './Components/Login_PopUp'
-import { EventAppContext } from './Context/EventContext'
-import Event from './Pages/Event_Components/Event'
-import { Routes, Route } from "react-router-dom"
-import AddEventpg from './Pages/Event_Components/Pages/AddEventpg'
-import NewHomepg from './Pages/NewHomepg'
+import React, { useContext } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import Home from "./Pages/Home";
+import About from "./Pages/About";
+import Login_PopUp from "./Components/Login_PopUp";
+import { EventAppContext } from "./Context/EventContext";
+import Event from "./Pages/Event_Components/Event";
+import AddEventpg from "./Pages/Event_Components/Pages/AddEventpg";
+import NewHomepg from "./Pages/NewHomepg";
+import Mobile_Options from "./Components/Mobile_Options";
+import SuperAdminPanel from "./Pages/Event_Components/Pages/SuperAdmin";
 
 const App = () => {
-  const { register, token } = useContext(EventAppContext)
+  const { register, token, options } = useContext(EventAppContext);
+
   return (
     <div>
-      {/* <div className='app'>
-        {register === true ? <Login_PopUp /> : <></>}
-        
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/Home' element={<Home />} />
-          <Route path='/Event' element={token?<Event />:<Home/>} />
-          <Route path='/AddEvent' element={<AddEventpg/>}/>
-        </Routes>
-      </div>
-      <About /> */}
-      {register===true ?<Login_PopUp/>:<></>}
-       <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/Home' element={<Home />} />
-          <Route path='/Event' element={token?<Event />:<Home/>} />
-          <Route path='/AddEvent' element={<AddEventpg/>}/>
-        </Routes>
-      {/* <NewHomepg/> */}
-    </div >
-  )
-}
+      {/* Login Modal */}
+      {register === true && <Login_PopUp />}
 
-export default App
+      {/* Mobile Options */}
+      {options === true && <Mobile_Options />}
+
+      {/* Main Routes */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Home" element={<Home />} />
+        <Route path="/Event" element={token ? <Event /> : <Home />} />
+        <Route path="/AddEvent" element={<AddEventpg />} />
+        <Route path="/Super_admin" element={<SuperAdminPanel />} />
+      </Routes>
+
+      {/* ✅ Floating Super Admin Button - Only visible if logged in */}
+      {
+        <div className="fixed bottom-5 right-5 z-50">
+          <Link to="/Super_admin">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow-lg transition-all duration-300">
+              Super Admin Panel
+            </button>
+          </Link>
+        </div>
+      }
+    </div>
+  );
+};
+
+export default App;
