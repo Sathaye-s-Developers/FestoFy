@@ -4,7 +4,7 @@ import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 import Otp_popup from './Otp_popup'
 import Select from 'react-select'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { college_Name } from '../Websites data/Colleges_Names';
 
 const Login_PopUp = () => {
     const { setRegister, url, settoken, setusername, setprogress } = useContext(EventAppContext)
@@ -12,13 +12,6 @@ const Login_PopUp = () => {
     const [otp, setotp] = useState(false)
     const [errorMsg, seterrorMsg] = useState("")
     const [savetoken, setsavetoken] = useState({ token: "" })
-
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' },
-
-    ]
 
     const [data, setdata] = useState({
         "username": "",
@@ -70,9 +63,10 @@ const Login_PopUp = () => {
         }
 
     }
+
     return (
         <div className='fixed inset-0 z-50 w-full h-full bg-[#00000090] grid'>
-            <div className='place-self-center left-[580px] opacity-80 top-[200px] bg-black rounded-[12px] sm:w-[55%] md:w-[50%] lg:w-[40%] xl:w-[30%] animate-[fadein_0.5s_ease-in-out_forwards] text-white'>
+            <div className='place-self-center left-[580px] opacity-80 top-[200px] bg-black rounded-[12px] w-[90%] sm:w-[55%] md:w-[50%] lg:w-[40%] xl:w-[30%] animate-[fadein_0.5s_ease-in-out_forwards] text-white'>
                 {otp === true ?
                     <div>
                         <Otp_popup email={data.email} setotp={setotp} login={login} data={data} setdata={setdata} setsavetoken={setsavetoken} savetoken={savetoken} />
@@ -86,39 +80,79 @@ const Login_PopUp = () => {
                         <div className='font-[Nunito]'>
                             <form onSubmit={onsubmit}>
                                 <div className='flex flex-col items-center'>
-                                    {login === "logout" ?<></> :<input type="text" placeholder='Your Username' name='username' onChange={onchangehandler} value={data.username} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' required autoComplete='username' />}
+                                    {login === "logout" ? <></> : <input type="text" placeholder='Your Username' name='username' onChange={onchangehandler} value={data.username} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' required autoComplete='username' />}
 
                                     <input type="email" placeholder='Your Email' name='email' onChange={onchangehandler} value={data.email} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' required autoComplete='email' />
 
                                     <input type="password" placeholder='Your Password' name='password' onChange={onchangehandler} value={data.password} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' required autoComplete='password' />
 
-                                    {/* <div className='flex items-center w-[80%] gap-1'> */}
-                                        {/* <select name="collegecode" id="collegeid" className='overflow-hidden outline-none border-2 border-gray-300 w-[20%] rounded-[5px] p-1 mb-3 text-sm h-[40px]'>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                            <option>Hello</option>
-                                        </select> */}
-                                        {/* <Select className=' outline-none  bg-black w-[30%] text-black rounded-[5px] p-1 mb-3 text-sm h-[40px]' options={options} /> */}
-                                        {/* <Menu>
-                                            <Menu.Button>College Code</Menu.Button>
-                                            <Menu.Items>
-                                                <Menu.Item>Hello</Menu.Item>
-                                            </Menu.Items>
-                                        </Menu> */}
-                                        <input type="text" placeholder='Your College-Code' name='college_code' onChange={onchangehandler} value={data.college_code} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' autoComplete='college-code' />
-                                    {/* </div> */}
+                                    {login === "logout" ? <></> :
+                                        <div className='w-[80%] mb-4'>
+                                            <Select
+                                                options={college_Name.map((college_Name, index) => ({ label: college_Name.full_name, value: college_Name.college_code }))}
+                                                className='w-full h-[36px]'
+                                                isSearchable
+                                                styles={{
+                                                    control: (baseStyles, state) => ({
+                                                        ...baseStyles,
+                                                        border: `1px solid white ${state.isFocused ? 'white' : 'white'}`,
+                                                        boxShadow: 'none',
+                                                        backgroundColor: 'transparent',
+
+                                                    }),
+                                                    menu: (base) => ({
+                                                        ...base,
+                                                        backgroundColor: '#1f2937', // 👈 dropdown background (Tailwind `gray-800`)
+                                                        color: 'white',
+                                                        zIndex: 9999
+                                                    }),
+                                                    option: (base, state) => ({
+                                                        ...base,
+                                                        backgroundColor: state.isFocused ? '#374151' : '#1f2937', // gray-700 when focused
+                                                        color: 'white',
+                                                        cursor: 'pointer',
+                                                        '&:hover': {
+                                                            backgroundColor: '#4b5563', // Tailwind gray-600
+                                                            color: 'black', // 👈 Your intended hover color
+                                                        },
+                                                    }),
+                                                    input: (base) => ({
+                                                        ...base,
+                                                        color: 'white',
+                                                    }),
+                                                    placeholder: (base) => ({
+                                                        ...base,
+                                                        color: '#9ca3af', // Tailwind gray-400
+                                                    }),
+                                                    singleValue: (base) => ({
+                                                        ...base,
+                                                        color: 'white',
+                                                    }),
+                                                }}
+                                                placeholder="Your College Name"
+                                            />
+                                        </div>}
+
+                                    {login==="logout"?<input type="text" placeholder='Special Key (Optional)' name='college_code' onChange={onchangehandler} value={data.college_code} className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' autoComplete='college-code' />:<></>}
+
+                                    {login === "logout" ?
+                                        <div className='flex flex-col items-end w-[80%]'>
+                                            <a className='text-blue-400 underline' href="#Tutorial" onClick={() => { setRegister(false) }}>Apply for special key</a>
+                                        </div>
+                                        :<></>
+                                    }
+
+                                    {login === "logout" ? <></> :
+                                        <div className='flex flex-col items-end w-[80%]'>
+                                            <a className='text-blue-400 underline' href="#Tutorial" onClick={() => { setRegister(false) }}>College name not found</a>
+                                        </div>
+                                    }
+
+
+
+                                    <div className='w-[80%] flex justify-end mb-2 hover:cursor-pointer'>
+                                        <a href="#Enquiry" className='text-blue-500 underline' onClick={() => { setRegister(false) }}></a>
+                                    </div>
 
                                     {errorMsg && (<div className='w-[80%] mb-3'><p className='text-red-600'>{errorMsg}</p></div>)}
                                     <div className='flex items-center w-[80%] mb-4'>

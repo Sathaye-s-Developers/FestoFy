@@ -45,7 +45,7 @@ const Navbar = () => {
               </li> */}
 
 
-            <a href="#Galary" className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
+            <a href="#Gallary" className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
               Gallery
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
             </a>
@@ -63,10 +63,6 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            {/* <button className="text-white hover:text-cyan-400 transition-colors duration-300" onClick={()=>{setoptions(prev=>!prev)}}>
-              <Menu className="w-6 h-6" />
-            </button> */}
-
             <button
               onClick={toggleoption}
               className="relative p-3 bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-xl border border-cyan-400/30 hover:from-cyan-500/30 hover:to-blue-600/30 hover:border-cyan-400/50 transition-all duration-300 hover:scale-110 group"

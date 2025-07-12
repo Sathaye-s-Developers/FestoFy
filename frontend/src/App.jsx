@@ -11,20 +11,9 @@ import Mobile_Options from './Components/Mobile_Options'
 import LoadingBar from "react-top-loading-bar";
 
 const App = () => {
-  const { register, token, options,setprogress,progress} = useContext(EventAppContext)
+  const { register, token, options, setprogress, progress } = useContext(EventAppContext)
   return (
     <div>
-      {/* <div className='app'>
-        {register === true ? <Login_PopUp /> : <></>}
-        
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/Home' element={<Home />} />
-          <Route path='/Event' element={token?<Event />:<Home/>} />
-          <Route path='/AddEvent' element={<AddEventpg/>}/>
-        </Routes>
-      </div>
-      <About /> */}
       <div>
         <LoadingBar
           color="#ADD8E6"
@@ -36,7 +25,8 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/Home' element={<Home />} />
-        <Route path='/Event' element={token ? <Event /> : <Home />} />
+        {/* <Route path='/Event' element={token ? <Event /> : <Home />} /> */}
+        <Route path='/Event' element={<Event />} />
         <Route path='/AddEvent' element={<AddEventpg />} />
       </Routes>
       {/* <NewHomepg/> */}

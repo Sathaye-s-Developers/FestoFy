@@ -5,6 +5,7 @@ import Features from "../Components/Features"
 import EventGalary from './EventGalary';
 import About from '../Pages/About';
 import EnquiryOption from "./EnquiryOption"
+import Tutorialsteps from './Tutorialsteps';
 
 const Navbar_Design = () => {
     return (
@@ -36,6 +37,7 @@ const Navbar_Design = () => {
                 <div className="max-w-6xl mx-auto">
                     <Header />
                     <Features />
+                    <Tutorialsteps/>
                     <EventGalary />
                     <About />
                     <EnquiryOption/>
@@ -46,7 +48,7 @@ const Navbar_Design = () => {
 
 
             {/* Floating Lines - Exact positions from image */}
-            <div className="absolute top-1/4 right-10 w-px h-32 bg-gradient-to-b from-cyan-400/60 to-transparent"></div>
+            {/* <div className="absolute top-1/4 right-10 w-px h-32 bg-gradient-to-b from-cyan-400/60 to-transparent"></div> */}
             <div className="absolute bottom-1/4 left-10 w-px h-24 bg-gradient-to-t from-pink-400/60 to-transparent"></div>
             <div className="absolute top-1/2 right-1/4 w-24 h-px bg-gradient-to-r from-emerald-400/60 to-transparent"></div>
             <div className="absolute bottom-1/3 left-1/3 w-16 h-px bg-gradient-to-l from-purple-400/60 to-transparent"></div>

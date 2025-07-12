@@ -30,7 +30,7 @@ const Mobile_Options = () => {
                         <p className='group p-5 border-2 border-transparent w-[80%] ml-3 mr-3 rounded-[15px] font-bold flex items-center gap-3 relative text-gray-300 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-600/20 hover:border-cyan-400/20 hover:text-cyan-300'><House className={` inset-0 w-6 h-6 text-cyan-400 `} />Home</p>
 
                         {token ?
-                            <p className='group p-5 border-2 border-transparent w-[80%] ml-3 mr-3 rounded-[15px] font-bold flex items-center gap-3 relative text-gray-300 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-600/20 hover:border-cyan-400/20 hover:text-cyan-300'><DollarSign className={`inset-0 w-6 h-6 text-cyan-400 `} /><Link to="/Event">Events</Link></p>
+                            <p className='group p-5 border-2 border-transparent w-[80%] ml-3 mr-3 rounded-[15px] font-bold flex items-center gap-3 relative text-gray-300 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-600/20 hover:border-cyan-400/20 hover:text-cyan-300' onClick={()=>{setoptions(false)}}><DollarSign className={`inset-0 w-6 h-6 text-cyan-400 `} /><Link to="/Event">Events</Link></p>
                             :
                             <></>
                         }
@@ -38,7 +38,7 @@ const Mobile_Options = () => {
                         {/* Optional Future
                         <p className='group p-5 border-2 border-transparent w-[80%] ml-3 mr-3 rounded-[15px] font-bold flex items-center gap-3 relative text-gray-300 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-600/20 hover:border-cyan-400/20 hover:text-cyan-300'><DollarSign className={`inset-0 w-6 h-6 text-cyan-400 `} />Pricing</p> */}
 
-                        <a onClick={toggleoption} href='#Galary' className='group p-5 border-2 border-transparent w-[80%] ml-3 mr-3 rounded-[15px] font-bold flex items-center gap-3 relative text-gray-300 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-600/20 hover:border-cyan-400/20 hover:text-cyan-300'><Image className={`inset-0 w-6 h-6 text-cyan-400 `} / >Gallery</a>
+                        <a onClick={toggleoption} href='#Gallary' className='group p-5 border-2 border-transparent w-[80%] ml-3 mr-3 rounded-[15px] font-bold flex items-center gap-3 relative text-gray-300 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-600/20 hover:border-cyan-400/20 hover:text-cyan-300'><Image className={`inset-0 w-6 h-6 text-cyan-400 `} / >Gallery</a>
 
                         <a onClick={toggleoption} href='#About' className='group p-5 border-2 border-transparent w-[80%] ml-3 mr-3 rounded-[15px] font-bold flex items-center gap-3 relative text-gray-300 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-600/20 hover:border-cyan-400/20 hover:text-cyan-300'><Image className={`inset-0 w-6 h-6 text-cyan-400 `} />About</a>
                         
