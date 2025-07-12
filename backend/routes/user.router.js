@@ -60,8 +60,7 @@ router.post("/signUp", async (req, res) => {
 
     const token = jwt.sign(
       { _id: newUser._id, email: newUser.email, role: newUser.role },
-      JWT_SECRET,
-      { expiresIn: "2d" }
+      JWT_SECRET
     );
 
     res.status(201).json({
@@ -92,10 +91,7 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       { _id: user._id, email: user.email, role: user.role },
-      JWT_SECRET,
-      {
-        expiresIn: "2d",
-      }
+      JWT_SECRET
     );
 
     res.status(200).json({

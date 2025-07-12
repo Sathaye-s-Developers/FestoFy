@@ -14,6 +14,7 @@ function reloadWebsite(){
       console.log('error:',err)
     })
 }
+setInterval(reloadWebsite, interval);
 
 const cors = require('cors');
 const connectDB = require('./configure/database');
@@ -33,10 +34,6 @@ cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-app.get('/cors-test', (req, res) => {
-  res.json({ message: "CORS works!" });
-});
 
 // Routes
 const homeRoutes = require('./routes/home.router');
