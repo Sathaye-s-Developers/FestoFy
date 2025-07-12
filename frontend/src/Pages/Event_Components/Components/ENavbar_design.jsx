@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import E_Navbar from './E_Navbar'
-import Profile_Popup from './profile_Popup'
+import Profile_Popup from './Profile_Popup'
 const ENavbar_design = () => {
   const [profileOptions, setprofileOptions] = useState(false)
   const popupRef = useRef(null);
