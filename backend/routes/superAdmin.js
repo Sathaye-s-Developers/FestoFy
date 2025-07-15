@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../Model/user.model");
 const verifyToken = require("../middlewares/token_varification");
-const authorizeSuperadmin = require("../middlewares/authorize_superadmin");
+const authorizeSuperadmin = require("../middlewares/is_superadmin");
 
 // Middleware to verify superadmin role
 router.use(verifyToken, authorizeSuperadmin);

@@ -13,6 +13,7 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    unique: true,
   },
   department: {
     type: String,

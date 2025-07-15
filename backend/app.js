@@ -36,13 +36,15 @@ const otpRoutes = require("./routes/otp.router");
 const eventRoutes = require("./routes/event.router");
 const subeventRoutes = require("./routes/subevent.router");
 const participationRoutes = require("./routes/participation.router");
+const forgot_password = require("./routes/forgot_password");
 
 app.use("/", homeRoutes);
 app.use("/Festofy/user", userRoutes);
 app.use("/Festofy/user/otp", otpRoutes);
 app.use("/Festofy/user/event", eventRoutes);
 app.use("/Festofy/user/event/subevent", subeventRoutes);
-app.use("/Festofy/participation/", participationRoutes);
+app.use("/Festofy/user/event/participation/", participationRoutes);
+app.use("/Festofy/user/password", forgot_password);
 
 //  Setup Socket.IO
 const server = http.createServer(app);
@@ -66,5 +68,5 @@ io.on("connection", (socket) => {
 // Start Server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(` Server running on http://localhost:${PORT}`);
 });

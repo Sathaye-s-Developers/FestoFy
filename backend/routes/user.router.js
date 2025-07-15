@@ -7,15 +7,16 @@ const verifyToken = require("../middlewares/token_varification");
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 const match_clg = require("../functions/searching_clg_codes");
 // //Admin secreate code
-// const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
-//super Admin
+const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
+// super Admin
 const SUPER_ADMIN_SECRET_KEY = process.env.SUPER_ADMIN_SECRET_KEY;
 //  Register
 router.post("/signUp", async (req, res) => {
   try {
-    const { username, email, password, collageName, adminCode } = req.body;
-
-    if (!username || !email || !password || !collageName) {
+    const { username, email, password, collegeName, adminCode, superAdminKey } =
+      req.body;
+    console.log("Incoming data:", req.body);
+    if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -39,18 +40,23 @@ router.post("/signUp", async (req, res) => {
         .json({ success: false, message: "Please Enter A Valid Email" });
     }
 
-    //  Find the college code based on name
-    const match = match_clg(collageName);
-    console.log(match);
+    // Find the college code based on name
 
-    if (!match) {
-      return res
-        .status(404)
-        .json({ message: "College not found in our records." });
+    try {
+      const match = match_clg(collegeName);
+      console.log(match);
+
+      if (!match) {
+        return res
+          .status(404)
+          .json({ message: "College not found in our records." });
+      }
+
+      const collageCode = Object.keys(match)[0];
+      // console.log(collegeCode);
+    } catch (err) {
+      console.log(err);
     }
-
-    const collageCode = Object.keys(match)[0];
-    console.log(collageCode);
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -68,7 +74,7 @@ router.post("/signUp", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      collageName,
+      collegeName,
       collageCode,
       role,
     });
@@ -169,16 +175,14 @@ router.get("/verifyUser", verifyToken, async (req, res) => {
   }
 });
 
-//  Protected Route
-router.get("/user_details", verifyToken, async (req, res) => {
+// 🔐 Get All Users (Admin/SuperAdmin only)
+router.get("/all_users", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
-    if (!user) return res.status(404).json({ error: "User not found" });
+    const users = await User.find().select("-password");
 
-    res.json({ message: "success detial fetched", user });
+    res.status(200).json({ message: "✅ All users fetched", users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 module.exports = router;
