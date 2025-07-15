@@ -22,7 +22,7 @@ const EventContext = (props) => {
     const [options, setoptions] = useState(false)
     const [progress, setprogress] = useState(0)
     const [randcolor, setrandcolor] = useState("")
-
+  const [profileOptions, setprofileOptions] = useState(false)
 
     const fetchUserDetails = async (token) => {
         try {
@@ -46,7 +46,7 @@ const EventContext = (props) => {
         }
     }, [token])
     const contextvalue = {
-        register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor
+        register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor,profileOptions, setprofileOptions
     }
     return (
         <EventAppContext.Provider value={contextvalue}>

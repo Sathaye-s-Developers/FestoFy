@@ -1,17 +1,16 @@
 import React, { useContext, useState } from 'react'
 import { Link } from "react-router-dom"
-import AddIcon from "../../../assets/add.png"
 import { EventAppContext } from '../../../Context/EventContext'
-import E_Dashboard from './E_Dashboard'
 import { Calendar, User, Menu,X } from 'lucide-react';
-import Main_Event from './Main_Event'
+import { FaHome } from "react-icons/fa";
 
-const E_Navbar = ({profileOptions ,setprofileOptions}) => {
-  const { details } = useContext(EventAppContext)
+const E_Navbar = () => {
+  const { details,profileOptions, setprofileOptions } = useContext(EventAppContext)
   const [dashboard, setdashboard] = useState(false)
   const toggleProfileOption=()=>{
     setprofileOptions(true)
   }
+  
 
   return (
 
@@ -25,7 +24,8 @@ const E_Navbar = ({profileOptions ,setprofileOptions}) => {
             </div>
             <span className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">Festofy</span>
           </div>
-          <div>
+          <div className='flex items-center gap-5'>
+            <Link to="/Home"><FaHome className={` w-8 h-8 text-cyan-300 hover:text-cyan-400 hover:scale-110 transition-all duration-300`}/></Link>
             <button
               onClick={toggleProfileOption}
               className="relative p-3 bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-xl border border-cyan-400/30 hover:from-cyan-500/30 hover:to-blue-600/30 hover:border-cyan-400/50 transition-all duration-300 hover:scale-110 group"
@@ -41,7 +41,7 @@ const E_Navbar = ({profileOptions ,setprofileOptions}) => {
 
         </nav>
       </header>
-      <Main_Event />
+
     </div>
   )
 }

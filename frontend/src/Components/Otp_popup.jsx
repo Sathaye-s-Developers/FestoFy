@@ -33,14 +33,13 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
 
     const getOtpValue = async (e) => {
         e.preventDefault()
-        setprogress(30)
         const otp = inputs.current.map(input => input?.value).join("");
 
         //logic for login and signup 
         try {
             const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp },{headers:{Authorization: `Bearer ${savetoken.token}`}})
             if (response.data.success) {
-                setprogress(80)
+                setprogress(50)
                 localStorage.setItem("token",savetoken.token)
                 settoken(savetoken.token)
                 setdata({ "username": "", "email": "", "password": "", "college_code": "" })
@@ -50,6 +49,7 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
         } catch (err) {
             if (err.response && (err.response.status === 400)) {
                 seterrorMsg(err.response.data.message);
+                setprogress(0)
             }
         }
     };

@@ -1,8 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import E_Navbar from './E_Navbar'
-import Profile_Popup from './Profile_Popup'
+import EventOptions from "./EventOptions"
+import Main_Event from './Main_Event'
+import { EventAppContext } from '../../../Context/EventContext'
+
 const ENavbar_design = () => {
-  const [profileOptions, setprofileOptions] = useState(false)
+  const {profileOptions,setprofileOptions}=useContext(EventAppContext)
   const popupRef = useRef(null);
 
   useEffect(() => {
@@ -10,7 +13,7 @@ const ENavbar_design = () => {
       if (
         popupRef.current && !popupRef.current.contains(event.target)
       ) {
-        setprofileOptions(false); 
+        setprofileOptions(false);
       }
     };
 
@@ -60,8 +63,10 @@ const ENavbar_design = () => {
           <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-pink-400 rounded-full animate-pulse opacity-60"></div>
           <div className="absolute bottom-1/4 left-1/2 w-1.5 h-1.5 bg-green-400 rounded-full animate-ping opacity-50"></div>
         </div>
-        <E_Navbar profileOptions={profileOptions} setprofileOptions={setprofileOptions} />
-        {profileOptions && <Profile_Popup profileOptions={profileOptions} setprofileOptions={setprofileOptions} popupRef={popupRef}/>}
+        <E_Navbar />
+              <Main_Event />
+        {profileOptions && <EventOptions popupRef={popupRef} />}
+        
       </div>
     </div>
   )
