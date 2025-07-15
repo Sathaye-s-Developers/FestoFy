@@ -9,7 +9,7 @@ const interval=300000;
 
 function reloadWebsite(){
     axios.get(url).then((res)=>{
-      console.log("Website reloaded")
+      // console.log("Website reloaded")
     }).catch((err)=>{
       console.log('error:',err)
     })
