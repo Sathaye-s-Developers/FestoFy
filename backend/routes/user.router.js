@@ -10,6 +10,7 @@ const match_clg = require("../functions/searching_clg_codes");
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
 // super Admin
 const SUPER_ADMIN_SECRET_KEY = process.env.SUPER_ADMIN_SECRET_KEY;
+
 //  Register
 router.post("/signUp", async (req, res) => {
   try {
@@ -42,21 +43,21 @@ router.post("/signUp", async (req, res) => {
 
     // Find the college code based on name
 
-    try {
-      const match = match_clg(collegeName);
-      console.log(match);
+    // try {
+    //   const match = match_clg(collegeName);
+    //   console.log(match);
 
-      if (!match) {
-        return res
-          .status(404)
-          .json({ message: "College not found in our records." });
-      }
+    //   if (!match) {
+    //     return res
+    //       .status(404)
+    //       .json({ message: "College not found in our records." });
+    //   }
 
-      const collageCode = Object.keys(match)[0];
-      // console.log(collegeCode);
-    } catch (err) {
-      console.log(err);
-    }
+    //   const collageCode = Object.keys(match)[0];
+    //   // console.log(collegeCode);
+    // } catch (err) {
+    //   console.log(err);
+    // }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -172,6 +173,19 @@ router.get("/verifyUser", verifyToken, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+//get user
+
+router.get("/user_details", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json({ message: "success detial fetched", user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

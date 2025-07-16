@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  phone: { type: String, trim: true },
+  department: { type: String },
+  year: { type: String },
+
   role: {
     type: String,
     required: true,

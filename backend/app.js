@@ -1,72 +1,60 @@
 const express = require("express");
 const app = express();
-const http = require("http");
-const { Server } = require("socket.io");
-
 const dotenv = require("dotenv");
 dotenv.config();
-const url = process.env.Backend_Url;
-const axios = require("axios");
 
-// Auto-reload
+const axios = require("axios");
+const cors = require("cors");
+const connectDB = require("./configure/database");
+//  Connect to MongoDB
+connectDB();
+
+// Auto Reload Setup (to prevent Render free tier sleeping)
+const url = process.env.Backend_Url || "https://festofy-backend.onrender.com";
 const interval = 300000;
 function reloadWebsite() {
   axios
     .get(url)
-    .then(() => console.log("Website reloaded"))
-    .catch((err) => console.log("error:", err));
+    .then(() => console.log("Website pinged to prevent sleep"))
+    .catch((err) => console.log(" Auto-ping error:", err.message));
 }
 setInterval(reloadWebsite, interval);
 
-// DB + Middleware
-const cors = require("cors");
-const connectDB = require("./configure/database");
-connectDB();
-
+//  Enable CORS
 app.use(
-  cors({ origin: "https://festofy-frontend.onrender.com", credentials: true })
+  cors({
+    origin: "https://festofy-frontend.onrender.com",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
 );
+
+// Parse incoming data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+//  Routes
 const homeRoutes = require("./routes/home.router");
 const userRoutes = require("./routes/user.router");
 const otpRoutes = require("./routes/otp.router");
 const eventRoutes = require("./routes/event.router");
 const subeventRoutes = require("./routes/subevent.router");
 const participationRoutes = require("./routes/participation.router");
-const forgot_password = require("./routes/forgot_password");
+const forgotPasswordRoutes = require("./routes/forgot_password");
+const volunteerRoutes = require("./routes/volunteer.router");
 
+//  Mount Routes
 app.use("/", homeRoutes);
 app.use("/Festofy/user", userRoutes);
 app.use("/Festofy/user/otp", otpRoutes);
 app.use("/Festofy/user/event", eventRoutes);
 app.use("/Festofy/user/event/subevent", subeventRoutes);
-app.use("/Festofy/user/event/participation/", participationRoutes);
-app.use("/Festofy/user/password", forgot_password);
+app.use("/Festofy/user/event/participation", participationRoutes);
+app.use("/Festofy/user/password", forgotPasswordRoutes);
+app.use("/Festofy/user/event/subevent/volunteer", volunteerRoutes);
 
-//  Setup Socket.IO
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "https://festofy-frontend.onrender.com",
-    methods: ["GET", "POST", "PUT"],
-    credentials: true,
-  },
-});
-app.set("io", io);
-
-// Socket Events (optional test)
-io.on("connection", (socket) => {
-  console.log("New client connected:", socket.id);
-  socket.on("disconnect", () =>
-    console.log(" Client disconnected:", socket.id)
-  );
-});
-
-// Start Server
+//  Start Express server
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(` Server running on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
