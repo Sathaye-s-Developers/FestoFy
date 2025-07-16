@@ -83,7 +83,7 @@ const About = () => {
             </div>
           ))}
         </div>
-
+          <div>hello</div>
         {/* Values Section */}
         <div>
           <h3 className="text-2xl font-semibold text-white mb-8 text-center">Our Values</h3>
