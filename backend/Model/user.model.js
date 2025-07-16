@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    require: true,
+    required: true,
     trim: true,
     lowercase: true,
     unique: true,
@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    require: true,
+    required: true,
     trim: true,
     lowercase: true,
     unique: true,
@@ -23,15 +23,14 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    require: true,
+    required: true,
     trim: true,
     minlength: [5, 'password must be at least 5 characters long']
   },
   college_code: {
     type: String,
     require: false,
-    trim: true,
-    lowercase: true
+    trim: true
   },
   role: {
     type: String,

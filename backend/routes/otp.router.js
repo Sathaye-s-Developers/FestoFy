@@ -1,8 +1,10 @@
 // routes/otp.router.js
 const router = require("express").Router();
 const {
+  generateOTP,
   sendOTP,
   sendConfirmationEmail,
+  sendForgotPasswordEmail,
 } = require("../email_services/EmailService");
 const User = require("../Model/user.model");
 const verifyToken = require("../middlewares/token_varification");
@@ -12,19 +14,30 @@ router.use(cors());
 const otpStore = new Map(); // { email: { otp, expiresAt } }
 
 router.post("/send-otp", async (req, res) => {
-  const { email } = req.body;
-  if (!email)
-    return res.status(400).json({ success: false, message: "Email required" });
+  const { email, purpose } = req.body;
+
+  if (!email || !email.includes("@"))
+    return res
+      .status(400)
+      .json({ success: false, message: "Valid email required" });
 
   try {
-    const otp = await sendOTP(email);
+    const otp = generateOTP();
+
     otpStore.set(email, {
       otp,
-      expiresAt: Date.now() + 3 * 60 * 1000,
+      expiresAt: Date.now() + 5 * 60 * 1000,
     });
+
+    if (purpose === "forgot") {
+      await sendForgotPasswordEmail(email, otp);
+    } else {
+      await sendOTP(email, otp);
+    }
+
     res.json({ success: true, message: "OTP sent successfully" });
   } catch (err) {
-    console.error(err);
+    console.error("Email sending failed:", err);
     res.status(500).json({ success: false, message: "Failed to send OTP" });
   }
 });

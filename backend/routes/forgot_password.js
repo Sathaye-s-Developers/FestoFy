@@ -4,11 +4,6 @@ const bcrypt = require("bcryptjs");
 const {
   sendPasswordChangedConfirmation,
 } = require("../email_services/EmailService");
-
-
-//reset password
-
-
 router.post("/reset-password", async (req, res) => {
   const { email, newPassword } = req.body;
 
