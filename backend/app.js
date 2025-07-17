@@ -21,13 +21,11 @@ function reloadWebsite() {
 setInterval(reloadWebsite, interval);
 
 //  Enable CORS
-app.use(
-  cors({
-    origin: "https://festofy-frontend.onrender.com",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors());
+cors({
+  origin: "https://festofy-frontend.onrender.com",
+  credentials: true,
+});
 
 // Parse incoming data
 app.use(express.json());

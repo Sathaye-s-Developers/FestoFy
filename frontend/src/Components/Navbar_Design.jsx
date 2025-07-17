@@ -1,5 +1,12 @@
 import React from 'react'
 import Navbar from "../Components/Navbar"
+import Header from './Header';
+import Features from "../Components/Features"
+import EventGalary from './EventGalary';
+import About from '../Pages/About';
+import EnquiryOption from "./EnquiryOption"
+import Tutorialsteps from './Tutorialsteps';
+
 const Navbar_Design = () => {
     return (
         <div className="min-h-screen relative overflow-hidden" style={{
@@ -23,11 +30,25 @@ const Navbar_Design = () => {
             <div className="absolute bottom-1/4 right-1/3 w-4 h-4 bg-pink-400 rounded-full blur-sm animate-bounce opacity-75"></div>
             <div className="absolute top-1/2 left-1/5 w-2 h-2 bg-cyan-300 rounded-full blur-sm animate-ping opacity-60"></div>
             <div className="absolute top-3/4 right-1/5 w-3 h-3 bg-green-400 rounded-full blur-sm animate-pulse opacity-85"></div>
-            
-            <Navbar/>
+
+            <Navbar />
+
+            <main className="relative z-10 flex flex-col items-center justify-center px-6 py-16 text-center">
+                <div className="max-w-6xl mx-auto">
+                    <Header />
+                    <Features />
+                    <Tutorialsteps/>
+                    <EventGalary />
+                    <About />
+                    <EnquiryOption/>
+                </div>
+
+            </main>
+
+
 
             {/* Floating Lines - Exact positions from image */}
-            <div className="absolute top-1/4 right-10 w-px h-32 bg-gradient-to-b from-cyan-400/60 to-transparent"></div>
+            {/* <div className="absolute top-1/4 right-10 w-px h-32 bg-gradient-to-b from-cyan-400/60 to-transparent"></div> */}
             <div className="absolute bottom-1/4 left-10 w-px h-24 bg-gradient-to-t from-pink-400/60 to-transparent"></div>
             <div className="absolute top-1/2 right-1/4 w-24 h-px bg-gradient-to-r from-emerald-400/60 to-transparent"></div>
             <div className="absolute bottom-1/3 left-1/3 w-16 h-px bg-gradient-to-l from-purple-400/60 to-transparent"></div>

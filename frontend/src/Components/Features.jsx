@@ -1,18 +1,75 @@
 import React, { useState } from 'react'
+import {Calendar,Users,Zap,Shield } from "lucide-react"
 const Cards = () => {
-  const [hover, sethover] = useState("First_card")
+  const [activeFeature, setActiveFeature] = useState(null)
+  const features = [
+    {
+      icon: Calendar,
+      title: 'Event Planning',
+      description: 'Streamline your event planning process with our intuitive tools'
+    },
+    {
+      icon: Users,
+      title: 'Team Collaboration',
+      description: 'Work seamlessly with your team members in real-time'
+    },
+    {
+      icon: Zap,
+      title: 'Quick Setup',
+      description: 'Get your events up and running in minutes, not hours'
+    },
+    {
+      icon: Shield,
+      title: 'Secure Platform',
+      description: 'Your data is protected with enterprise-grade security'
+    }
+  ];
+
   return (
-    <div className='flex flex-col items-center'>
-      <h1 className='font-semibold text-green-600 text-[16px] md:text-3xl'>Features</h1>
-      <p className='font-bold text-[21px] sm:text-[25px] md:text-4xl mt-3 text-center'>Smart Tools for Smarter Events</p>
-      <div className='flex sm:h-[50px] gap-8 items-center mt-3'>
-        <div onClick={() => sethover("First_card")} className={`cursor-pointer text-[8px] sm:text-[18px] flex items-center justify-center text-center p:2  sm:h-[30px]  ${hover === "First_card" ? "underline font-bold translate-0.5" : ""}`} >Event Planning & Promotion</div>
-
-        <div onClick={() => sethover("Second_card")} className={`cursor-pointer text-[8px] sm:text-[18px] flex items-center justify-center text-center p:2  sm:h-[30px] ${hover === "Second_card" ? "underline font-bold translate-0.5" : ""}`}>Custom Schedules</div>
-
-        <div onClick={() => sethover("Third_card")} className={`cursor-pointer text-[8px] sm:text-[18px] flex items-center justify-center text-center p:2  sm:h-[30px] ${hover === "Third_card" ? "underline font-bold translate-0.5" : ""}`}>Role based Access</div>
-      </div>
-    </div>
+       <div className="mb-20">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-12 animate-fadeInUp">
+              Why Choose <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Festofy?</span>
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {features.map((feature, index) => {
+                const IconComponent = feature.icon;
+                const isActive = activeFeature === index;
+                return (
+                  <div 
+                    key={feature.title}
+                    className={`group p-6 bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border transition-all duration-300 cursor-pointer transform animate-fadeInUp ${
+                      isActive 
+                        ? 'border-cyan-400/60 scale-105 -translate-y-2 shadow-lg shadow-cyan-500/20' 
+                        : 'border-cyan-400/20 hover:border-cyan-400/40 hover:scale-105 hover:-translate-y-2'
+                    }`}
+                    style={{
+                      animationDelay: `${index * 150}ms`
+                    }}
+                    onClick={() => setActiveFeature(isActive ? null : index)}
+                    onTouchStart={() => setActiveFeature(index)}
+                    onTouchEnd={() => setTimeout(() => setActiveFeature(null), 2000)}
+                  >
+                    <div className={`p-3 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-xl border border-cyan-400/30 w-fit mb-4 transition-all duration-300 ${
+                      isActive ? 'scale-110 border-cyan-400/60' : 'group-hover:scale-110'
+                    }`}>
+                      <IconComponent className="w-6 h-6 text-cyan-400" />
+                    </div>
+                    <h3 className={`text-xl font-semibold mb-3 transition-colors duration-300 ${
+                      isActive ? 'text-cyan-300' : 'text-white group-hover:text-cyan-300'
+                    }`}>
+                      {feature.title}
+                    </h3>
+                    <p className={`transition-colors duration-300 ${
+                      isActive ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300'
+                    }`}>
+                      {feature.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
   )
 }
 

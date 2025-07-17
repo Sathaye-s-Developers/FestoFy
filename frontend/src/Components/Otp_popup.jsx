@@ -4,7 +4,7 @@ import { EventAppContext } from '../Context/EventContext';
 import axios from 'axios';
 
 const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}) => {
-    const { url, setRegister, settoken } = useContext(EventAppContext)
+    const { url, setRegister, settoken,progress,setprogress } = useContext(EventAppContext)
 
     const [minutes, setminutes] = useState(2)
     const [seconds, setseconds] = useState(59)
@@ -39,14 +39,17 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
         try {
             const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp },{headers:{Authorization: `Bearer ${savetoken.token}`}})
             if (response.data.success) {
+                setprogress(50)
                 localStorage.setItem("token",savetoken.token)
                 settoken(savetoken.token)
                 setdata({ "username": "", "email": "", "password": "", "college_code": "" })
                 setRegister(false)
+                setprogress(100)
             }
         } catch (err) {
             if (err.response && (err.response.status === 400)) {
                 seterrorMsg(err.response.data.message);
+                setprogress(0)
             }
         }
     };
@@ -84,7 +87,7 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
         <div>
             <form onSubmit={getOtpValue}>
                 <div className='relative p-5 pb-2 flex justify-between font-[Nunito]'>
-                    <p className='absolute' onClick={() => { setotp(false) }} ><IoArrowBackCircleSharp size={30} /></p>
+                    <p className='absolute' onClick={() => { setotp(false) }} ><IoArrowBackCircleSharp onClick={()=>{setprogress(0)}} size={30} /></p>
                     <div className='flex justify-center w-full'>
                         <p className='font-bold text-[18px] '>Enter Otp</p>
                     </div>

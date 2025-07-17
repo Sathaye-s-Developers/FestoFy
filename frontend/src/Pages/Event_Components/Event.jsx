@@ -1,12 +1,14 @@
-import React from 'react'
-// import E_Navbar from './Components/E_Navbar'
+import React, { useContext } from 'react'
+
 import ENavbar_design from './Components/ENavbar_design'
+
 
 const Event = () => {
 
     return (
         <div>
             {/* <E_Navbar/> */}
+            
             <ENavbar_design/>
             
         </div>

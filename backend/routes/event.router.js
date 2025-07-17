@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Event = require("../Model/event.module");
+const volunteer = require("../Model/volunteer.model");
+const SubEvent = require("../Model/subevent.model");
 const verifyToken = require("../middlewares/token_varification");
 const isAdmin = require("../middlewares/is_admin");
+const Volunteer = require("../Model/volunteer.model");
+
 // CREATE Event
 router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
@@ -108,23 +112,37 @@ router.delete("/delete", verifyToken, isAdmin, async (req, res) => {
     const { eventId } = req.body;
 
     if (!eventId) {
-      return res.status(400).json({ error: " Event ID is required" });
+      return res.status(400).json({ error: "Event ID is required" });
     }
 
+    // Find the event
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Delete all volunteers linked with this event
+    if (event.volunteers?.length) {
+      await Volunteer.deleteMany({ _id: { $in: event.volunteers } });
+    }
+
+    // Delete all subevents linked with this event
+    if (event.subEvents?.length) {
+      await SubEvent.deleteMany({ _id: { $in: event.subEvents } });
+    }
+
+    // Delete the event
     const deleted = await Event.findByIdAndDelete(eventId);
 
-    if (!deleted) {
-      return res
-        .status(404)
-        .json({ error: "Event not found or already deleted" });
-    }
-
     res.json({
-      message: " Event deleted successfully",
+      success: true,
+      message: "Event and related data deleted successfully",
       deleted,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Delete error:", err);
+    res.status(500).json({ error: err.message || "Server error" });
   }
 });
+
 module.exports = router;

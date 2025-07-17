@@ -16,7 +16,7 @@ router.post("/signUp", async (req, res) => {
   try {
     const { username, email, password, collegeName, adminCode, superAdminKey } =
       req.body;
-    console.log("Incoming data:", req.body);
+    //console.log("Incoming data:", req.body);
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
     }
@@ -75,8 +75,8 @@ router.post("/signUp", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      collegeName,
-      collageCode,
+      collegeName: collegeName,
+      collageCode: "1234",
       role,
     });
 
@@ -96,9 +96,7 @@ router.post("/signUp", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({ success: false, message: "Error during registration" });
+    res.status(500).json({ success: false, message: "Error during SignUp" });
   }
 });
 
