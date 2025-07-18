@@ -74,7 +74,57 @@ router.post("/verify-otp", verifyToken, async (req, res) => {
   } catch (e) {
     console.error(e);
   }
-  res.json({ success: true, message: "OTP verified ✅" });
+  res.json({ success: true, message: "OTP verified " });
+});
+
+// Public OTP Verification (no login)
+router.post("/verify-otp-public", async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({
+      success: false,
+      message: "Email and OTP are required",
+    });
+  }
+
+  // Check if email exists in the database
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "Email not registered in the system",
+    });
+  }
+
+  const stored = otpStore.get(email);
+  if (!stored) {
+    return res.status(400).json({
+      success: false,
+      message: "OTP expired or not found",
+    });
+  }
+
+  if (Date.now() > stored.expiresAt) {
+    otpStore.delete(email);
+    return res.status(400).json({
+      success: false,
+      message: "OTP expired",
+    });
+  }
+
+  if (stored.otp !== otp) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid OTP",
+    });
+  }
+
+  otpStore.delete(email);
+  return res.status(200).json({
+    success: true,
+    message: "OTP verified ",
+  });
 });
 
 module.exports = router;

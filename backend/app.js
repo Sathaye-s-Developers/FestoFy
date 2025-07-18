@@ -40,12 +40,14 @@ const subeventRoutes = require("./routes/subevent.router");
 const participationRoutes = require("./routes/participation.router");
 const forgotPasswordRoutes = require("./routes/forgot_password");
 const volunteerRoutes = require("./routes/volunteer.router");
+const setProfile = require("./routes/profile.router");
 
 //  Mount Routes
 app.use("/", homeRoutes);
 app.use("/Festofy/user", userRoutes);
 app.use("/Festofy/user/otp", otpRoutes);
 app.use("/Festofy/user/event", eventRoutes);
+app.use("/Festofy/user/event/profile", setProfile);
 app.use("/Festofy/user/event/subevent", subeventRoutes);
 app.use("/Festofy/user/event/participation", participationRoutes);
 app.use("/Festofy/user/password", forgotPasswordRoutes);

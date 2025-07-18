@@ -43,22 +43,6 @@ router.post("/signUp", async (req, res) => {
 
     // Find the college code based on name
 
-    // try {
-    //   const match = match_clg(collegeName);
-    //   console.log(match);
-
-    //   if (!match) {
-    //     return res
-    //       .status(404)
-    //       .json({ message: "College not found in our records." });
-    //   }
-
-    //   const collageCode = Object.keys(match)[0];
-    //   // console.log(collegeCode);
-    // } catch (err) {
-    //   console.log(err);
-    // }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
