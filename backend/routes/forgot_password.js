@@ -7,7 +7,7 @@ const {
 
 //reset password
 
-router.post("/reset-password", async (req, res) => {
+router.patch("/reset-password", async (req, res) => {
   const { email, newPassword } = req.body;
 
   if (!email || !newPassword) {
