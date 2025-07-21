@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { IoArrowBackCircleSharp } from "react-icons/io5";
-import { EventAppContext } from '../Context/EventContext';
 import axios from 'axios';
+import { EventAppContext } from '../../Context/EventContext';
 
-const Otp_popup = ({ email, savetoken }) => {
-    const { url, setRegister, settoken, setprogress, otp, setotp } = useContext(EventAppContext)
+const Forgot_OtpPopup = ({ email }) => {
+    const { url, progress, setprogress,setpassword } = useContext(EventAppContext)
+
     const [errorMsg, seterrorMsg] = useState("")
     const [timerKey, setTimerKey] = useState(0);
     const [displayTime, setDisplayTime] = useState("2:59");
@@ -52,10 +53,6 @@ const Otp_popup = ({ email, savetoken }) => {
         try {
             const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp }, { headers: { Authorization: `Bearer ${savetoken.token}` } })
             if (response.data.success) {
-                setprogress(50)
-                localStorage.setItem("token", savetoken.token)
-                settoken(savetoken.token)
-                setRegister(false)
                 setprogress(100)
             }
         } catch (err) {
@@ -68,7 +65,7 @@ const Otp_popup = ({ email, savetoken }) => {
 
     const onsubmit = async (e) => {
         try {
-            const response = await axios.post(url + "/Festofy/user/otp/send-otp", { email })
+            const response = await axios.post(url + "/Festofy/user/otp/send-otp", { email:email, purpose: "forgot" })
 
         } catch (err) {
             if (err.response && (err.response.status === 409 || err.response.status === 401)) {
@@ -101,7 +98,7 @@ const Otp_popup = ({ email, savetoken }) => {
         <div>
             <form onSubmit={getOtpValue}>
                 <div className='relative p-5 pb-2 flex justify-between font-[Nunito]'>
-                    <p className='absolute' onClick={() => { setotp(false) }} ><IoArrowBackCircleSharp onClick={() => { setprogress(0) }} size={30} /></p>
+                    <p className='absolute' onClick={() => {setpassword(false)}} ><IoArrowBackCircleSharp size={30} /></p>
                     <div className='flex justify-center w-full'>
                         <p className='font-bold text-[18px] '>Enter Otp</p>
                     </div>
@@ -161,4 +158,4 @@ const Otp_popup = ({ email, savetoken }) => {
     )
 }
 
-export default React.memo(Otp_popup)
+export default Forgot_OtpPopup

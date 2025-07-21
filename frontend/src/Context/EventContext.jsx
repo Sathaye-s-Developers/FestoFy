@@ -1,6 +1,5 @@
 import axios, { Axios } from "axios"
-import { createContext, useEffect, useState } from "react"
-import randomcolor from "randomcolor";
+import { createContext, useEffect, useState, useMemo, useCallback } from "react"
 import randomColor from "randomcolor";
 
 
@@ -13,16 +12,22 @@ const EventContext = (props) => {
         luminosity: lum,
         hue: hue,
     };
-    
+
+    const url = "http://localhost:3000"
+
     const [register, setRegister] = useState(false)
     const [token, settoken] = useState(() => localStorage.getItem("token") || "");
     const [authtoken, setauthtoken] = useState("")
-    const url = "http://localhost:3000"
     const [details, setdetails] = useState({ username: "", email: "" })
     const [options, setoptions] = useState(false)
     const [progress, setprogress] = useState(0)
     const [randcolor, setrandcolor] = useState("")
-  const [profileOptions, setprofileOptions] = useState(false)
+    const [profileOptions, setprofileOptions] = useState(false)
+    const [otp, setotp] = useState(false)
+    const [password, setpassword] = useState(false)
+
+    //Otp Email
+    const [email, setemail] = useState({ "email": "" })
 
     const fetchUserDetails = async (token) => {
         try {
@@ -45,8 +50,17 @@ const EventContext = (props) => {
             fetchUserDetails(storedtoken)
         }
     }, [token])
-    const contextvalue = {
-        register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor,profileOptions, setprofileOptions
+
+
+    const closePopup = useCallback(() => {
+        setRegister(false);
+    }, []);
+
+    // const contextvalue = useMemo(() => ({
+    //     register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp,password, setpassword
+    // }), [register, url, token, details, options, progress, randcolor, profileOptions, email, setRegister, settoken, setdetails, fetchUserDetails, setoptions, setprogress, setprofileOptions, setemail, closePopup, otp, setotp,password, setpassword]);
+    const contextvalue={
+        register, setRegister, url, token, settoken, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp,password, setpassword
     }
     return (
         <EventAppContext.Provider value={contextvalue}>

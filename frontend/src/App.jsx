@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import Home from './Pages/Home'
-import About from './Pages/About'
 import Login_PopUp from './Components/Login_PopUp'
 import { EventAppContext } from './Context/EventContext'
 import Event from './Pages/Event_Components/Event'
@@ -28,7 +27,7 @@ const App = () => {
         <Route path='/Home' element={<Home />} />
         <Route path='/Event' element={token ? <Event /> : <Home />} />
         {/* <Route path='/Event' element={<Event />} /> */}
-        <Route path='/CreateEvent' element={<Design_CreateEvent/>}/>
+        {/* <Route path='/CreateEvent' element={<Design_CreateEvent/>}/> */}
         <Route path='/Profile' element={token ?<Profilepg/>:<Home/>}/>
       </Routes>
     </div >

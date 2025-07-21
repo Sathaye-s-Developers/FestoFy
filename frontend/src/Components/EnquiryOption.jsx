@@ -114,6 +114,7 @@ const EnquiryOption = () => {
                                         required
                                         className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
                                         placeholder="Enter your full name"
+                                        autoComplete="true"
                                     />
                                 </div>
 
@@ -125,7 +126,7 @@ const EnquiryOption = () => {
                                         type="email"
                                         id="email"
                                         name="email"
-
+                                       autoComplete="true"
                                         required
                                         className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
                                         placeholder="Enter your email"
@@ -143,7 +144,7 @@ const EnquiryOption = () => {
                                         id="phone"
                                         name="phone"
                                         required
-
+                                        autoComplete="true"
                                         className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
                                         placeholder="Enter your phone number"
                                     />
@@ -166,16 +167,16 @@ const EnquiryOption = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="eventdept" className="block text-sm font-medium text-gray-300 mb-2">
+                                <p className="block text-sm font-medium text-gray-300 mb-2">
                                     Event Department *
-                                </label>
+                                </p>
                                 <input required type='text' name='eventdept' className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300" placeholder='Enter your department' />
                             </div>
                             <div>
-                                <label htmlFor="eventdept" className="block text-sm font-medium text-gray-300 mb-2">
+                                <p className="block text-sm font-medium text-gray-300 mb-2">
                                     Type of Enquiry *
-                                </label>
-                                <Select
+                                </p>
+                                <Select 
                                     options={option.map((option, index) => ({ label: option.value }))}
                                     className='w-full h-[36px]'
                                     styles={{
