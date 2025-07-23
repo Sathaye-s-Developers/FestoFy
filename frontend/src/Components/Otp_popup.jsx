@@ -35,7 +35,7 @@ const Otp_popup = ({ email, savetoken }) => {
 
             const formattedTime = `${minutesRef.current}:${secondsRef.current < 10 ? '0' + secondsRef.current : secondsRef.current}`;
             timeDisplayRef.current = formattedTime;
-            setDisplayTime(formattedTime); // ✅ this will force re-render
+            setDisplayTime(formattedTime); 
 
 
         }, 1000);
@@ -56,6 +56,7 @@ const Otp_popup = ({ email, savetoken }) => {
                 localStorage.setItem("token", savetoken.token)
                 settoken(savetoken.token)
                 setRegister(false)
+                setotp(false)
                 setprogress(100)
             }
         } catch (err) {

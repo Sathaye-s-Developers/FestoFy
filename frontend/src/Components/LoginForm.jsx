@@ -1,14 +1,15 @@
-import React, { useContext, memo } from 'react'
+import React, { useContext, memo, useState } from 'react'
 import { EventAppContext } from '../Context/EventContext'
 import { college_Name } from "../Websites data/Colleges_Names"
 import Select from 'react-select'
 import { RxCross2 } from "react-icons/rx";
 import { useForm } from 'react-hook-form';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
     const { closePopup, setpassword } = useContext(EventAppContext)
     const { register, handleSubmit, setValue } = useForm();
-
+    const [addpassword, setaddpassword] = useState(false)
     const handleCollegeChange = (selectedOption) => {
         setValue("college_code", selectedOption.value)
     }
@@ -24,10 +25,15 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                     <div className='flex flex-col items-center'>
                         {login === "logout" ? null : <input type="text" placeholder='Your Username' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='username' {...register("Username", { required: true })} />}
 
-                        <input type="email" placeholder='Your Email' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4'  autoComplete='email' {...register("Email",{required:true})} />
+                        <input type="email" placeholder='Your Email' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
 
-                        <input type="password" placeholder='Your Password' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-2' autoComplete='password' {...register("Password",{required:true})}/>
-
+                        <div className='flex w-[80%] justify-around items-center relative mb-4'>
+                            <input type={addpassword ? "text" : "password"} placeholder='Your Password' className='outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("Password", { required: true })} />
+                            <p
+                                onClick={() => setaddpassword(prev => !prev)}
+                                className='absolute top-2.5 right-3 cursor-pointer text-gray-500'
+                            >{addpassword ? <FiEyeOff /> : <FiEye />}</p>
+                        </div>
                         {login === "logout" ?
                             <div className='flex flex-col items-start w-[80%] mb-2'>
                                 <div className='text-gray-300 hover:underline active:text-white active:underline' onClick={() => { setpassword(true) }}>Forgot Password ?</div>

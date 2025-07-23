@@ -4,7 +4,7 @@ import { EventAppContext } from '../../Context/EventContext';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 
-const Forgot_pass = ({ Forgototp, setForgototp ,setemail}) => {
+const Forgot_pass = ({ Forgototp, setForgototp ,setregemail}) => {
     const { setRegister, url } = useContext(EventAppContext)
     const { register, handleSubmit } = useForm();
 
@@ -13,7 +13,7 @@ const Forgot_pass = ({ Forgototp, setForgototp ,setemail}) => {
             const response = await axios.post(url + "/Festofy/user/otp/forgot", { email: formData.Email })
             if (response) {
                 setForgototp(true)
-                setemail(formData.Email)
+                setregemail(formData.Email)
             }
 
         } catch (err) {

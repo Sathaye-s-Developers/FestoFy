@@ -3,7 +3,7 @@ import { IoArrowBackCircleSharp } from "react-icons/io5";
 import axios from 'axios';
 import { EventAppContext } from '../../Context/EventContext';
 
-const Forgot_OtpPopup = ({ email }) => {
+const Forgot_OtpPopup = ({ regemail,setnewpassword,setForgototp }) => {
     const { url, progress, setprogress,setpassword } = useContext(EventAppContext)
 
     const [errorMsg, seterrorMsg] = useState("")
@@ -51,9 +51,10 @@ const Forgot_OtpPopup = ({ email }) => {
         const otp = inputs.current.map(input => input?.value).join("");
 
         try {
-            const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp }, { headers: { Authorization: `Bearer ${savetoken.token}` } })
+            const response = await axios.post(url + "/Festofy/user/otp/verify-otp-public", { email: regemail, otp: otp })
             if (response.data.success) {
                 setprogress(100)
+                setnewpassword(true)
             }
         } catch (err) {
             if (err.response && (err.response.status === 400)) {
@@ -98,13 +99,13 @@ const Forgot_OtpPopup = ({ email }) => {
         <div>
             <form onSubmit={getOtpValue}>
                 <div className='relative p-5 pb-2 flex justify-between font-[Nunito]'>
-                    <p className='absolute' onClick={() => {setpassword(false)}} ><IoArrowBackCircleSharp size={30} /></p>
+                    <p className='absolute' onClick={() => {setForgototp(false)}} ><IoArrowBackCircleSharp size={30} /></p>
                     <div className='flex justify-center w-full'>
                         <p className='font-bold text-[18px] '>Enter Otp</p>
                     </div>
                 </div>
                 <div className='ml-10 mr-10'>
-                    <p className='text-[12px] text-center text-gray-500'>Otp sent on <br /> {email}</p>
+                    <p className='text-[12px] text-center text-gray-500'>Otp sent on <br /> {regemail}</p>
                 </div>
                 <div className='flex flex-col items-center'>
                     <div className='flex mb-3 justify-center gap-3 m-5'>
