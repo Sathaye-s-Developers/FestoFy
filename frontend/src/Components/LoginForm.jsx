@@ -18,7 +18,7 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
             <div className='p-5 flex justify-between font-[Nunito]'>
                 <h1 className='font-bold ml-5 text-[18px]'>{login === "logout" ? "Login" : "SignUp"}</h1>
                 <RxCross2 onClick={closePopup} />
-                {/* <img src={CrossIcon} className='w-[15px] h-[15px]'  alt="crossicon" /> */}
+
             </div>
             <div className='font-[Nunito]'>
                 <form onSubmit={handleSubmit(onsubmit)}>
@@ -34,14 +34,8 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                                 className='absolute top-2.5 right-3 cursor-pointer text-gray-500'
                             >{addpassword ? <FiEyeOff /> : <FiEye />}</p>
                         </div>
-                        {login === "logout" ?
-                            <div className='flex flex-col items-start w-[80%] mb-2'>
-                                <div className='text-gray-300 hover:underline active:text-white active:underline' onClick={() => { setpassword(true) }}>Forgot Password ?</div>
-                            </div>
-                            : <></>
-                        }
                         {login === "logout" ? <></> :
-                            <div className='w-[80%] mt-2 mb-4'>
+                            <div className='w-[80%] mb-4'>
                                 <Select
                                     options={college_Name.map((college_Name) => ({ label: college_Name.full_name, value: college_Name.college_code }))}
                                     className='w-full h-[36px]'
@@ -88,12 +82,21 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                             </div>}
 
                         {login === "logout" ? <input type="text" placeholder='Special Key (Optional)' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' {...register("Special_key")} autoComplete='college-code' /> : null}
+                        {errorMsg && (<div className='w-[80%] mb-3'><p className='text-red-600'>{errorMsg}</p></div>)}
+                        {login === "logout" ?
+                            <div className='flex flex-col items-end w-[80%]'>
+                                <div className='text-blue-400 hover:underline active:text-white active:underline' onClick={() => { setpassword(true) }}>Forgot Password ?</div>
+                            </div>
+                            : <></>
+                        }
+
                         {login === "logout" ?
                             <div className='flex flex-col items-end w-[80%]'>
                                 <a className='text-blue-400 underline' href="#Tutorial" onClick={closePopup}>Apply for special key</a>
                             </div>
                             : <></>
                         }
+
                         {login === "logout" ? <></> :
                             <div className='flex flex-col items-end w-[80%]'>
                                 <a className='text-blue-400 underline' href="#Tutorial" onClick={closePopup}>If College name not found</a>
@@ -103,7 +106,6 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                             <a href="#Enquiry" className='text-blue-500 underline' onClick={closePopup}></a>
                         </div>
 
-                        {errorMsg && (<div className='w-[80%] mb-3'><p className='text-red-600'>{errorMsg}</p></div>)}
                         <div className='flex items-center w-[80%] mb-4'>
                             <input type="checkbox" className='cursor-pointer' required />
                             <p className='text-[12px] pl-1 text-gray-600 '> By continuing , I agree to the terms & conditions </p>

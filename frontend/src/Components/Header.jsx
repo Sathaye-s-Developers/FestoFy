@@ -21,7 +21,7 @@ const Header = () => {
                     {/* Subtitle */}
                     <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed hover:text-gray-200 transition-colors duration-300 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
                         All-in-one platform to effortlessly plan, promote, and manage your college events.
-                        Simplify the chaos, amplify the experience!
+                        <br/>Simplify the chaos, amplify the experience!
                     </p>
 
                     {/* CTA Button - Exact styling from image */}

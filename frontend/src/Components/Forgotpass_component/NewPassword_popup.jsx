@@ -5,20 +5,27 @@ import { EventAppContext } from '../../Context/EventContext';
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import axios from 'axios';
 
-const NewPassword_popup = ({Allclose}) => {
+const NewPassword_popup = ({ Allclose }) => {
 
-  const { register, handleSubmit } = useForm();
-  const { closePopup, url,setprogress } = useContext(EventAppContext)
+  const { register, handleSubmit, watch, setError } = useForm();
+  const { closePopup, url, setprogress } = useContext(EventAppContext)
   const [changepassword, setchangepassword] = useState(false)
   const [confirmpassword, setconfirmpassword] = useState(false)
 
 
   const onsubmithandler = async (data) => {
+    if (data.NewSPassword !== data.Password) {
+      setError("Password", {
+        type: "manual",
+        message: "Passwords do not match"
+      });
+      return;
+    }
     try {
       const response = await axios.patch(url + "/Festofy/user/password/reset-password", { email: data.Email, newPassword: data.Password })
       if (response) {
-          setprogress(100)
-          Allclose()
+        setprogress(100)
+        Allclose()
       }
     }
     catch (err) {
@@ -38,7 +45,7 @@ const NewPassword_popup = ({Allclose}) => {
             <input type="email" placeholder='Enter Email' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
 
             <div className='flex w-[80%] justify-around items-center relative mb-4'>
-              <input type={changepassword ? "text" : "password"} placeholder='Set New Password' className='outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("NewSPassword", { required: true })}/>
+              <input type={changepassword ? "text" : "password"} placeholder='Set New Password' className='outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("NewSPassword", { required: true })} />
               <p
                 onClick={() => setchangepassword(prev => !prev)}
                 className='absolute top-2.5 right-3 cursor-pointer text-gray-500'
@@ -52,7 +59,9 @@ const NewPassword_popup = ({Allclose}) => {
                 className='absolute top-2.5 right-3 cursor-pointer text-gray-500'
               >{confirmpassword ? <FiEyeOff /> : <FiEye />}</p>
             </div>
-
+            {watch("NewSPassword") !== watch("Password") && watch("Password") && (
+              <p className='text-red-500 text-sm mb-2 -mt-2'>Passwords do not match</p>
+            )}
 
             {/* <input type="password" placeholder='Confirm New Password' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='password' {...register("Password", { required: true })} /> */}
 

@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import { Star, ArrowRight } from "lucide-react";
+import Cultural1 from "../Websites data/Event Galary/Cultural1.jpeg"
 const EventGalary = () => {
     const [activeGalleryImage, setActiveGalleryImage] = useState(null);
 
+
+
     const galleryImages = [
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=400',
+        Cultural1,
         'https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=400',
         'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=400',
         'https://images.pexels.com/photos/2608517/pexels-photo-2608517.jpeg?auto=compress&cs=tinysrgb&w=400',
