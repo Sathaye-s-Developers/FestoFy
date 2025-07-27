@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
-
 const axios = require("axios");
 const cors = require("cors");
 const connectDB = require("./configure/database");
@@ -21,11 +20,14 @@ function reloadWebsite() {
 setInterval(reloadWebsite, interval);
 
 //  Enable CORS
-app.use(cors());
-cors({
-  origin: "https://festofy-frontend.onrender.com",
-  credentials: true,
-});
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://festofy-frontend.onrender.com"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Parse incoming data
 app.use(express.json());
@@ -45,9 +47,9 @@ const setProfile = require("./routes/profile.router");
 //  Mount Routes
 app.use("/", homeRoutes);
 app.use("/Festofy/user", userRoutes);
+app.use("/Festofy/user/profile", setProfile);
 app.use("/Festofy/user/otp", otpRoutes);
 app.use("/Festofy/user/event", eventRoutes);
-app.use("/Festofy/user/event/profile", setProfile);
 app.use("/Festofy/user/event/subevent", subeventRoutes);
 app.use("/Festofy/user/event/participation", participationRoutes);
 app.use("/Festofy/user/password", forgotPasswordRoutes);

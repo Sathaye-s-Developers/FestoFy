@@ -35,12 +35,15 @@ router.post("/register-login", async (req, res) => {
     await sendOTP(email, otp);
     return res
       .status(200)
-      .json({ success: true, message: "OTP sent for registration" });
+      .json({ success: true, message: "OTP sent for registration/login" });
   } catch (err) {
     console.error("OTP (register) send failed:", err);
     return res
       .status(500)
-      .json({ success: false, message: "Failed to send registration OTP" });
+      .json({
+        success: false,
+        message: "Failed to send registration/login OTP",
+      });
   }
 });
 

@@ -14,8 +14,7 @@ const SUPER_ADMIN_SECRET_KEY = process.env.SUPER_ADMIN_SECRET_KEY;
 //  Register
 router.post("/signUp", async (req, res) => {
   try {
-    const { username, email, password, collegeName, adminCode, superAdminKey } =
-      req.body;
+    const { username, email, password, collegeName } = req.body;
     //console.log("Incoming data:", req.body);
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
@@ -42,26 +41,16 @@ router.post("/signUp", async (req, res) => {
     }
 
     // Find the college code based on name
+    //....
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Role logic
-    let role = "user";
-    if (adminCode && adminCode === ADMIN_SECRET_CODE) {
-      role = "admin";
-    }
-    if (superAdminKey && superAdminKey === SUPER_ADMIN_SECRET_KEY) {
-      role = "superadmin";
-    }
 
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       collegeName: collegeName,
-      collageCode: "1234",
-      role,
     });
 
     await newUser.save(); // Save new user
@@ -87,7 +76,7 @@ router.post("/signUp", async (req, res) => {
 //  Login
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, adminCode, superAdminKey } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: "Invalid Credentials" });
@@ -103,6 +92,21 @@ router.post("/login", async (req, res) => {
         expiresIn: "2d",
       }
     );
+
+    // Role logic
+    let role = "user";
+    if (adminCode && adminCode === ADMIN_SECRET_CODE) {
+      role = "admin";
+    }
+    if (superAdminKey && superAdminKey === SUPER_ADMIN_SECRET_KEY) {
+      role = "superadmin";
+    }
+
+    // Save new role
+    if (user.role !== role) {
+      user.role = role;
+      await user.save();
+    }
 
     res.status(200).json({
       success: true,
@@ -171,12 +175,12 @@ router.get("/user_details", verifyToken, async (req, res) => {
   }
 });
 
-// 🔐 Get All Users (Admin/SuperAdmin only)
+//  Get All Users (Admin/SuperAdmin only)
 router.get("/all_users", verifyToken, async (req, res) => {
   try {
     const users = await User.find().select("-password");
 
-    res.status(200).json({ message: "✅ All users fetched", users });
+    res.status(200).json({ message: " All users fetched", users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

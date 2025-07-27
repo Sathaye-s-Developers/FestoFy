@@ -12,7 +12,7 @@ function verifyToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET); // secret must match
-    //  console.log("✅ Decoded token:", decoded);
+    //  console.log(" Decoded token:", decoded);
     req.user = decoded;
 
     next();

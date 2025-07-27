@@ -3,47 +3,60 @@ import { IoArrowBackCircleSharp } from "react-icons/io5";
 import { EventAppContext } from '../Context/EventContext';
 import axios from 'axios';
 
-const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}) => {
-    const { url, setRegister, settoken,progress,setprogress } = useContext(EventAppContext)
-
-    const [minutes, setminutes] = useState(2)
-    const [seconds, setseconds] = useState(59)
+const Otp_popup = ({ email, savetoken }) => {
+    const { url, setRegister, settoken, setprogress, otp, setotp } = useContext(EventAppContext)
     const [errorMsg, seterrorMsg] = useState("")
+    const [timerKey, setTimerKey] = useState(0);
+    const [displayTime, setDisplayTime] = useState("2:59");
+
+
+    const timeDisplayRef = useRef("2:59");
+    const timerRef = useRef(null)
+    const minutesRef = useRef(2)
+    const secondsRef = useRef(59)
+
 
     const inputs = useRef([])
+
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (seconds > 0) {
-                setseconds(seconds - 1)
-            }
-            if (seconds === 0) {
-                if (minutes === 0) {
-                    clearInterval(interval)
+        if (timerRef.current) clearInterval(timerRef.current);
+
+        timerRef.current = setInterval(() => {
+            if (secondsRef.current > 0) {
+                secondsRef.current -= 1;
+            } else {
+                if (minutesRef.current > 0) {
+                    minutesRef.current -= 1;
+                    secondsRef.current = 59;
                 } else {
-                    setseconds(59)
-                    setminutes(minutes - 1)
+                    clearInterval(timerRef.current);
                 }
             }
+
+            const formattedTime = `${minutesRef.current}:${secondsRef.current < 10 ? '0' + secondsRef.current : secondsRef.current}`;
+            timeDisplayRef.current = formattedTime;
+            setDisplayTime(formattedTime); 
+
+
         }, 1000);
-        return () => {
-            clearInterval(interval)
-        }
-    }, [seconds])
+
+        return () => clearInterval(timerRef.current);
+    }, [timerKey]);
+
 
 
     const getOtpValue = async (e) => {
         e.preventDefault()
         const otp = inputs.current.map(input => input?.value).join("");
 
-        //logic for login and signup 
         try {
-            const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp },{headers:{Authorization: `Bearer ${savetoken.token}`}})
+            const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp }, { headers: { Authorization: `Bearer ${savetoken.token}` } })
             if (response.data.success) {
                 setprogress(50)
-                localStorage.setItem("token",savetoken.token)
+                localStorage.setItem("token", savetoken.token)
                 settoken(savetoken.token)
-                setdata({ "username": "", "email": "", "password": "", "college_code": "" })
                 setRegister(false)
+                setotp(false)
                 setprogress(100)
             }
         } catch (err) {
@@ -56,7 +69,7 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
 
     const onsubmit = async (e) => {
         try {
-            const response = await axios.post(url + "/Festofy/user/otp/send-otp", { email: data.email })
+            const response = await axios.post(url + "/Festofy/user/otp/send-otp", { email })
 
         } catch (err) {
             if (err.response && (err.response.status === 409 || err.response.status === 401)) {
@@ -66,8 +79,10 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
     }
 
     const onresend = () => {
-        setminutes(2)
-        setseconds(59)
+        minutesRef.current = 2;
+        secondsRef.current = 59;
+        setDisplayTime("2:59");
+        setTimerKey(prev => prev + 1);
         onsubmit()
     }
     const handleChange = (e, index) => {
@@ -87,7 +102,7 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
         <div>
             <form onSubmit={getOtpValue}>
                 <div className='relative p-5 pb-2 flex justify-between font-[Nunito]'>
-                    <p className='absolute' onClick={() => { setotp(false) }} ><IoArrowBackCircleSharp onClick={()=>{setprogress(0)}} size={30} /></p>
+                    <p className='absolute' onClick={() => { setotp(false) }} ><IoArrowBackCircleSharp onClick={() => { setprogress(0) }} size={30} /></p>
                     <div className='flex justify-center w-full'>
                         <p className='font-bold text-[18px] '>Enter Otp</p>
                     </div>
@@ -122,10 +137,20 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
                 <div className='ml-5 md:ml-6 lg:ml-11 mt-3 flex justify-between w-[85%] md:w-[80%]'>
                     <div className='flex items-center justify-center gap-1'>
                         <p className='font-semibold text-[12px] text-center'>Time Remaining : </p>
-                        <p className={`font-extrabold text-[12px] text-center ${minutes === 0 && seconds < 20 ? "text-red-500" : "text-white"}`}>{`${minutes}:${seconds < 10 ? '0' + seconds : seconds}`}</p>
+                        <p className={`font-extrabold text-[12px] text-center ${displayTime.startsWith("0:") && parseInt(displayTime.split(":")[1]) < 20 ? "text-red-500" : "text-white"}`}>
+                            {displayTime}
+                        </p>
+
                     </div>
                     <div>
-                        <button onClick={onresend} disabled={minutes !== 0 && seconds !== 0} className={`text-[14px] underline ${minutes === 0 && seconds === 0 ? "text-white  cursor-pointer" : "text-[#B0B0B0] cursor-not-allowed"}`}>Resend-otp</button>
+                        <button
+                            onClick={onresend}
+                            disabled={!(timeDisplayRef.current === "0:00")}
+                            className={`text-[14px] underline ${displayTime === "0:00" ? "text-white cursor-pointer" : "text-[#B0B0B0] cursor-not-allowed"
+                                }`}
+                        >
+                            Resend-otp
+                        </button>
                     </div>
                 </div>
                 <div className='flex justify-center  mt-3'>
@@ -137,4 +162,4 @@ const Otp_popup = ({ email, setotp, login, data, setdata,setsavetoken,savetoken}
     )
 }
 
-export default Otp_popup
+export default React.memo(Otp_popup)
