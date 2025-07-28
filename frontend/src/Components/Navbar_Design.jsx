@@ -9,21 +9,10 @@ import Tutorialsteps from './Tutorialsteps';
 
 const Navbar_Design = () => {
     return (
-        <div className="min-h-screen relative overflow-hidden" style={{
-            background: `linear-gradient(135deg, 
-        #121E31 0%, 
-        #164064 35%, 
-        #3D2E52 70%, 
-        #1D4547 100%)`
+        <div className="min-h-screen relative overflow-hidden bg-black" style={{
+            
         }}>
-            {/* Geometric Grid Overlay - Matching image opacity */}
-            <div className="absolute inset-0 opacity-25">
-                {/* <div className="absolute inset-0" style={{
-                    backgroundImage: `linear-gradient(rgba(34, 211, 238, 0.3) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(34, 211, 238, 0.3) 1px, transparent 1px)`,
-                    backgroundSize: '80px 80px'
-                }}></div> */}
-            </div>
+    
 
             <Navbar />
 
