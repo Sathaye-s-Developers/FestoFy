@@ -46,7 +46,7 @@ const Login_PopUp = () => {
             newurl += "/Festofy/user/signUp"
         }
         try {
-            const response = await axios.post(newurl, { email: formData.Email, password: formData.Password })
+            const response = await axios.post(newurl, {username:formData.Username, email: formData.Email, password: formData.Password })
             if (response.data.success) {
                 setprogress(70)
                 setotp(true)

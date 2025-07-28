@@ -8,7 +8,7 @@ const Header = () => {
             
                 <div>
                     {/* Main Heading - Exact gradient text from image */}
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight animate-fadeInUp">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight animate-fadeInUp max-w-4xl mx-auto">
                         <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-white bg-clip-text text-transparent">
                             All-In-One
                         </span>
