@@ -10,19 +10,30 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
     const { title, description, date, time, location, eventId } = req.body;
 
-    if (!eventId || !title || !date) {
-      return res
-        .status(400)
-        .json({ error: "Missing required fields (eventId, title, date)" });
+    if (!eventId || !title || !date || !description || !time || !location) {
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
+    // Check if event exists
     const eventExists = await Event.findById(eventId);
     if (!eventExists) {
-      return res.status(404).json({ error: " Event not found" });
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Check for duplicate sub-event title within the same event
+    const duplicateSubEvent = await SubEvent.findOne({
+      eventId,
+      title: title.trim(),
+    });
+
+    if (duplicateSubEvent) {
+      return res.status(409).json({
+        error: "A SubEvent with this title already exists for this event.",
+      });
     }
 
     const newSubEvent = new SubEvent({
-      title,
+      title: title.trim(),
       description,
       date,
       time,
@@ -48,12 +59,57 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
   }
 });
 
+// GET sub-events filtered by section (college or global)
+router.get("/section/:eventType", verifyToken, async (req, res) => {
+  try {
+    const { eventType } = req.params;
+    const userCollege = req.user.collegeName;
+
+    let eventFilter = {};
+
+    if (eventType === "college") {
+      eventFilter = {
+        eventType: "college",
+        createdByCollege: userCollege,
+      };
+    } else if (eventType === "explore") {
+      eventFilter = {
+        eventType: "explore",
+      };
+    } else {
+      return res.status(400).json({ error: "Invalid event type" });
+    }
+
+    // Find matching events first
+    const matchedEvents = await Event.find(eventFilter).select("_id");
+    const eventIds = matchedEvents.map((e) => e._id);
+
+    // Fetch sub-events linked to those event IDs
+    const subEvents = await SubEvent.find({ eventId: { $in: eventIds } });
+
+    res.status(200).json({ subEvents });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //  Update SubEvent
 router.patch("/update", verifyToken, isAdmin, async (req, res) => {
   try {
-    const { updateData, subEventId } = req.body;
+    const { subEventId, title, description, date, time, location } = req.body;
 
-    const updated = await SubEvent.findByIdAndUpdate(subEventId, updateData, {
+    if (!subEventId) {
+      return res.status(400).json({ error: "subEventId is required" });
+    }
+
+    const updateFields = {};
+    if (title) updateFields.title = title;
+    if (description) updateFields.description = description;
+    if (date) updateFields.date = date;
+    if (time) updateFields.time = time;
+    if (location) updateFields.location = location;
+
+    const updated = await SubEvent.findByIdAndUpdate(subEventId, updateFields, {
       new: true,
     });
 
@@ -66,7 +122,6 @@ router.patch("/update", verifyToken, isAdmin, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 // Delete SubEvent by ID
 router.delete("/delete", verifyToken, isAdmin, async (req, res) => {
   try {

@@ -6,7 +6,6 @@ const {
   sendConfirmationEmail,
   sendForgotPasswordEmail,
 } = require("../email_services/EmailService");
-// const jwt = require("jsonwebtoken");
 const User = require("../Model/user.model");
 const verifyToken = require("../middlewares/token_varification");
 const cors = require("cors");

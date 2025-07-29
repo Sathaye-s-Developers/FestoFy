@@ -6,18 +6,15 @@ const eventSchema = new mongoose.Schema({
     required: true,
     trim: true,
     lowercase: true,
-
     minlength: [13, "Email must be at least 13 characters long"],
   },
   title: {
     type: String,
     required: true,
     trim: true,
-    unique: true,
   },
   department: {
     type: String,
-    required: false,
     trim: true,
   },
   description: {
@@ -34,10 +31,23 @@ const eventSchema = new mongoose.Schema({
     start: Date,
     end: Date,
   },
+
+  //Visibility logic: 'college' or 'explore'
+  visibility: {
+    type: String,
+    enum: ["college", "explore"],
+    default: "college",
+  },
+
+  createdByCollege: {
+    type: String,
+    required: true, // used for filtering college events
+  },
+
   subEvents: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "SubEvent", // update as needed
+      ref: "SubEvent",
     },
   ],
   volunteers: [
@@ -46,7 +56,6 @@ const eventSchema = new mongoose.Schema({
       ref: "Volunteer",
     },
   ],
-
   participants: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -55,7 +64,7 @@ const eventSchema = new mongoose.Schema({
   ],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // update as needed
+    ref: "User",
   },
   createdAt: {
     type: Date,
@@ -63,6 +72,4 @@ const eventSchema = new mongoose.Schema({
   },
 });
 
-const Event = mongoose.model("Event", eventSchema);
-
-module.exports = Event;
+module.exports = mongoose.model("Event", eventSchema);

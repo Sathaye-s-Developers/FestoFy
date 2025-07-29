@@ -1,12 +1,13 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
 const verifyToken = require("../middlewares/token_varification");
+
 const User = require("../Model/user.model");
 const SubEvent = require("../Model/subevent.model");
 const Event = require("../Model/event.module");
 const Volunteer = require("../Model/volunteer.model");
 
-//get volunteers
-
+// Get all volunteers
 router.get("/get", async (req, res) => {
   try {
     const volunteers = await Volunteer.find();
@@ -21,25 +22,22 @@ router.get("/registered-events/:volunteerId", async (req, res) => {
   try {
     const { volunteerId } = req.params;
 
-    // Step 1: Find events where volunteer is listed
     const events = await Event.find({ volunteers: volunteerId })
       .populate("subEvents")
       .select("title department dateRange subEvents");
 
     res.json({ success: true, events });
   } catch (err) {
-    console.error(" Error fetching volunteer events:", err);
+    console.error("Error fetching volunteer events:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
-//registeration
-
+// Register a volunteer
 router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
     const { eventId, subEventId } = req.body;
-    // console.log(subEventId);
 
     if (!eventId || !subEventId) {
       return res
@@ -50,17 +48,43 @@ router.post("/register", verifyToken, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // Check if already registered
+    // Check if already registered for the same subevent
     const existing = await Volunteer.findOne({
       email: user.email,
       eventId,
-      subEventId,
+      subEventIds: subEventId,
     });
+
     if (existing) {
-      return res.status(409).json({ error: "Already registered as volunteer" });
+      return res
+        .status(409)
+        .json({ error: "Already registered for this subevent" });
     }
 
-    // Create Volunteer entry
+    // Check if a volunteer record exists for same user & event
+    let volunteer = await Volunteer.findOne({ email: user.email, eventId });
+
+    if (volunteer) {
+      // Just push the new subEventId if not already included
+      if (!volunteer.subEventIds.includes(subEventId)) {
+        volunteer.subEventIds.push(subEventId);
+        await volunteer.save();
+
+        await SubEvent.findByIdAndUpdate(
+          subEventId,
+          { $push: { volunteers: volunteer._id } },
+          { new: true }
+        );
+
+        return res.status(200).json({ message: "SubEvent added", volunteer });
+      } else {
+        return res
+          .status(409)
+          .json({ error: "Already registered for this subevent" });
+      }
+    }
+
+    // Create new Volunteer
     const newVolunteer = new Volunteer({
       name: user.username,
       email: user.email,
@@ -69,7 +93,7 @@ router.post("/register", verifyToken, async (req, res) => {
       department: user.department,
       year: user.year,
       eventId,
-      SubEventId: subEventId,
+      subEventIds: [subEventId],
     });
 
     const savedVolunteer = await newVolunteer.save();
@@ -96,12 +120,11 @@ router.post("/register", verifyToken, async (req, res) => {
   }
 });
 
-// DELETE volunteer by ID
+// Delete a volunteer by ID
 router.delete("/delete/:volunteerId", async (req, res) => {
   try {
     const { volunteerId } = req.params;
 
-    // Step 1: Delete the volunteer from the database
     const deletedVolunteer = await Volunteer.findByIdAndDelete(volunteerId);
     if (!deletedVolunteer) {
       return res
@@ -109,13 +132,12 @@ router.delete("/delete/:volunteerId", async (req, res) => {
         .json({ success: false, message: "Volunteer not found." });
     }
 
-    // Step 2: Remove volunteer reference from any Events
+    // Remove reference from Events and SubEvents
     await Event.updateMany(
       { volunteers: volunteerId },
       { $pull: { volunteers: volunteerId } }
     );
 
-    // Step 3: Remove volunteer reference from any SubEvents
     await SubEvent.updateMany(
       { volunteers: volunteerId },
       { $pull: { volunteers: volunteerId } }
@@ -130,6 +152,19 @@ router.delete("/delete/:volunteerId", async (req, res) => {
   }
 });
 
-module.exports = router;
+// Get all subevents a volunteer is linked to
+router.get("/:id/subevents", async (req, res) => {
+  try {
+    const volunteer = await Volunteer.findById(req.params.id).populate(
+      "subEventIds"
+    );
+    if (!volunteer) {
+      return res.status(404).json({ error: "Volunteer not found" });
+    }
+    res.status(200).json({ subEvents: volunteer.subEventIds });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;

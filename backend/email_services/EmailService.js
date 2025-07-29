@@ -1,12 +1,12 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-// 🔐 Generate 6-digit OTP
+// Generate 6-digit OTP
 function generateOTP(length = 6) {
   return [...Array(length)].map(() => Math.floor(Math.random() * 10)).join("");
 }
 
-// 📬 Email transporter setup
+// Email transporter setup
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ✅ OTP Email for registration
+//  OTP Email for registration
 async function sendOTP(toEmail, otp) {
   if (!toEmail || !otp) throw new Error("Missing email or OTP");
 
@@ -156,7 +156,7 @@ async function sendPasswordChangedConfirmation(email) {
   await transporter.sendMail(mailOptions);
 }
 
-// ✅ Export functions
+//  Export functions
 module.exports = {
   generateOTP,
   sendOTP,
