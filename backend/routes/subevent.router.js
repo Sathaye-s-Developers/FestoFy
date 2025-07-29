@@ -5,7 +5,7 @@ const Event = require("../Model/event.module");
 const isAdmin = require("../middlewares/is_admin");
 const verifyToken = require("../middlewares/token_varification");
 
-// 🔹 Create SubEvent
+// Create SubEvent
 router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
     const { title, description, date, time, location, eventId } = req.body;

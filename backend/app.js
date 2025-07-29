@@ -20,7 +20,6 @@ function reloadWebsite() {
 setInterval(reloadWebsite, interval);
 
 //  Enable CORS
-
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://festofy-frontend.onrender.com"],
@@ -29,7 +28,7 @@ app.use(
   })
 );
 
-// Parse incoming data
+//data parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

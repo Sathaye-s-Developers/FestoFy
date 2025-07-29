@@ -38,13 +38,16 @@ router.patch("/reset-password", async (req, res) => {
         .json({ success: false, message: "Failed to update password" });
     }
 
-    //  Send confirmation email only after update
-    await sendPasswordChangedConfirmation(email);
-
-    return res.status(200).json({
+    // Respond immediately for faster service
+    res.status(200).json({
       success: true,
       message: "Password reset successfully",
     });
+
+    // Send confirmation email in background
+    sendPasswordChangedConfirmation(email).catch((err) =>
+      console.error("Password change email failed:", err)
+    );
   } catch (err) {
     console.error(" Password reset failed:", err.message);
     return res.status(500).json({

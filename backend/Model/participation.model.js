@@ -15,7 +15,6 @@ const participationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
     college: {
       type: String,
       required: true,
@@ -28,7 +27,7 @@ const participationSchema = new mongoose.Schema(
     subEventId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubEvent",
-      required: true,
+      required: false, // For main event-level registration
     },
     registeredAt: {
       type: Date,
@@ -39,8 +38,31 @@ const participationSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "cancelled"],
       default: "pending",
     },
+    type: {
+      type: String,
+      enum: ["college", "explore"],
+      required: true,
+    },
   },
   { timestamps: true }
+);
+
+// 🛡️ Unique only for same person (email) registering for same sub-event
+participationSchema.index(
+  { participantEmail: 1, subEventId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { subEventId: { $exists: true } },
+  }
+);
+
+// 🛡️ Unique only for same person (email) registering for full event (no sub-event)
+participationSchema.index(
+  { participantEmail: 1, eventId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { subEventId: { $exists: false } },
+  }
 );
 
 module.exports = mongoose.model("Participation", participationSchema);

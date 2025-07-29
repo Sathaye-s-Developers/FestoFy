@@ -40,9 +40,6 @@ router.post("/signUp", async (req, res) => {
         .json({ success: false, message: "Please Enter A Valid Email" });
     }
 
-    // Find the college code based on name
-    //....
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
