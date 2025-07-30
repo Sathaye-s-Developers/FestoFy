@@ -91,7 +91,7 @@ const EventGalary = () => {
                                 className={`w-20 h-20 sm:w-40 sm:h-40 rounded-[50%] transition duration-200 
                            ${category === item.Event_Category ? "ring-2 ring-blue-500 scale-105" : ""}`}
                             />
-                            <p className="mt-2 text-[#747474] text-[max(1.4vw,16px)]">
+                            <p className="mt-2 text-gray-300 text-[max(1.4vw,16px)]">
                                 {item.Event_Category}
                             </p>
                         </div>
