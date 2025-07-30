@@ -36,16 +36,16 @@ const NewPassword_popup = ({ Allclose }) => {
   return (
     <div>
       <div className='p-5 flex justify-between font-[Nunito]'>
-        <h1 className='font-bold ml-5 text-[18px]'>Set New Password</h1>
-        <RxCross2 onClick={closePopup} />
+        <h1 className='font-bold ml-5 text-[18px] text-black'>Set New Password</h1>
+        <RxCross2 onClick={closePopup} color='black'/>
       </div>
       <div className='font-[Nunito]'>
         <form onSubmit={handleSubmit(onsubmithandler)}>
           <div className='flex flex-col items-center'>
-            <input type="email" placeholder='Enter Email' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
+            <input type="email" placeholder='Enter Email' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
 
             <div className='flex w-[80%] justify-around items-center relative mb-4'>
-              <input type={changepassword ? "text" : "password"} placeholder='Set New Password' className='outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("NewSPassword", { required: true })} />
+              <input type={changepassword ? "text" : "password"} placeholder='Set New Password' className='text-black outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("NewSPassword", { required: true })} />
               <p
                 onClick={() => setchangepassword(prev => !prev)}
                 className='absolute top-2.5 right-3 cursor-pointer text-gray-500'
@@ -53,7 +53,7 @@ const NewPassword_popup = ({ Allclose }) => {
             </div>
 
             <div className='flex w-[80%] justify-around items-center relative mb-4'>
-              <input type={confirmpassword ? "text" : "password"} placeholder='Confirm New Password' className='outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("Password", { required: true })} />
+              <input type={confirmpassword ? "text" : "password"} placeholder='Confirm New Password' className='text-black outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("Password", { required: true })} />
               <p
                 onClick={() => setconfirmpassword(prev => !prev)}
                 className='absolute top-2.5 right-3 cursor-pointer text-gray-500'

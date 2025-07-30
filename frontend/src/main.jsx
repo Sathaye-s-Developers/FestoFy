@@ -3,12 +3,15 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import EventContext from './Context/EventContext.jsx'
-import {BrowserRouter} from "react-router-dom"
+import { BrowserRouter } from "react-router-dom"
+import AnimationContext from './Context/AnimationContext.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <EventContext>
-        <App />
+        <AnimationContext>
+          <App />
+        </AnimationContext>
       </EventContext>
     </BrowserRouter>
   </StrictMode>,

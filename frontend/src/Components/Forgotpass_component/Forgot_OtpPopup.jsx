@@ -99,9 +99,9 @@ const Forgot_OtpPopup = ({ regemail,setnewpassword,setForgototp }) => {
         <div>
             <form onSubmit={getOtpValue}>
                 <div className='relative p-5 pb-2 flex justify-between font-[Nunito]'>
-                    <p className='absolute' onClick={() => {setForgototp(false)}} ><IoArrowBackCircleSharp size={30} /></p>
+                    <p className='absolute' onClick={() => {setForgototp(false)}} ><IoArrowBackCircleSharp  color='black' size={30} /></p>
                     <div className='flex justify-center w-full'>
-                        <p className='font-bold text-[18px] '>Enter Otp</p>
+                        <p className='font-bold text-[18px] text-black'>Enter Otp</p>
                     </div>
                 </div>
                 <div className='ml-10 mr-10'>
@@ -115,7 +115,7 @@ const Forgot_OtpPopup = ({ regemail,setnewpassword,setForgototp }) => {
                                 ref={(el) => (inputs.current[i] = el)}
                                 type="text"
                                 maxLength={1}
-                                className="border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 cursor-pointer"
+                                className="border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 cursor-pointer text-black"
                                 pattern="[0-9]*"
                                 inputMode="numeric"
                                 required
@@ -133,8 +133,8 @@ const Forgot_OtpPopup = ({ regemail,setnewpassword,setForgototp }) => {
 
                 <div className='ml-5 md:ml-6 lg:ml-11 mt-3 flex justify-between w-[85%] md:w-[80%]'>
                     <div className='flex items-center justify-center gap-1'>
-                        <p className='font-semibold text-[12px] text-center'>Time Remaining : </p>
-                        <p className={`font-extrabold text-[12px] text-center ${displayTime.startsWith("0:") && parseInt(displayTime.split(":")[1]) < 20 ? "text-red-500" : "text-white"}`}>
+                        <p className='font-semibold text-[12px] text-center text-black'>Time Remaining : </p>
+                        <p className={`font-extrabold text-[12px] text-centerk ${displayTime.startsWith("0:") && parseInt(displayTime.split(":")[1]) < 20 ? "text-red-500" : "text-black"}`}>
                             {displayTime}
                         </p>
 

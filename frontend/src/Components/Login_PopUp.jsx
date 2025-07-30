@@ -77,7 +77,7 @@ const Login_PopUp = () => {
 
     return (
         <div className='fixed inset-0 z-50 w-full h-full bg-[#00000090] grid'>
-            <div className='place-self-center left-[580px] opacity-80 top-[200px] bg-black rounded-[12px] w-[90%] sm:w-[55%] md:w-[50%] lg:w-[40%] xl:w-[30%] animate-[fadein_0.5s_ease-in-out_forwards] text-white'>
+            <div className='place-self-center left-[580px] opacity-80 top-[200px] bg-white rounded-[12px] w-[90%] sm:w-[55%] md:w-[50%] lg:w-[40%] xl:w-[30%] animate-[fadein_0.5s_ease-in-out_forwards] text-white'>
 
                 {RenderSmallComponent()}
 

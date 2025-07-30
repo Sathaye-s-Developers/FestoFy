@@ -10,20 +10,19 @@ import Tutorialsteps from './Tutorialsteps';
 const Navbar_Design = () => {
     return (
         <div className="min-h-screen relative overflow-hidden bg-black" style={{
-            
+
         }}>
-    
 
             <Navbar />
 
             <main className="relative z-10 flex flex-col items-center justify-center px-6 py-16 text-center">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-7xl mx-auto">
                     <Header />
                     <Features />
-                    <Tutorialsteps/>
+                    <Tutorialsteps />
                     <EventGalary />
                     <About />
-                    <EnquiryOption/>
+                    <EnquiryOption />
                 </div>
 
             </main>

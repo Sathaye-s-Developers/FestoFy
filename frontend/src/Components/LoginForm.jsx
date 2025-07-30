@@ -16,19 +16,19 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
     return (
         <div>
             <div className='p-5 flex justify-between font-[Nunito]'>
-                <h1 className='font-bold ml-5 text-[18px]'>{login === "logout" ? "Login" : "SignUp"}</h1>
-                <RxCross2 onClick={closePopup} />
+                <h1 className='font-bold ml-5 text-[18px] text-black'>{login === "logout" ? "Login" : "SignUp"}</h1>
+                <RxCross2 onClick={closePopup} color='black' />
 
             </div>
             <div className='font-[Nunito]'>
                 <form onSubmit={handleSubmit(onsubmit)}>
                     <div className='flex flex-col items-center'>
-                        {login === "logout" ? null : <input type="text" placeholder='Your Username' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='username' {...register("Username", { required: true })} />}
+                        {login === "logout" ? null : <input type="text" placeholder='Your Username' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='username' {...register("Username", { required: true })} />}
 
-                        <input type="email" placeholder='Your Email' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
+                        <input type="email" placeholder='Your Email' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
 
                         <div className='flex w-[80%] justify-around items-center relative mb-4'>
-                            <input type={addpassword ? "text" : "password"} placeholder='Your Password' className='outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("Password", { required: true })} />
+                            <input type={addpassword ? "text" : "password"} placeholder='Your Password' className='text-black outline-none border-2 border-gray-300 w-full rounded-[5px] p-1' autoComplete='password' {...register("Password", { required: true })} />
                             <p
                                 onClick={() => setaddpassword(prev => !prev)}
                                 className='absolute top-2.5 right-3 cursor-pointer text-gray-500'
@@ -46,7 +46,7 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                                             border: `1px solid white ${state.isFocused ? 'white' : 'white'}`,
                                             boxShadow: 'none',
                                             backgroundColor: 'transparent',
-
+                                            color: 'black'
                                         }),
                                         menu: (base) => ({
                                             ...base,
@@ -66,22 +66,22 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                                         }),
                                         input: (base) => ({
                                             ...base,
-                                            color: 'white',
+                                            color: 'black',
                                         }),
                                         placeholder: (base) => ({
                                             ...base,
-                                            color: '#9ca3af', // Tailwind gray-400
+                                            color: 'black', // Tailwind gray-400
                                         }),
                                         singleValue: (base) => ({
                                             ...base,
-                                            color: 'white',
+                                            color: 'black',
                                         }),
                                     }}
                                     placeholder="Your College Name"
                                 />
                             </div>}
 
-                        {login === "logout" ? <input type="text" placeholder='Special Key (Optional)' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' {...register("Special_key")} autoComplete='college-code' /> : null}
+                        {login === "logout" ? <input type="text" placeholder='Special Key (Optional)' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' {...register("Special_key")} autoComplete='college-code' /> : null}
                         {errorMsg && (<div className='w-[80%] mb-3'><p className='text-red-600'>{errorMsg}</p></div>)}
                         {login === "logout" ?
                             <div className='flex flex-col items-end w-[80%]'>

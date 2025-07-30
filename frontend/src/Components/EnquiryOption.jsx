@@ -12,7 +12,7 @@ const EnquiryOption = () => {
     ]
 
     return (
-        <div className="mb-20" id='Enquiry'>
+        <div id='Enquiry'>
             <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-3xl border border-cyan-400/20 p-8 md:p-12">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -34,8 +34,8 @@ const EnquiryOption = () => {
                                         <Mail className="w-6 h-6 text-cyan-400" />
                                     </div>
                                     <div>
-                                        <h4 className="text-white font-medium">Email</h4>
-                                        <p className="text-gray-300">festofy011@gmail.com</p>
+                                        <h4 className="text-white font-medium text-start">Email</h4>
+                                        <p className="text-gray-300 text-start">festofy011@gmail.com</p>
                                     </div>
                                 </div>
 
@@ -43,9 +43,9 @@ const EnquiryOption = () => {
                                     <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-xl border border-cyan-400/30 group-hover:scale-110 transition-transform duration-300">
                                         <Phone className="w-6 h-6 text-cyan-400" />
                                     </div>
-                                    <div>
-                                        <h4 className="text-white font-medium">Phone</h4>
-                                        <p className="text-gray-300">+91 87679 12498</p>
+                                    <div className=''>
+                                        <h4 className="text-white font-medium text-start">Phone</h4>
+                                        <p className="text-gray-300 text-start">+91 87679 12498</p>
                                     </div>
                                 </div>
 
@@ -54,8 +54,8 @@ const EnquiryOption = () => {
                                         <MapPin className="w-6 h-6 text-cyan-400" />
                                     </div>
                                     <div>
-                                        <h4 className="text-white font-medium">Address</h4>
-                                        <p className="text-gray-300">Dixit Road, Vile Parle (E),<br />
+                                        <h4 className="text-white font-medium text-start">Address</h4>
+                                        <p className="text-gray-300 text-start">Festofy Office, devipada, borivali(E)<br />
                                             Mumbai 400057, Maharashtra</p>
                                     </div>
                                 </div>
