@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
 import { Star, ArrowRight } from "lucide-react";
 import Cultural1 from "../Websites data/Event Galary/Cultural1.jpeg"
+import Sports1 from "../Websites data/Event Galary/Sports1.jpeg"
+import Tech4 from "../Websites data/Event Galary/Tech4.jpeg"
+import Cultural2 from "../Websites data/Event Galary/Cultural2.jpeg"
+import Sports2 from "../Websites data/Event Galary/Sports2.jpeg"
+import Tech2 from "../Websites data/Event Galary/Tech2.jpeg"
+
 const EventGalary = () => {
     const [activeGalleryImage, setActiveGalleryImage] = useState(null);
 
@@ -8,11 +14,11 @@ const EventGalary = () => {
 
     const galleryImages = [
         Cultural1,
-        'https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/2608517/pexels-photo-2608517.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=400',
-        'https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=400'
+        Sports1,
+        Tech4,
+        Cultural2,
+        Sports2,
+        Tech2
     ];
 
     return (
