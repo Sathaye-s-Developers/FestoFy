@@ -3,8 +3,7 @@ import { EventAppContext } from '../Context/EventContext'
 import { Play } from 'lucide-react';
 import { useGSAP } from "@gsap/react"
 import gsap from 'gsap';
-import featuresIMG from "../assets/featuresIMG.png"
-import mobilescreen from "../assets/mobilescreen.mp4"
+
 
 const Header = () => {
     const { setRegister, token } = useContext(EventAppContext)
