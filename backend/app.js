@@ -28,6 +28,10 @@ app.use(
   })
 );
 
+//cookie setup
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 //data parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

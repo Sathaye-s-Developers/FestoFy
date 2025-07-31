@@ -7,15 +7,15 @@ const SubEvent = require("../Model/subevent.model");
 const Event = require("../Model/event.module");
 const Volunteer = require("../Model/volunteer.model");
 
-// Get all volunteers
-router.get("/get", async (req, res) => {
-  try {
-    const volunteers = await Volunteer.find();
-    res.status(200).json({ volunteers });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// // Get all volunteers
+// router.get("/get", async (req, res) => {
+//   try {
+//     const volunteers = await Volunteer.find();
+//     res.status(200).json({ volunteers });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 // Get all events a volunteer is registered to
 router.get("/registered-events/:volunteerId", async (req, res) => {
