@@ -8,8 +8,6 @@ const {
 } = require("../email_services/EmailService");
 const User = require("../Model/user.model");
 const verifyToken = require("../middlewares/token_varification");
-const cors = require("cors");
-router.use(cors());
 
 const otpStore = new Map(); // { email: { otp, expiresAt } }
 

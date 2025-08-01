@@ -20,10 +20,32 @@ function reloadWebsite() {
 setInterval(reloadWebsite, interval);
 
 //  Enable CORS
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",
+//       "https://festofy-frontend.onrender.com",
+//     ],
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//     credentials: true,
+//   })
+// );
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://festofy-frontend.onrender.com",
+];
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://festofy-frontend.onrender.com"],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS error: Origin ${origin} not allowed`));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
