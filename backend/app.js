@@ -31,6 +31,7 @@ setInterval(reloadWebsite, interval);
 //   })
 // );
 
+////////
 const allowedOrigins = [
   "http://localhost:5173",
   "https://festofy-frontend.onrender.com",
@@ -68,6 +69,7 @@ const participationRoutes = require("./routes/participation.router");
 const forgotPasswordRoutes = require("./routes/forgot_password");
 const volunteerRoutes = require("./routes/volunteer.router");
 const setProfile = require("./routes/profile.router");
+const payment = require("./routes/payment");
 
 //  Mount Routes
 app.use("/", homeRoutes);
@@ -79,6 +81,7 @@ app.use("/Festofy/user/event/subevent", subeventRoutes);
 app.use("/Festofy/user/event/participation", participationRoutes);
 app.use("/Festofy/user/password", forgotPasswordRoutes);
 app.use("/Festofy/user/event/subevent/volunteer", volunteerRoutes);
+app.use("/Festofy/user/payment", payment);
 
 //  Start Express server
 const PORT = process.env.PORT || 3000;

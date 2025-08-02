@@ -99,14 +99,14 @@ router.post("/register", verifyToken, async (req, res) => {
     const savedVolunteer = await newVolunteer.save();
 
     // Link to Event
-    await Event.findByIdAndUpdate(
+    const event = await Event.findByIdAndUpdate(
       eventId,
       { $push: { volunteers: savedVolunteer._id } },
       { new: true }
     );
 
     // Link to SubEvent
-    await SubEvent.findByIdAndUpdate(
+    const subevent = await SubEvent.findByIdAndUpdate(
       subEventId,
       { $push: { volunteers: savedVolunteer._id } },
       { new: true }
@@ -114,7 +114,12 @@ router.post("/register", verifyToken, async (req, res) => {
 
     res
       .status(201)
-      .json({ message: "Volunteer registered", volunteer: savedVolunteer });
+      .json({
+        message: "Volunteer registered",
+        volunteer: savedVolunteer,
+        events: event,
+        subevents: subevent,
+      });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -143,9 +148,10 @@ router.delete("/delete/:volunteerId", async (req, res) => {
       { $pull: { volunteers: volunteerId } }
     );
 
-    res
-      .status(200)
-      .json({ success: true, message: "Volunteer deleted successfully." });
+    res.status(200).json({
+      success: true,
+      message: "Volunteer deleted successfully.",
+    });
   } catch (err) {
     console.error("Error deleting volunteer:", err);
     res.status(500).json({ success: false, message: "Server error." });

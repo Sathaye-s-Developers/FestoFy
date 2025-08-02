@@ -41,7 +41,7 @@ const eventSchema = new mongoose.Schema({
 
   createdByCollege: {
     type: String,
-    required: true, // used for filtering college events
+    required: true, //filtering collage event
   },
 
   subEvents: [

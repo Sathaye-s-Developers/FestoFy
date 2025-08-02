@@ -3,6 +3,7 @@ const router = express.Router();
 const Event = require("../Model/event.module");
 const SubEvent = require("../Model/subevent.model");
 const Volunteer = require("../Model/volunteer.model");
+const User = require("../Model/user.model");
 const verifyToken = require("../middlewares/token_varification");
 const isAdmin = require("../middlewares/is_admin");
 
@@ -11,10 +12,11 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
     const userId = req.user._id;
     const userEmail = req.user.email;
-    const userCollege = req.user.collegeName;
+    const { collegeName } = await User.findOne({ _id: userId });
+
     const { title, department, description, bannerUrl, dateRange, visibility } =
       req.body;
-
+    //  console.log("req.user in /create route:", req.user);
     if (!title || !department || !description || !bannerUrl || !dateRange) {
       return res.status(400).send({ message: "All fields are required" });
     }
@@ -40,7 +42,7 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       volunteers: [],
       createdBy: userId,
       visibility: visibility || "college", //college or explore  by default college
-      createdByCollege: userCollege,
+      createdByCollege: collegeName,
     });
 
     await newEvent.save();

@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const verifyToken = require("../middlewares/token_varification");
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
-const match_clg = require("../functions/searching_clg_codes");
+//const match_clg = require("../functions/searching_clg_codes");
 // //Admin secreate code
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
 // super Admin
