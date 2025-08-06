@@ -2,23 +2,20 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 function verifyToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ message: "Token missing" });
-  // Check if Authorization header is present and starts with Bearer
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Token missing or invalid format" });
+  console.log("working");
+  const token = req.cookies?.token;
+  // console.log("Cookies:", token);
+  
+  if (!token) {
+    return res.status(401).json({ message: "Token missing from cookie" });
   }
-  const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET); // secret must match
-    //  console.log("✅ Decoded token:", decoded);
-    req.user = decoded;
-
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded; // Attach user data to the request
     next();
   } catch (err) {
-    console.log(err);
-    return res.status(401).json({ message: "Invalid token  or expire" });
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 }
 

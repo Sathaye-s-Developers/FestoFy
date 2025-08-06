@@ -13,9 +13,11 @@ const SUPER_ADMIN_SECRET_KEY = process.env.SUPER_ADMIN_SECRET_KEY;
 
 //  Register
 router.post("/signUp", async (req, res) => {
+  console.log("Headers:", req.headers);
+  console.log("Body received:", req.body);
   try {
     const { username, email, password, collegeName } = req.body;
-    //console.log("Incoming data:", req.body);
+
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
     }
@@ -40,9 +42,6 @@ router.post("/signUp", async (req, res) => {
         .json({ success: false, message: "Please Enter A Valid Email" });
     }
 
-    // Find the college code based on name
-    //....
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -50,10 +49,10 @@ router.post("/signUp", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      collegeName: collegeName,
+      collegeName,
     });
 
-    await newUser.save(); // Save new user
+    await newUser.save();
 
     const token = jwt.sign(
       { _id: newUser._id, email: newUser.email, role: newUser.role },
@@ -61,10 +60,16 @@ router.post("/signUp", async (req, res) => {
       { expiresIn: "2d" }
     );
 
-    res.status(201).json({
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+    });
+
+    return res.status(201).json({
       success: true,
       message: "User registered successfully.",
-      token,
       username: newUser.username,
     });
   } catch (err) {
@@ -73,7 +78,7 @@ router.post("/signUp", async (req, res) => {
   }
 });
 
-//  Login
+// Login
 router.post("/login", async (req, res) => {
   try {
     const { email, password, adminCode, superAdminKey } = req.body;
@@ -85,15 +90,7 @@ router.post("/login", async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid Credentials" });
 
-    const token = jwt.sign(
-      { _id: user._id, email: user.email, role: user.role },
-      JWT_SECRET,
-      {
-        expiresIn: "2d",
-      }
-    );
-
-    // Role logic
+    // role
     let role = "user";
     if (adminCode && adminCode === ADMIN_SECRET_CODE) {
       role = "admin";
@@ -102,22 +99,62 @@ router.post("/login", async (req, res) => {
       role = "superadmin";
     }
 
-    // Save new role
+    // Update user role
     if (user.role !== role) {
       user.role = role;
       await user.save();
     }
 
-    res.status(200).json({
+    // Create JWT
+    const token = jwt.sign(
+      { _id: user._id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "2d" }
+    );
+
+    // Set token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+    });
+
+    //SEND RESPONSE
+    return res.status(200).json({
       success: true,
       message: "Login successful",
-      token,
       username: user.username,
+      role: user.role,
+      token:token
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Error during login" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error during login" });
   }
+});
+
+//logout
+// router.post("/logout", (req, res) => {
+//   res.clearCookie("token", {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === "production",
+//     sameSite: "strict",
+//   });
+
+//   res.status(200).json({ success: true, message: "Logged out successfully" });
+// });
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
 //verify user to get its able or not

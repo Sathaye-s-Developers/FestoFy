@@ -21,16 +21,39 @@ function reloadWebsite() {
 setInterval(reloadWebsite, interval);
 
 //  Enable CORS
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://festofy-frontend.onrender.com",
-    ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",
+//       "https://festofy-frontend.onrender.com",
+//     ],
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//     credentials: true,
+//   })
+// );
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000", 
+  "https://festofy-frontend.onrender.com",
+  "https://hoppscotch.io" 
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    console.log("Request Origin:", origin);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true); // reflect the allowed origin
+    } else {
+      callback(null, false);
+    }
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  credentials: true,
+}));
+
+//cookie setup
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 // Parse incoming data
 app.use(express.json());
