@@ -8,12 +8,15 @@ import axios from 'axios';
 const NewPassword_popup = ({ Allclose }) => {
 
   const { register, handleSubmit, watch, setError } = useForm();
-  const { closePopup, url, setprogress } = useContext(EventAppContext)
+  const { closePopup, api, setprogress } = useContext(EventAppContext)
   const [changepassword, setchangepassword] = useState(false)
   const [confirmpassword, setconfirmpassword] = useState(false)
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onsubmithandler = async (data) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     if (data.NewSPassword !== data.Password) {
       setError("Password", {
         type: "manual",
@@ -22,14 +25,16 @@ const NewPassword_popup = ({ Allclose }) => {
       return;
     }
     try {
-      const response = await axios.patch(url + "/Festofy/user/password/reset-password", { email: data.Email, newPassword: data.Password })
+      const response = await api.patch("/Festofy/user/password/reset-password", { email: data.Email, newPassword: data.Password })
       if (response) {
         setprogress(100)
         Allclose()
       }
+      setIsSubmitting(false);
     }
     catch (err) {
       console.log(err)
+      setIsSubmitting(false);
     }
 
   }
@@ -37,7 +42,7 @@ const NewPassword_popup = ({ Allclose }) => {
     <div>
       <div className='p-5 flex justify-between font-[Nunito]'>
         <h1 className='font-bold ml-5 text-[18px] text-black'>Set New Password</h1>
-        <RxCross2 onClick={closePopup} color='black'/>
+        <RxCross2 onClick={closePopup} color='black' />
       </div>
       <div className='font-[Nunito]'>
         <form onSubmit={handleSubmit(onsubmithandler)}>
@@ -65,7 +70,10 @@ const NewPassword_popup = ({ Allclose }) => {
 
             {/* <input type="password" placeholder='Confirm New Password' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='password' {...register("Password", { required: true })} /> */}
 
-            <button type="submit" className='bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3'>Submit</button>
+            <button type='submit' disabled={isSubmitting} className={`${isSubmitting
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/25 hover:scale-105 hover:-translate-y-0.3"
+              } bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none`}>{isSubmitting ? "Submitting..." : "Submit"}</button>
           </div>
 
         </form>

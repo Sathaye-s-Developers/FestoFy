@@ -6,10 +6,12 @@ import { RxCross2 } from "react-icons/rx";
 import { useForm } from 'react-hook-form';
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
+const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, setIsSubmitting }) => {
     const { closePopup, setpassword } = useContext(EventAppContext)
     const { register, handleSubmit, setValue } = useForm();
     const [addpassword, setaddpassword] = useState(false)
+
+
     const handleCollegeChange = (selectedOption) => {
         setValue("college_code", selectedOption.value)
     }
@@ -90,18 +92,18 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                             : <></>
                         }
 
-                        {login === "logout" ?
+                        {/* {login === "logout" ?
                             <div className='flex flex-col items-end w-[80%]'>
                                 <a className='text-blue-400 underline' href="#Tutorial" onClick={closePopup}>Apply for special key</a>
                             </div>
                             : <></>
-                        }
+                        } */}
 
-                        {login === "logout" ? <></> :
+                        {/* {login === "logout" ? <></> :
                             <div className='flex flex-col items-end w-[80%]'>
                                 <a className='text-blue-400 underline' href="#Tutorial" onClick={closePopup}>If College name not found</a>
                             </div>
-                        }
+                        } */}
                         <div className='w-[80%] flex justify-end mb-2 hover:cursor-pointer'>
                             <a href="#Enquiry" className='text-blue-500 underline' onClick={closePopup}></a>
                         </div>
@@ -110,7 +112,12 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg }) => {
                             <input type="checkbox" className='cursor-pointer' required />
                             <p className='text-[12px] pl-1 text-gray-600 '> By continuing , I agree to the terms & conditions </p>
                         </div>
-                        <button type="submit" className='bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3'>Submit</button>
+
+                        <button type='submit' disabled={isSubmitting} className={`${isSubmitting
+                            ? "opacity-50 cursor-not-allowed"
+                            : "cursor-pointer hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/25 hover:scale-105 hover:-translate-y-0.3"
+                            } bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none`}>{isSubmitting ? "Submitting..." : "Submit"}</button>
+
                         <div className='flex gap-2 mb-2'>
                             {login === "login" ? <p className='text-gray-600 text-[14px]'>Already have an account </p> :
                                 <p className='text-gray-600 text-[14px]'>Create a new account ? </p>}

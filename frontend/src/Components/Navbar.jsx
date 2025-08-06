@@ -7,51 +7,62 @@ import { SplitText } from 'gsap/all';
 import gsap from 'gsap';
 
 const Navbar = () => {
-  const { setRegister, token, settoken, setoptions, options, setprogress, setotp } = useContext(EventAppContext)
+  const { api, setRegister, token, settoken, setoptions, options, setprogress, setotp, isAuthenticated, setdetails, setisAuthenticated } = useContext(EventAppContext)
 
   const toggleoption = () => {
     setoptions((prev) => !prev)
   }
 
-  const logout = () => {
-    localStorage.removeItem("token")
-    settoken("")
-  }
+  // const logout = () => {
+  //   localStorage.removeItem("token")
+  //   settoken("")
+  // }
+  const logout = async (e) => {
+    try {
+      e.preventDefault();
+      await api.post("/Festofy/user/logout",{withCredentials:true}); // backend clears the cookie
+      setdetails({ username: "", email: "" }); // clear context user
+      window.location.href = "/";
+      setisauthenticated(false)
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   const letterref = useRef()
-  const navbarref=useRef()
+  const navbarref = useRef()
 
   useGSAP(() => {
-  const ctx = gsap.context(() => {
-    const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
+    const ctx = gsap.context(() => {
+      const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
 
-    gsap.fromTo(
-      lettersplit.chars,
-      { x: 10, opacity: 0 },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power2.inOut",
-        stagger: 0.1,
-        onComplete: () => {
-          lettersplit.revert(); 
+      gsap.fromTo(
+        lettersplit.chars,
+        { x: 10, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power2.inOut",
+          stagger: 0.1,
+          onComplete: () => {
+            lettersplit.revert();
+          }
         }
-      }
-    );
+      );
 
-    // Animate navbar slide-in
-    gsap.from(navbarref.current, {
-      y: -100,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out",
+      // Animate navbar slide-in
+      gsap.from(navbarref.current, {
+        y: -100,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      });
     });
-  });
 
 
-  return () => ctx.revert();
-}, [letterref,navbarref]);
+    return () => ctx.revert();
+  }, [letterref, navbarref]);
 
   return (
     <div>
@@ -77,7 +88,7 @@ const Navbar = () => {
               <Link to="/Home">Home</Link>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
             </li>
-            {token ? (
+            {isAuthenticated ? (
               <li
                 className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group"
                 onClick={() => setprogress(100)}
@@ -95,7 +106,7 @@ const Navbar = () => {
               About
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
             </a>
-            {!token && (
+            {!isAuthenticated && (
               <a href="#Enquiry" className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-medium relative group">
                 Enquiry
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
@@ -111,21 +122,19 @@ const Navbar = () => {
             >
               <div className="relative w-6 h-6">
                 <Menu
-                  className={`absolute inset-0 w-6 h-6 text-cyan-400 transition-all duration-300 ${
-                    options ? 'opacity-0 rotate-180 scale-75' : 'opacity-100 rotate-0 scale-100'
-                  }`}
+                  className={`absolute inset-0 w-6 h-6 text-cyan-400 transition-all duration-300 ${options ? 'opacity-0 rotate-180 scale-75' : 'opacity-100 rotate-0 scale-100'
+                    }`}
                 />
                 <X
-                  className={`absolute inset w-6 h-6 text-cyan-400 transition-all duration-300 ${
-                    options ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-180 scale-75'
-                  }`}
+                  className={`absolute inset w-6 h-6 text-cyan-400 transition-all duration-300 ${options ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-180 scale-75'
+                    }`}
                 />
               </div>
             </button>
           </div>
 
           {/* Login / Logout Button */}
-          {token ? (
+          {isAuthenticated ? (
             <div className="hidden md:block">
               <button
                 className="flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full hover:from-cyan-400 hover:to-blue-500 transition-all duration-300 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.5"

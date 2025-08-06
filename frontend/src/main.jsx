@@ -5,14 +5,19 @@ import App from './App.jsx'
 import EventContext from './Context/EventContext.jsx'
 import { BrowserRouter } from "react-router-dom"
 import AnimationContext from './Context/AnimationContext.jsx'
+import { CookiesProvider } from "react-cookie";
+
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <CookiesProvider>
     <BrowserRouter>
       <EventContext>
         <AnimationContext>
-          <App />
+            <App />
         </AnimationContext>
       </EventContext>
     </BrowserRouter>
+    </CookiesProvider>
   </StrictMode>,
 )

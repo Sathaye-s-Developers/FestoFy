@@ -11,7 +11,7 @@ import Profilepg from './Pages/Event_Components/Components/Profilepg'
 import Design_CreateEvent from './Pages/Event_Components/Pages/Design_CreateEvent'
 
 const App = () => {
-  const { register, token, options, setprogress, progress } = useContext(EventAppContext)
+  const { register, token, options, setprogress, progress,isAuthenticated } = useContext(EventAppContext)
   return (
     <div>
       <div>
@@ -25,10 +25,10 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/Home' element={<Home />} />
-        <Route path='/Event' element={token ? <Event /> : <Home />} />
+        <Route path='/Event' element={isAuthenticated ? <Event /> : <Home />} />
         {/* <Route path='/Event' element={<Event />} /> */}
-        {/* <Route path='/CreateEvent' element={<Design_CreateEvent/>}/> */}
-        <Route path='/Profile' element={token ?<Profilepg/>:<Home/>}/>
+        <Route path='/CreateEvent' element={<Design_CreateEvent/>}/>
+        <Route path='/Profile' element={isAuthenticated ?<Profilepg/>:<Home/>}/>
       </Routes>
     </div >
   )
