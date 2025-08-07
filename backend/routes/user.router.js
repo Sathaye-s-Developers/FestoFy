@@ -204,11 +204,11 @@ router.get("/verifyUser", verifyToken, async (req, res) => {
 router.get("/user_details", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) return res.status(404).json({isAuthenticated: false  });
 
-    res.json({ message: "success detial fetched", user });
+    res.json({ isAuthenticated:true, user });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({isAuthenticated: false });
   }
 });
 

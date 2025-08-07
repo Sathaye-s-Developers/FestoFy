@@ -33,9 +33,9 @@ setInterval(reloadWebsite, interval);
 // );
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://localhost:3000", 
+  "http://localhost:3000",
   "https://festofy-frontend.onrender.com",
-  "https://hoppscotch.io" 
+  "https://hoppscotch.io"
 ];
 
 app.use(cors({
@@ -50,6 +50,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true,
 }));
+// app.options("*", cors());
 
 //cookie setup
 const cookieParser = require("cookie-parser");
