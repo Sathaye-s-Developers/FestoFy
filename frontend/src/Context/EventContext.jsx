@@ -74,12 +74,12 @@ const EventContext = (props) => {
     }, [api]);
 
     useEffect(() => {
-        const code = localStorage.getItem("ULRKGDAPS")
+        const code = localStorage.getItem("ULRKGDAPS");
         if (code) {
             fetchUserDetails()
         }
 
-    }, [fetchUserDetails]);
+    }, []);
 
     const closePopup = useCallback(() => {
         setRegister(false);
