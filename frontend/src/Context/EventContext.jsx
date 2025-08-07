@@ -78,8 +78,7 @@ const EventContext = (props) => {
         if (code) {
             fetchUserDetails()
         }
-
-    }, []);
+    }, [fetchUserDetails]);
 
     const closePopup = useCallback(() => {
         setRegister(false);
