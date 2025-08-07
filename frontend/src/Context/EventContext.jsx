@@ -65,7 +65,7 @@ const EventContext = (props) => {
             setdetails({ username: response.data.user.username, email: response.data.user.email })
 
             if (response.data.isAuthenticated) {
-                setisAuthenticated(true)
+                setisAuthenticated(response.data.isAuthenticated)
             }
 
         } catch (err) {
