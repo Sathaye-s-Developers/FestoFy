@@ -38,18 +38,23 @@ const allowedOrigins = [
   "https://hoppscotch.io"
 ];
 
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     console.log("Request Origin:", origin);
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true); // reflect the allowed origin
+//     } else {
+//       callback(null, false);
+//     }
+//   },
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//   credentials: true,
+// }));
 app.use(cors({
-  origin: function (origin, callback) {
-    console.log("Request Origin:", origin);
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true); // reflect the allowed origin
-    } else {
-      callback(null, false);
-    }
-  },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  origin: allowedOrigins,
   credentials: true,
 }));
+
 // app.options("*", cors());
 
 //cookie setup
