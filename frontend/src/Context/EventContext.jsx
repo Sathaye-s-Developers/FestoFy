@@ -64,18 +64,21 @@ const EventContext = (props) => {
             const response = await api.get("/Festofy/user/user_details");
             setdetails({ username: response.data.user.username, email: response.data.user.email })
 
-            if(response.data.isAuthenticated){
+            if (response.data.isAuthenticated) {
                 setisAuthenticated(true)
             }
-            
+
         } catch (err) {
             setisAuthenticated(false)
         }
     }, [api]);
 
     useEffect(() => {
+        const code = localStorage.getItem("ULRKGDAPS")
+        if (code) {
+            fetchUserDetails()
+        }
 
-        fetchUserDetails()
     }, [fetchUserDetails]);
 
     const closePopup = useCallback(() => {
