@@ -10,7 +10,7 @@ import Forgot_OtpPopup from './Forgotpass_component/Forgot_OtpPopup';
 import LoginForm from './LoginForm';
 import NewPassword_popup from './Forgotpass_component/NewPassword_popup';
 const Login_PopUp = () => {
-    const { api, setprogress, otp, setotp, password, setpassword } = useContext(EventAppContext)
+    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated } = useContext(EventAppContext)
     const [login, setlogin] = useState("logout")
 
     const [Forgototp, setForgototp] = useState(false)
@@ -28,7 +28,7 @@ const Login_PopUp = () => {
 
         if (password) return <Forgot_pass Forgototp={Forgototp} setForgototp={setForgototp} setregemail={setregemail} />
 
-        if (otp) return <Otp_popup email={email} setotp={setotp} login={login}  />//token used
+        if (otp) return <Otp_popup email={email} setotp={setotp} login={login} />//token used
 
         return <LoginForm login={login} setlogin={setlogin} onsubmit={onsubmit} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} />
     }
@@ -53,31 +53,41 @@ const Login_PopUp = () => {
             const response = await axios.post(newurl, { username: formData.Username, email: formData.Email, password: formData.Password }, {
                 withCredentials: true,
             })
-            if (response.data.success) {
-                setprogress(70)
-                setotp(true)
-                setemail(formData.Email)
-
-                try {
-                    const response = await api.post("/Festofy/user/otp/register-login", { email: formData.Email })
-                    if (response.data.success) {
-                        setprogress(100)
-                    }
-                    setIsSubmitting(false);
-
-                } catch (err) {
-                    setprogress(0);
-                    if (err.response && (err.response.status === 409 || err.response.status === 401)) {
-                        seterrorMsg(err.response.data.message);
-                    }
-                    setIsSubmitting(false);
+            if (login === "logout") {
+                if (response.data.success) {
+                    setprogress(70)
+                    setIsSubmitting(true);
+                    setRegister(false)
+                    setisAuthenticated(true)
+                    localStorage.setItem("ULRKGDAPS", "ABCEFG123")
+                    setprogress(100)
                 }
-                // setsavetoken({ token: response.data.token })
+            } else {
+                if (response.data.success) {
+                    setprogress(70)
+                    setotp(true)
+                    setemail(formData.Email)
+                    setIsSubmitting(true);
+                    try {
+                        const response = await api.post("/Festofy/user/otp/register-login", { email: formData.Email })
+                        if (response.data.success) {
+                            setprogress(100)
+                        }
+                        setIsSubmitting(false);
 
+                    } catch (err) {
+                        setprogress(0);
+                        if (err.response && (err.response.status === 409 || err.response.status === 401)) {
+                            seterrorMsg(err.response.data.message);
+                        }
+                        setIsSubmitting(false);
+                    }
+                }
             }
         } catch (err) {
             if (err.response && (err.response.status === 409 || err.response.status === 401)) {
                 seterrorMsg(err.response.data.message);
+                setIsSubmitting(false);
             }
         }
 

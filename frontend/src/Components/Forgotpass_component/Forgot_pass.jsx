@@ -43,7 +43,7 @@ const Forgot_pass = ({ Forgototp, setForgototp, setregemail }) => {
                 <form onSubmit={handleSubmit(onsubmit)}>
                     <div className='flex flex-col items-center'>
                         <label className='w-[80%] mb-2 text-black' htmlFor="email">Enter Registered Email :</label>
-                        <input type="email" placeholder='Your Email' className='outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
+                        <input type="email" placeholder='Your Email' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='email' {...register("Email", { required: true })} />
                         {errors.Email && <p className="text-red-500 text-sm mb-2 -mt-2">{errors.Email.message}</p>}
                         <button type='submit' disabled={isSubmitting} className={`${isSubmitting
                             ? "opacity-50 cursor-not-allowed"

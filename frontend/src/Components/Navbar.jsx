@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { EventAppContext } from '../Context/EventContext';
 import { Link } from "react-router-dom"
 import { Calendar, User, Menu, X } from 'lucide-react';
@@ -7,23 +7,21 @@ import { SplitText } from 'gsap/all';
 import gsap from 'gsap';
 
 const Navbar = () => {
-  const { api, setRegister, token, settoken, setoptions, options, setprogress, setotp, isAuthenticated, setdetails, setisAuthenticated } = useContext(EventAppContext)
-
+  const { api, setRegister, token, settoken, setoptions, options, setprogress, setotp, isAuthenticated, setdetails, setisAuthenticated, details } = useContext(EventAppContext)
   const toggleoption = () => {
     setoptions((prev) => !prev)
   }
 
-  // const logout = () => {
-  //   localStorage.removeItem("token")
-  //   settoken("")
-  // }
+  const hasAnimated = useRef(false);
+
   const logout = async (e) => {
     try {
       e.preventDefault();
-      await api.post("/Festofy/user/logout",{withCredentials:true}); // backend clears the cookie
+      await api.post("/Festofy/user/logout", { withCredentials: true }); // backend clears the cookie
       setdetails({ username: "", email: "" }); // clear context user
       window.location.href = "/";
-      setisauthenticated(false)
+      setisAuthenticated(false)
+      localStorage.removeItem("ULRKGDAPS")
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -32,38 +30,34 @@ const Navbar = () => {
   const letterref = useRef()
   const navbarref = useRef()
 
-  useGSAP(() => {
-    const ctx = gsap.context(() => {
-      const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
+  useEffect(() => {
+    if (hasAnimated.current) return; // prevent re-running
+    hasAnimated.current = true;
 
-      gsap.fromTo(
-        lettersplit.chars,
-        { x: 10, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power2.inOut",
-          stagger: 0.1,
-          onComplete: () => {
-            lettersplit.revert();
-          }
-        }
-      );
+    const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
 
-      // Animate navbar slide-in
-      gsap.from(navbarref.current, {
-        y: -100,
-        opacity: 0,
+    gsap.fromTo(
+      lettersplit.chars,
+      { x: 10, opacity: 0 },
+      {
+        x: 0,
+        opacity: 1,
         duration: 1,
-        ease: "power3.out",
-      });
+        ease: "power2.inOut",
+        stagger: 0.1,
+        onComplete: () => {
+          lettersplit.revert();
+        }
+      }
+    );
+
+    gsap.from(navbarref.current, {
+      y: -100,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out",
     });
-
-
-    return () => ctx.revert();
-  }, [letterref, navbarref]);
-
+  }, []);
   return (
     <div>
       {/* <header className="relative z-10 px-6 py-6"> */}

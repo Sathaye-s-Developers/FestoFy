@@ -4,7 +4,7 @@ import { EventAppContext } from '../Context/EventContext';
 import axios from 'axios';
 
 const Otp_popup = ({ email }) => {
-    const { api, setRegister, setprogress, otp, setotp,setisAuthenticated } = useContext(EventAppContext)
+    const { api, setRegister, setprogress, otp, setotp, setisAuthenticated ,isAuthenticated} = useContext(EventAppContext)
     const [errorMsg, seterrorMsg] = useState("")
     const [timerKey, setTimerKey] = useState(0);
     const [displayTime, setDisplayTime] = useState("2:59");
@@ -64,6 +64,7 @@ const Otp_popup = ({ email }) => {
                 setotp(false)
                 setprogress(100)
                 setisAuthenticated(true)
+                localStorage.setItem("ULRKGDAPS","ABCEFG123")
             }
             setIsSubmitting(false);
         } catch (err) {

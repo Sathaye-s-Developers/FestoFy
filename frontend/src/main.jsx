@@ -11,13 +11,13 @@ import { CookiesProvider } from "react-cookie";
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <CookiesProvider>
-    <BrowserRouter>
-      <EventContext>
-        <AnimationContext>
+      <BrowserRouter>
+        <EventContext>
+          <AnimationContext>
             <App />
-        </AnimationContext>
-      </EventContext>
-    </BrowserRouter>
+          </AnimationContext>
+        </EventContext>
+      </BrowserRouter>
     </CookiesProvider>
   </StrictMode>,
 )

@@ -7,11 +7,12 @@ import { Routes, Route } from "react-router-dom"
 import Mobile_Options from './Components/Mobile_Options'
 import LoadingBar from "react-top-loading-bar";
 import Profilepg from './Pages/Event_Components/Components/Profilepg'
+import Loading_comp from "./Components/Loading_comp"
 
 import Design_CreateEvent from './Pages/Event_Components/Pages/Design_CreateEvent'
 
 const App = () => {
-  const { register, token, options, setprogress, progress,isAuthenticated } = useContext(EventAppContext)
+  const { register, token, options, setprogress, progress, isAuthenticated } = useContext(EventAppContext)
   return (
     <div>
       <div>
@@ -19,16 +20,17 @@ const App = () => {
           color="#ADD8E6"
           progress={progress}
           onLoaderFinished={() => setprogress(0)}
-        /></div>
+        /></div>  
       {register === true ? <Login_PopUp /> : <></>}
       {options === true ? <Mobile_Options /> : <></>}
       <Routes>
+        {/* <Route path='/' element={<Loading_comp><Home /></Loading_comp>} /> */}
         <Route path='/' element={<Home />} />
         <Route path='/Home' element={<Home />} />
         <Route path='/Event' element={isAuthenticated ? <Event /> : <Home />} />
         {/* <Route path='/Event' element={<Event />} /> */}
-        <Route path='/CreateEvent' element={<Design_CreateEvent/>}/>
-        <Route path='/Profile' element={isAuthenticated ?<Profilepg/>:<Home/>}/>
+        <Route path='/CreateEvent' element={<Design_CreateEvent />} />
+        <Route path='/Profile' element={isAuthenticated ? <Profilepg /> : <Home />} />
       </Routes>
     </div >
   )
