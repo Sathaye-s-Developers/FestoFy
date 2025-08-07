@@ -62,7 +62,7 @@ const EventContext = (props) => {
         // setloading(true)
         try {
             const response = await api.get("/Festofy/user/user_details");
-
+            console.log(response.data.isAuthenticated)
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
             }
