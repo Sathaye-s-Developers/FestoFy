@@ -3,6 +3,7 @@ import E_Navbar from './E_Navbar'
 import EventOptions from "./EventOptions"
 import Main_Event from './Main_Event'
 import { EventAppContext } from '../../../Context/EventContext'
+import Event_filteSection from '../Event_pg_Components/Event_filteSection'
 
 const ENavbar_design = () => {
   const { profileOptions, setprofileOptions } = useContext(EventAppContext)
@@ -32,6 +33,7 @@ const ENavbar_design = () => {
 
         <E_Navbar />
         <Main_Event />
+        <Event_filteSection/>
         {profileOptions && <EventOptions popupRef={popupRef} />}
 
       </div>
