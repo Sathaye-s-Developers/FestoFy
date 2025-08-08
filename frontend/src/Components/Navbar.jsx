@@ -52,12 +52,12 @@ const Navbar = () => {
       }
     );
 
-    gsap.from(navbarref.current, {
-      y: -100,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out",
-    });
+    // gsap.from(navbarref.current, {
+    //   y: -100,
+    //   opacity: 0,
+    //   duration: 1,
+    //   ease: "power3.out",
+    // });
   }, []);
   return (
     <div>
