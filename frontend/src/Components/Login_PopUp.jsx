@@ -35,7 +35,7 @@ const Login_PopUp = () => {
 
         if (otp) return <Otp_popup email={email} setotp={setotp} login={login} />//token used
 
-        return <LoginForm login={login} setlogin={setlogin} Controller={Controller}  onsubmit={onsubmit} control={control} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} />
+        return <LoginForm login={login} setlogin={setlogin}  onsubmit={onsubmit} control={control} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} />
     }
 
     const Allclose = () => {

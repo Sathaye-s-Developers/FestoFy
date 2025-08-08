@@ -5,7 +5,7 @@ import Select from 'react-select'
 import { RxCross2 } from "react-icons/rx";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register, handleSubmit, setValue,Controller,control }) => {
+const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register, handleSubmit, setValue,control }) => {
     const { closePopup, setpassword } = useContext(EventAppContext)
 
     const [addpassword, setaddpassword] = useState(false)
@@ -18,8 +18,10 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register
         });
     };
     React.useEffect(() => {
-        register("college_code", { required: true });
-    }, [register]);
+       if (login !== "logout") {
+    register("college_code", { required: "College is required" });
+  }
+    }, [register,login]);
 
     return (
         <div>
