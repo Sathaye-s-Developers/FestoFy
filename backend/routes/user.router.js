@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const User = require("../Model/user.model");
-const trackvisit = require("../Model/trackVisit.model")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
