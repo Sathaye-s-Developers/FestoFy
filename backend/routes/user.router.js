@@ -223,22 +223,4 @@ router.get("/all_users", verifyToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-router.post("/track-visit",verifyToken, async (req, res) => {
-  try {
-    let stat = await trackvisit.findOne();
-
-    if (!stat) {
-      stat = new trackvisit({ totalVisits: 1 });
-    } else {
-      stat.totalVisits += 1;
-    }
-
-    await stat.save();
-    res.status(200).json({ success: true, message: "Visit counted" });
-  } catch (err) {
-    console.log(err)
-    res.status(500).json({ success: false, message: "Error tracking visit" });
-  }
-});
 module.exports = router;

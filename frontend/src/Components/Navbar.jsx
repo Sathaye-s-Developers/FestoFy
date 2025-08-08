@@ -3,7 +3,7 @@ import { EventAppContext } from '../Context/EventContext';
 import { Link } from "react-router-dom"
 import { Calendar, User, Menu, X } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
-import  SplitText from 'gsap/SplitText';
+import { SplitText } from 'gsap/all';
 import gsap from 'gsap';
 
 const Navbar = () => {
@@ -11,16 +11,17 @@ const Navbar = () => {
   const toggleoption = () => {
     setoptions((prev) => !prev)
   }
-  gsap.registerPlugin(SplitText);
+
   const hasAnimated = useRef(false);
 
   const logout = async (e) => {
     try {
       e.preventDefault();
-      await api.post("/Festofy/user/logout",{}, { withCredentials: true }); // backend clears the cookie
+      await api.post("/Festofy/user/logout", { withCredentials: true }); // backend clears the cookie
       setdetails({ username: "", email: "" }); // clear context user
       document.cookie = "hasVisited=; max-age=0; path=/";
       setisAuthenticated(false)
+      localStorage.removeItem("ULRKGDAPS")
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -33,7 +34,6 @@ const Navbar = () => {
     if (hasAnimated.current) return; // prevent re-running
     hasAnimated.current = true;
 
-    requestAnimationFrame(() => {
     const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
 
     gsap.fromTo(
@@ -57,8 +57,7 @@ const Navbar = () => {
       duration: 1,
       ease: "power3.out",
     });
-    })
-  }, [letterref,navbarref]);
+  }, []);
   return (
     <div>
       {/* <header className="relative z-10 px-6 py-6"> */}
