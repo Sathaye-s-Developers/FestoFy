@@ -78,7 +78,7 @@ const Header = () => {
             {/* CTA Button - Exact styling from image */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20" ref={(el) => (headerRef.current[2] = el)} style={{ animationDelay: '400ms' }}>
                 <button className="group px-12 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xl font-semibold rounded-full hover:from-cyan-400 hover:to-blue-500 transform hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-2xl hover:shadow-cyan-500/40 relative overflow-hidden" onClick={() => {
-                    if (!token) {
+                    if (!isAuthenticated) {
                         setRegister(true)
                     } else {
                         console.log("hello")

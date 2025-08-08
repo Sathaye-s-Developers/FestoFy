@@ -6,15 +6,22 @@ import { RxCross2 } from "react-icons/rx";
 import { useForm } from 'react-hook-form';
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, setIsSubmitting }) => {
+const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting,register,handleSubmit,setValue }) => {
     const { closePopup, setpassword } = useContext(EventAppContext)
-    const { register, handleSubmit, setValue } = useForm();
+
     const [addpassword, setaddpassword] = useState(false)
 
 
     const handleCollegeChange = (selectedOption) => {
-        setValue("college_code", selectedOption.value)
-    }
+        setValue("college_code", selectedOption.value, {
+            shouldValidate: true, // Optional, to trigger validation
+            shouldDirty: true,
+        });
+    };
+    React.useEffect(() => {
+        register("college_code");
+    }, [register]);
+
     return (
         <div>
             <div className='p-5 flex justify-between font-[Nunito]'>
@@ -38,7 +45,7 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, setIsSub
                         </div>
                         {login === "logout" ? <></> :
                             <div className='w-[80%] mb-4'>
-                                <Select
+                                <Select name="college_code" onChange={handleCollegeChange}
                                     options={college_Name.map((college_Name) => ({ label: college_Name.full_name, value: college_Name.college_code }))}
                                     className='w-full h-[36px]'
                                     isSearchable

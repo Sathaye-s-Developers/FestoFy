@@ -19,6 +19,7 @@ const Navbar = () => {
       e.preventDefault();
       await api.post("/Festofy/user/logout", { withCredentials: true }); // backend clears the cookie
       setdetails({ username: "", email: "" }); // clear context user
+      document.cookie = "hasVisited=; max-age=0; path=/";
       window.location.href = "/";
       setisAuthenticated(false)
       localStorage.removeItem("ULRKGDAPS")

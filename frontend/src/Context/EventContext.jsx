@@ -30,56 +30,57 @@ const EventContext = (props) => {
     const [loading, setloading] = useState(false)
 
     const [isAuthenticated, setisAuthenticated] = useState(false)
+    const param = {
+        luminosity: lum,
+        hue: hue,
+    };
 
     //Otp Email
     const [email, setemail] = useState({ "email": "" })
 
-    // const fetchUserDetails = useCallback(async () => {
-    //     try {
-    //         const response = await api.get("/Festofy/user/user_details")
-    //         // setrandcolor(randomColor(param));
-
-    //         setisAuthenticated(response.data.isAuthenticated)
-
-    //         setdetails(prev => {
-    //             const newUser = {
-    //                 username: response.data.user.username,
-    //                 email: response.data.user.email,
-    //             };
-
-    //             if (prev.username !== newUser.username || prev.email !== newUser.email) {
-    //                 return newUser; // update only if changed
-    //             }
-    //             return prev; // no update needed
-    //         });
-
-
-    //     } catch (err) {
-    //         setisAuthenticated(false)
-    //     }
-    // }, [api, setdetails, setisAuthenticated])
     const fetchUserDetails = useCallback(async () => {
-        // setloading(true)
         try {
             const response = await api.get("/Festofy/user/user_details");
-            console.log(response.data.isAuthenticated)
+            setrandcolor(randomColor(param));
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
             }
 
-            setdetails({ username: response.data.user.username, email: response.data.user.email })
+            setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code })
 
         } catch (err) {
             setisAuthenticated(false)
         }
     }, [api]);
 
+    // useEffect(() => {
+    //     const code = localStorage.getItem("ULRKGDAPS");
+    //     if (code) {
+    //         fetchUserDetails()
+    //     }
+    // }, [fetchUserDetails]);
     useEffect(() => {
-        const code = localStorage.getItem("ULRKGDAPS");
-        if (code) {
-            fetchUserDetails()
+        const checkVisitAndTrack = async () => {
+            const cookies = document.cookie.split("; ").map((cookie) => cookie.trim());
+            const hasvisited = cookies.some((cookie) =>
+                cookie.startsWith("hasVisited=true")
+            );
+            if (hasvisited) {
+                setisAuthenticated(true);
+            } else {
+                try {
+                    const response = await api.post("/Festofy/user/track-visit", {}, { withCredentials: true })
+                    console.log(response.data)
+                    document.cookie = "hasVisited=true; max-age=86400; path=/";
+                } catch (err) {
+                    console.log(err)
+                }
+            }
+
         }
-    }, [fetchUserDetails]);
+        checkVisitAndTrack();
+    }, [])
+
 
     const closePopup = useCallback(() => {
         setRegister(false);

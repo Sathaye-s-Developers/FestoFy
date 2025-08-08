@@ -5,14 +5,22 @@ import { User, Calendar, LogOut, Settings, Bell, Star } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Link } from "react-router-dom"
 
-const EventOptions = ({popupRef }) => {
+const EventOptions = ({ popupRef }) => {
     const Navigate = useNavigate()
-    const { details, randcolor, settoken ,profileOptions, setprofileOptions} = useContext(EventAppContext)
-    const logout = () => {
-        localStorage.removeItem("token")
-        settoken("")
-        Navigate("/Home")
-    }
+    const { details, randcolor, settoken, profileOptions, setprofileOptions,api,setdetails,setisAuthenticated } = useContext(EventAppContext)
+    const logout = async (e) => {
+        try {
+            e.preventDefault();
+            await api.post("/Festofy/user/logout", { withCredentials: true }); // backend clears the cookie
+            setdetails({ username: "", email: "" }); // clear context user
+            window.location.href = "/";
+            setisAuthenticated(false)
+            localStorage.removeItem("ULRKGDAPS")
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
+    };
+
     return (
         <div ref={popupRef}>
             <div className={`h-full fixed top-2 right-0 lg:w-[28vw] xl:w-[22vw] sm:w-[44vw] md:w-[35vw] w-[60vw] max-w-[60vw] z-50 transition-transform ease-in-out transform ${profileOptions ? 'translate-x-0' : '-translate-x-full'

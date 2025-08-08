@@ -3,23 +3,27 @@ import { RxCross2 } from "react-icons/rx";
 import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 import Otp_popup from './Otp_popup'
-
+import { useForm } from "react-hook-form";
 
 import Forgot_pass from "./Forgotpass_component/Forgot_pass"
 import Forgot_OtpPopup from './Forgotpass_component/Forgot_OtpPopup';
 import LoginForm from './LoginForm';
 import NewPassword_popup from './Forgotpass_component/NewPassword_popup';
 const Login_PopUp = () => {
-    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated ,fetchUserDetails} = useContext(EventAppContext)
+    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails } = useContext(EventAppContext)
     const [login, setlogin] = useState("logout")
 
     const [Forgototp, setForgototp] = useState(false)
     const [errorMsg, seterrorMsg] = useState("")
-    // const [savetoken, setsavetoken] = useState({ token: "" })
     const [newpassword, setnewpassword] = useState(false)
     const [regemail, setregemail] = useState("")
     const [email, setemail] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const {
+        register,
+        handleSubmit,
+        setValue
+    } = useForm();
 
     const RenderSmallComponent = () => {
         if (newpassword) return <NewPassword_popup Allclose={Allclose} />
@@ -30,7 +34,7 @@ const Login_PopUp = () => {
 
         if (otp) return <Otp_popup email={email} setotp={setotp} login={login} />//token used
 
-        return <LoginForm login={login} setlogin={setlogin} onsubmit={onsubmit} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} />
+        return <LoginForm login={login} setlogin={setlogin} onsubmit={onsubmit} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} />
     }
 
     const Allclose = () => {
@@ -38,10 +42,21 @@ const Login_PopUp = () => {
         setForgototp(false)
         setpassword(false)
     }
+
     const onsubmit = useCallback(async (formData) => {
         seterrorMsg("")
+        console.log(formData)
         if (isSubmitting) return;
         setIsSubmitting(true);
+        const payload = {
+            username: formData.Username,
+            email: formData.Email,
+            password: formData.Password,
+        };
+
+        if (login === "login") {
+            payload.college_code = formData.college_code;
+        }
 
         let newurl = api.defaults.baseURL;
         if (login === "logout") {
@@ -50,7 +65,7 @@ const Login_PopUp = () => {
             newurl += "/Festofy/user/signUp"
         }
         try {
-            const response = await axios.post(newurl, { username: formData.Username, email: formData.Email, password: formData.Password }, {
+            const response = await axios.post(newurl, payload, {
                 withCredentials: true,
             })
             if (login === "logout") {
