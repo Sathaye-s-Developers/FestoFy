@@ -63,7 +63,7 @@ const Otp_popup = ({ email }) => {
                 setprogress(100)
                 setisAuthenticated(true)
                 await checkVisitAndTrack()
-                // localStorage.setItem("ULRKGDAPS","ABCEFG123")
+                await fetchUserDetails()
             }
             setIsSubmitting(false);
         } catch (err) {

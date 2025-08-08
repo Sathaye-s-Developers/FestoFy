@@ -74,9 +74,9 @@ const Login_PopUp = () => {
                     setIsSubmitting(true);
                     setRegister(false)
                     setisAuthenticated(true)
-                    // localStorage.setItem("ULRKGDAPS", "ABCEFG123")
                     setprogress(100)
                     await checkVisitAndTrack()
+                    await fetchUserDetails()
                 }
             } else {
                 if (response.data.success) {

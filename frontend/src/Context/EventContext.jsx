@@ -39,16 +39,10 @@ const EventContext = (props) => {
         try {
             const response = await api.get("/Festofy/user/user_details");
             setrandcolor(randomColor(param));
-            // if (response.data.isAuthenticated) {
-            //     updateAuthState(true)
-            // } else {
-            //     updateAuthState(false)
-            // }
-
             setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code })
 
         } catch (err) {
-           console.log(err)
+            console.log(err)
         }
     }, [api]);
 
@@ -62,7 +56,6 @@ const EventContext = (props) => {
         } else {
             try {
                 const response = await api.post("/Festofy/user/track-visit", {}, { withCredentials: true })
-                console.log(response.data)
                 document.cookie = "hasVisited=true; max-age=86400; path=/";
             } catch (err) {
                 console.log(err)
@@ -72,7 +65,9 @@ const EventContext = (props) => {
     }
     useEffect(() => {
         checkVisitAndTrack();
-        fetchUserDetails()
+        if (isAuthenticated) {
+            fetchUserDetails()
+        }
     }, [])
 
 
