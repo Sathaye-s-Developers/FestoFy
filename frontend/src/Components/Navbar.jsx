@@ -3,7 +3,7 @@ import { EventAppContext } from '../Context/EventContext';
 import { Link } from "react-router-dom"
 import { Calendar, User, Menu, X } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
-import { SplitText } from 'gsap/all';
+import { SplitText } from 'gsap/SplitText';
 import gsap from 'gsap';
 
 const Navbar = () => {
@@ -11,7 +11,7 @@ const Navbar = () => {
   const toggleoption = () => {
     setoptions((prev) => !prev)
   }
-
+  gsap.registerPlugin(SplitText);
   const hasAnimated = useRef(false);
 
   const logout = async (e) => {
