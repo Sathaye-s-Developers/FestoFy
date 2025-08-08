@@ -3,7 +3,7 @@ import { EventAppContext } from '../Context/EventContext';
 import { Link } from "react-router-dom"
 import { Calendar, User, Menu, X } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
-import { SplitText } from 'gsap/SplitText';
+import  SplitText from 'gsap/SplitText';
 import gsap from 'gsap';
 
 const Navbar = () => {
@@ -35,6 +35,7 @@ const Navbar = () => {
     if (hasAnimated.current) return; // prevent re-running
     hasAnimated.current = true;
 
+    requestAnimationFrame(() => {
     const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
 
     gsap.fromTo(
@@ -58,7 +59,8 @@ const Navbar = () => {
       duration: 1,
       ease: "power3.out",
     });
-  }, []);
+    })
+  }, [letterref,navbarref]);
   return (
     <div>
       {/* <header className="relative z-10 px-6 py-6"> */}
