@@ -3,14 +3,13 @@ import { EventAppContext } from '../Context/EventContext'
 import { college_Name } from "../Websites data/Colleges_Names"
 import Select from 'react-select'
 import { RxCross2 } from "react-icons/rx";
-import { useForm } from 'react-hook-form';
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting,register,handleSubmit,setValue }) => {
+const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register, handleSubmit, setValue,Controller,control }) => {
     const { closePopup, setpassword } = useContext(EventAppContext)
 
     const [addpassword, setaddpassword] = useState(false)
-
+ 
 
     const handleCollegeChange = (selectedOption) => {
         setValue("college_code", selectedOption.value, {
@@ -19,7 +18,7 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting,register,
         });
     };
     React.useEffect(() => {
-        register("college_code");
+        register("college_code", { required: true });
     }, [register]);
 
     return (
@@ -45,49 +44,72 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting,register,
                         </div>
                         {login === "logout" ? <></> :
                             <div className='w-[80%] mb-4'>
-                                <Select name="college_code" onChange={handleCollegeChange}
-                                    options={college_Name.map((college_Name) => ({ label: college_Name.full_name, value: college_Name.college_code }))}
-                                    className='w-full h-[36px]'
-                                    isSearchable
-                                    styles={{
-                                        control: (baseStyles, state) => ({
-                                            ...baseStyles,
-                                            border: `1px solid white ${state.isFocused ? 'white' : 'white'}`,
-                                            boxShadow: 'none',
-                                            backgroundColor: 'transparent',
-                                            color: 'black'
-                                        }),
-                                        menu: (base) => ({
-                                            ...base,
-                                            backgroundColor: '#1f2937', // 👈 dropdown background (Tailwind `gray-800`)
-                                            color: 'white',
-                                            zIndex: 9999
-                                        }),
-                                        option: (base, state) => ({
-                                            ...base,
-                                            backgroundColor: state.isFocused ? '#374151' : '#1f2937', // gray-700 when focused
-                                            color: 'white',
-                                            cursor: 'pointer',
-                                            '&:hover': {
-                                                backgroundColor: '#4b5563', // Tailwind gray-600
-                                                color: 'black', // 👈 Your intended hover color
-                                            },
-                                        }),
-                                        input: (base) => ({
-                                            ...base,
-                                            color: 'black',
-                                        }),
-                                        placeholder: (base) => ({
-                                            ...base,
-                                            color: 'black', // Tailwind gray-400
-                                        }),
-                                        singleValue: (base) => ({
-                                            ...base,
-                                            color: 'black',
-                                        }),
-                                    }}
-                                    placeholder="Your College Name"
+                                <Controller
+                                    name="college_code"
+                                    control={control}  // get this from useForm()
+                                    rules={{ required: "College is required" }}
+                                    render={({ field, fieldState: { error } }) => (
+                                        <>
+                                            <Select
+                                                {...field}
+                                                options={college_Name.map(college => ({
+                                                    label: college.full_name,
+                                                    value: college.college_code,
+                                                }))}
+                                                className="w-full h-[36px]"
+                                                isSearchable
+                                                styles={{
+                                                    control: (baseStyles, state) => ({
+                                                        ...baseStyles,
+                                                        border: `1px solid white ${state.isFocused ? "white" : "white"}`,
+                                                        boxShadow: "none",
+                                                        backgroundColor: "transparent",
+                                                        color: "black",
+                                                    }),
+                                                    menu: (base) => ({
+                                                        ...base,
+                                                        backgroundColor: "#1f2937",
+                                                        color: "white",
+                                                        zIndex: 9999,
+                                                    }),
+                                                    option: (base, state) => ({
+                                                        ...base,
+                                                        backgroundColor: state.isFocused ? "#374151" : "#1f2937",
+                                                        color: "white",
+                                                        cursor: "pointer",
+                                                        "&:hover": {
+                                                            backgroundColor: "#4b5563",
+                                                            color: "black",
+                                                        },
+                                                    }),
+                                                    input: (base) => ({
+                                                        ...base,
+                                                        color: "black",
+                                                    }),
+                                                    placeholder: (base) => ({
+                                                        ...base,
+                                                        color: "black",
+                                                    }),
+                                                    singleValue: (base) => ({
+                                                        ...base,
+                                                        color: "black",
+                                                    }),
+                                                }}
+                                                placeholder="Your College Name"
+                                                onChange={val => field.onChange(val.value)} // pass only value to react-hook-form
+                                                value={college_Name
+                                                    .map(college => ({
+                                                        label: college.full_name,
+                                                        value: college.college_code,
+                                                    }))
+                                                    .find(option => option.value === field.value)
+                                                }
+                                            />
+                                            {error && <p className="text-red-600 text-sm mt-1">{error.message}</p>}
+                                        </>
+                                    )}
                                 />
+
                             </div>}
 
                         {login === "logout" ? <input type="text" placeholder='Special Key (Optional)' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' {...register("Special_key")} autoComplete='college-code' /> : null}

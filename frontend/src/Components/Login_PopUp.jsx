@@ -3,7 +3,7 @@ import { RxCross2 } from "react-icons/rx";
 import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 import Otp_popup from './Otp_popup'
-import { useForm } from "react-hook-form";
+import { useForm,Controller} from "react-hook-form";
 
 import Forgot_pass from "./Forgotpass_component/Forgot_pass"
 import Forgot_OtpPopup from './Forgotpass_component/Forgot_OtpPopup';
@@ -22,7 +22,8 @@ const Login_PopUp = () => {
     const {
         register,
         handleSubmit,
-        setValue
+        setValue,
+        control
     } = useForm();
 
     const RenderSmallComponent = () => {
@@ -34,7 +35,7 @@ const Login_PopUp = () => {
 
         if (otp) return <Otp_popup email={email} setotp={setotp} login={login} />//token used
 
-        return <LoginForm login={login} setlogin={setlogin} onsubmit={onsubmit} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} />
+        return <LoginForm login={login} setlogin={setlogin} Controller={Controller}  onsubmit={onsubmit} control={control} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} />
     }
 
     const Allclose = () => {
