@@ -65,9 +65,7 @@ const EventContext = (props) => {
     }
     useEffect(() => {
         checkVisitAndTrack();
-        if (isAuthenticated) {
-            fetchUserDetails()
-        }
+        fetchUserDetails()
     }, [])
 
 
