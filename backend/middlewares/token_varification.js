@@ -3,7 +3,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 function verifyToken(req, res, next) {
   console.log("working");
-  const token = req.cookies?.token;
+  const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1]
   // console.log("Cookies:", token);
   
   if (!token) {

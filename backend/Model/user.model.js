@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   collegeName: {
     type: String,
-    require: false,
+    required: false,
   },
   password: {
     type: String,
@@ -28,12 +28,12 @@ const userSchema = new mongoose.Schema({
   },
   college_code: {
     type: String,
-    require: false,
+    required: true,
     trim: true
   },
   role: {
     type: String,
-    require: false,
+    required: false,
     default: "user",
     enum: ["user", "admin", "superadmin"],
   },

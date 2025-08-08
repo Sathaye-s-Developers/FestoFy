@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../Model/user.model");
+const trackvisit = require("../Model/trackVisit.model")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
@@ -16,7 +17,7 @@ router.post("/signUp", async (req, res) => {
   console.log("Headers:", req.headers);
   console.log("Body received:", req.body);
   try {
-    const { username, email, password, collegeName } = req.body;
+    const { username, email, password, college_code } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
@@ -49,7 +50,7 @@ router.post("/signUp", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      collegeName,
+      college_code,
     });
 
     await newUser.save();
@@ -126,7 +127,7 @@ router.post("/login", async (req, res) => {
       message: "Login successful",
       username: user.username,
       role: user.role,
-      token:token
+      token: token
     });
   } catch (err) {
     console.error(err);
@@ -204,11 +205,11 @@ router.get("/verifyUser", verifyToken, async (req, res) => {
 router.get("/user_details", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
-    if (!user) return res.status(404).json({isAuthenticated: false  });
+    if (!user) return res.status(404).json({ isAuthenticated: false });
 
-    res.json({ isAuthenticated:true, user });
+    res.json({ isAuthenticated: true, user });
   } catch (err) {
-    res.status(500).json({isAuthenticated: false });
+    res.status(500).json({ isAuthenticated: false });
   }
 });
 
@@ -220,6 +221,24 @@ router.get("/all_users", verifyToken, async (req, res) => {
     res.status(200).json({ message: " All users fetched", users });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/track-visit",verifyToken, async (req, res) => {
+  try {
+    let stat = await trackvisit.findOne();
+
+    if (!stat) {
+      stat = new trackvisit({ totalVisits: 1 });
+    } else {
+      stat.totalVisits += 1;
+    }
+
+    await stat.save();
+    res.status(200).json({ success: true, message: "Visit counted" });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ success: false, message: "Error tracking visit" });
   }
 });
 module.exports = router;
