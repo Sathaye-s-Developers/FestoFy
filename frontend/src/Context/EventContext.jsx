@@ -27,7 +27,7 @@ const EventContext = (props) => {
     const [profileOptions, setprofileOptions] = useState(false)
     const [otp, setotp] = useState(false)
     const [password, setpassword] = useState(false)
-    const [loading, setloading] = useState(false)
+    const [loading, setloading] = useState(true)
 
     const [isAuthenticated, setisAuthenticated] = useState(false)
     const param = {
@@ -50,6 +50,8 @@ const EventContext = (props) => {
 
         } catch (err) {
             setisAuthenticated(false)
+        } finally {
+            setloading(false); // only stop loading after fetch completes or errors
         }
     }, [api]);
 
@@ -57,7 +59,10 @@ const EventContext = (props) => {
         const code = localStorage.getItem("ULRKGDAPS");
         if (code) {
             fetchUserDetails()
+        } else {
+            setloading(false)
         }
+
     }, [fetchUserDetails]);
 
 
@@ -66,8 +71,8 @@ const EventContext = (props) => {
     }, []);
 
     const contextvalue = useMemo(() => ({
-         api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading
-    }), [  api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading]);
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading
+    }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading]);
 
 
     // const contextvalue = {

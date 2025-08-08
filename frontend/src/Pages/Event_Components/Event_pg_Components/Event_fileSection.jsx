@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap } from 'lucide-react';
-const Event_filteSection = () => {
+const Event_fileSection = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedFilter, setSelectedFilter] = useState('All');
@@ -409,4 +409,4 @@ const Event_filteSection = () => {
     )
 }
 
-export default Event_filteSection
+export default Event_fileSection

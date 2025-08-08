@@ -12,15 +12,19 @@ import Loading_comp from "./Components/Loading_comp"
 import Design_CreateEvent from './Pages/Event_Components/Pages/Design_CreateEvent'
 
 const App = () => {
-  const { register, token, options, setprogress, progress, isAuthenticated } = useContext(EventAppContext)
+  const { register, loading, options, setprogress, progress, isAuthenticated } = useContext(EventAppContext)
+  if (loading) {
+    return <Loading_comp />;
+  }
   return (
     <div>
       <div>
+
         <LoadingBar
           color="#ADD8E6"
           progress={progress}
           onLoaderFinished={() => setprogress(0)}
-        /></div>  
+        /></div>
       {register === true ? <Login_PopUp /> : <></>}
       {options === true ? <Mobile_Options /> : <></>}
       <Routes>
