@@ -45,7 +45,6 @@ const Login_PopUp = () => {
 
     const onsubmit = useCallback(async (formData) => {
         seterrorMsg("")
-        console.log(formData)
         if (isSubmitting) return;
         setIsSubmitting(true);
         const payload = {

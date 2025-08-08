@@ -15,7 +15,7 @@ const EventContext = (props) => {
     const [cookies, setCookie, removeCookie] = useCookies(['Login']);
 
     const api = useMemo(() => axios.create({
-        baseURL: import.meta.env.REACT_APP_API_URL || "http://localhost:3000",
+        baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
         withCredentials: true,
     }), []);
 
