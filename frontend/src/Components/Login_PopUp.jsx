@@ -10,7 +10,7 @@ import Forgot_OtpPopup from './Forgotpass_component/Forgot_OtpPopup';
 import LoginForm from './LoginForm';
 import NewPassword_popup from './Forgotpass_component/NewPassword_popup';
 const Login_PopUp = () => {
-    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails } = useContext(EventAppContext)
+    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails,checkVisitAndTrack } = useContext(EventAppContext)
     const [login, setlogin] = useState("logout")
 
     const [Forgototp, setForgototp] = useState(false)
@@ -74,9 +74,9 @@ const Login_PopUp = () => {
                     setIsSubmitting(true);
                     setRegister(false)
                     setisAuthenticated(true)
-                    localStorage.setItem("ULRKGDAPS", "ABCEFG123")
+                    // localStorage.setItem("ULRKGDAPS", "ABCEFG123")
                     setprogress(100)
-                    await fetchUserDetails()
+                    await checkVisitAndTrack()
                 }
             } else {
                 if (response.data.success) {

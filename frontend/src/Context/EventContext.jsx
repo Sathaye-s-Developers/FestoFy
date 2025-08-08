@@ -1,18 +1,12 @@
 import axios, { Axios } from "axios"
 import { createContext, useEffect, useState, useMemo, useCallback } from "react"
 import randomColor from "randomcolor";
-import { useCookies } from "react-cookie";
 
 export const EventAppContext = createContext(null)
 
 const EventContext = (props) => {
     const [hue, setHue] = useState('red');
     const [lum, setLum] = useState('light');
-    // const param = {
-    //     luminosity: lum,
-    //     hue: hue,
-    // };
-    const [cookies, setCookie, removeCookie] = useCookies(['Login']);
 
     const api = useMemo(() => axios.create({
         baseURL: import.meta.env.REACT_APP_API_URL || "http://localhost:3000",
@@ -37,48 +31,48 @@ const EventContext = (props) => {
 
     //Otp Email
     const [email, setemail] = useState({ "email": "" })
+    const updateAuthState = (value) => {
+        setisAuthenticated((prev) => (prev !== value ? value : prev));
+    };
 
     const fetchUserDetails = useCallback(async () => {
         try {
             const response = await api.get("/Festofy/user/user_details");
             setrandcolor(randomColor(param));
-            if (response.data.isAuthenticated) {
-                setisAuthenticated(response.data.isAuthenticated)
-            }
+            // if (response.data.isAuthenticated) {
+            //     updateAuthState(true)
+            // } else {
+            //     updateAuthState(false)
+            // }
 
             setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code })
 
         } catch (err) {
-            setisAuthenticated(false)
+           console.log(err)
         }
     }, [api]);
 
-    // useEffect(() => {
-    //     const code = localStorage.getItem("ULRKGDAPS");
-    //     if (code) {
-    //         fetchUserDetails()
-    //     }
-    // }, [fetchUserDetails]);
-    useEffect(() => {
-        const checkVisitAndTrack = async () => {
-            const cookies = document.cookie.split("; ").map((cookie) => cookie.trim());
-            const hasvisited = cookies.some((cookie) =>
-                cookie.startsWith("hasVisited=true")
-            );
-            if (hasvisited) {
-                setisAuthenticated(true);
-            } else {
-                try {
-                    const response = await api.post("/Festofy/user/track-visit", {}, { withCredentials: true })
-                    console.log(response.data)
-                    document.cookie = "hasVisited=true; max-age=86400; path=/";
-                } catch (err) {
-                    console.log(err)
-                }
+    const checkVisitAndTrack = async () => {
+        const cookies = document.cookie.split("; ").map((cookie) => cookie.trim());
+        const hasvisited = cookies.some((cookie) =>
+            cookie.startsWith("hasVisited=true")
+        );
+        if (hasvisited) {
+            setisAuthenticated(true);
+        } else {
+            try {
+                const response = await api.post("/Festofy/user/track-visit", {}, { withCredentials: true })
+                console.log(response.data)
+                document.cookie = "hasVisited=true; max-age=86400; path=/";
+            } catch (err) {
+                console.log(err)
             }
-
         }
+
+    }
+    useEffect(() => {
         checkVisitAndTrack();
+        fetchUserDetails()
     }, [])
 
 
@@ -86,12 +80,14 @@ const EventContext = (props) => {
         setRegister(false);
     }, []);
 
-    // const contextvalue = useMemo(() => ({
-    //     register, setRegister, url details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp,password, setpassword
-    // }), [register, url details, options, progress, randcolor, profileOptions, email, setRegister, setdetails, fetchUserDetails, setoptions, setprogress, setprofileOptions, setemail, closePopup, otp, setotp,password, setpassword]);
-    const contextvalue = {
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading
-    }
+    const contextvalue = useMemo(() => ({
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, checkVisitAndTrack
+    }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, checkVisitAndTrack]);
+
+
+    // const contextvalue = {
+    //     api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading
+    // }
     return (
         <EventAppContext.Provider value={contextvalue}>
             {props.children}

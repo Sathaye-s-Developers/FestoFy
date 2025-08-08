@@ -7,7 +7,7 @@ import { SplitText } from 'gsap/all';
 import gsap from 'gsap';
 
 const Navbar = () => {
-  const { api, setRegister, token, settoken, setoptions, options, setprogress, setotp, isAuthenticated, setdetails, setisAuthenticated, details } = useContext(EventAppContext)
+  const { api, setRegister, setoptions, options, setprogress, setotp, isAuthenticated, setdetails, setisAuthenticated, details } = useContext(EventAppContext)
   const toggleoption = () => {
     setoptions((prev) => !prev)
   }
@@ -31,34 +31,34 @@ const Navbar = () => {
   const letterref = useRef()
   const navbarref = useRef()
 
-  // useEffect(() => {
-  //   if (hasAnimated.current) return; // prevent re-running
-  //   hasAnimated.current = true;
+  useEffect(() => {
+    if (hasAnimated.current) return; // prevent re-running
+    hasAnimated.current = true;
 
-  //   const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
+    const lettersplit = new SplitText(letterref.current, { type: 'chars,words' });
 
-  //   gsap.fromTo(
-  //     lettersplit.chars,
-  //     { x: 10, opacity: 0 },
-  //     {
-  //       x: 0,
-  //       opacity: 1,
-  //       duration: 1,
-  //       ease: "power2.inOut",
-  //       stagger: 0.1,
-  //       onComplete: () => {
-  //         lettersplit.revert();
-  //       }
-  //     }
-  //   );
+    gsap.fromTo(
+      lettersplit.chars,
+      { x: 10, opacity: 0 },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 1,
+        ease: "power2.inOut",
+        stagger: 0.1,
+        onComplete: () => {
+          lettersplit.revert();
+        }
+      }
+    );
 
-  //   gsap.from(navbarref.current, {
-  //     y: -100,
-  //     opacity: 0,
-  //     duration: 1,
-  //     ease: "power3.out",
-  //   });
-  // }, []);
+    gsap.from(navbarref.current, {
+      y: -100,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out",
+    });
+  }, []);
   return (
     <div>
       {/* <header className="relative z-10 px-6 py-6"> */}
