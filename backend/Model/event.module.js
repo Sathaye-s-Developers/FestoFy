@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { trim } = require("validator");
 
 const eventSchema = new mongoose.Schema({
   organiser_name: {
@@ -33,9 +34,18 @@ const eventSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  location: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   dateRange: {
     start: Date,
     end: Date,
+  },
+  price: {
+    type: Number,
+    require: false,
   },
   event_mode: {
     type: String,

@@ -10,7 +10,7 @@ const ratingSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Reference to User so a user can only rate once
+      ref: "users", // Reference to User so a user can only rate once
       required: true,
     },
     rating: {
@@ -27,7 +27,7 @@ const ratingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Optional: prevent duplicate ratings from same user for same event
+// prevent duplicate ratings from same user for same event
 ratingSchema.index({ eventId: 1, userId: 1 }, { unique: true });
 
 module.exports = mongoose.model("Rating", ratingSchema);

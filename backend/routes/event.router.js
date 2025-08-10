@@ -16,16 +16,26 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
 
     const {
       organiser_name,
+
       title,
       department,
       description,
       bannerUrl,
+      location,
       dateRange,
       visibility,
+      price,
       event_mode, //event would be paid or free
     } = req.body;
     //  console.log("req.user in /create route:", req.user);
-    if (!title || !department || !description || !bannerUrl || !dateRange) {
+    if (
+      !title ||
+      !department ||
+      !description ||
+      !bannerUrl ||
+      !dateRange ||
+      !location
+    ) {
       return res.status(400).send({ message: "All fields are required" });
     }
 
@@ -46,16 +56,18 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       department,
       description,
       bannerUrl,
+      location,
       dateRange,
       subEvents: [],
       volunteers: [],
       createdBy: userId,
       visibility: visibility || "college", //college or explore  by default college
+      price: price || 0,
       event_mode: event_mode || "free", //free pr paid
       createdByCollege: collegeName,
     });
 
-    await newEvent.save();
+    const newevent = await newEvent.save();
     res
       .status(201)
       .json({ message: "Event created successfully", event: newEvent });
