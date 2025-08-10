@@ -10,6 +10,12 @@ const subEventSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+
+  event_mode: {
+    type: String,
+    enum: ["free", "paid"],
+    default: "free",
+  },
   date: {
     type: Date,
     required: true,

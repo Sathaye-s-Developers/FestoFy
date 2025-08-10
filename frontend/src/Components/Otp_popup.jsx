@@ -3,11 +3,12 @@ import { IoArrowBackCircleSharp } from "react-icons/io5";
 import { EventAppContext } from '../Context/EventContext';
 import axios from 'axios';
 
-const Otp_popup = ({ email, savetoken }) => {
-    const { url, setRegister, settoken, setprogress, otp, setotp } = useContext(EventAppContext)
+const Otp_popup = ({ email }) => {
+    const { api, setRegister, setprogress, otp, setotp, setisAuthenticated ,isAuthenticated} = useContext(EventAppContext)
     const [errorMsg, seterrorMsg] = useState("")
     const [timerKey, setTimerKey] = useState(0);
     const [displayTime, setDisplayTime] = useState("2:59");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
     const timeDisplayRef = useRef("2:59");
@@ -35,7 +36,7 @@ const Otp_popup = ({ email, savetoken }) => {
 
             const formattedTime = `${minutesRef.current}:${secondsRef.current < 10 ? '0' + secondsRef.current : secondsRef.current}`;
             timeDisplayRef.current = formattedTime;
-            setDisplayTime(formattedTime); 
+            setDisplayTime(formattedTime);
 
 
         }, 1000);
@@ -47,29 +48,37 @@ const Otp_popup = ({ email, savetoken }) => {
 
     const getOtpValue = async (e) => {
         e.preventDefault()
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         const otp = inputs.current.map(input => input?.value).join("");
 
         try {
-            const response = await axios.post(url + "/Festofy/user/otp/verify-otp", { email: email, otp: otp }, { headers: { Authorization: `Bearer ${savetoken.token}` } })
+            const response = await api.post("/Festofy/user/otp/verify-otp", { email: email, otp: otp }, {
+                withCredentials: true, // 👈 sends cookies
+            })
             if (response.data.success) {
                 setprogress(50)
-                localStorage.setItem("token", savetoken.token)
-                settoken(savetoken.token)
+                // localStorage.setItem("token", savetoken.token)
+                // settoken(savetoken.token)
                 setRegister(false)
                 setotp(false)
                 setprogress(100)
+                setisAuthenticated(true)
+                localStorage.setItem("ULRKGDAPS","ABCEFG123")
             }
+            setIsSubmitting(false);
         } catch (err) {
             if (err.response && (err.response.status === 400)) {
                 seterrorMsg(err.response.data.message);
                 setprogress(0)
+                setIsSubmitting(false);
             }
         }
     };
 
     const onsubmit = async (e) => {
         try {
-            const response = await axios.post(url + "/Festofy/user/otp/send-otp", { email })
+            const response = await api.post("/Festofy/user/otp/send-otp", { email })
 
         } catch (err) {
             if (err.response && (err.response.status === 409 || err.response.status === 401)) {
@@ -102,9 +111,9 @@ const Otp_popup = ({ email, savetoken }) => {
         <div>
             <form onSubmit={getOtpValue}>
                 <div className='relative p-5 pb-2 flex justify-between font-[Nunito]'>
-                    <p className='absolute' onClick={() => { setotp(false) }} ><IoArrowBackCircleSharp onClick={() => { setprogress(0) }} size={30} /></p>
+                    <p className='absolute' onClick={() => { setotp(false) }} ><IoArrowBackCircleSharp color='black' onClick={() => { setprogress(0) }} size={30} /></p>
                     <div className='flex justify-center w-full'>
-                        <p className='font-bold text-[18px] '>Enter Otp</p>
+                        <p className='font-bold text-[18px] text-black'>Enter Otp</p>
                     </div>
                 </div>
                 <div className='ml-10 mr-10'>
@@ -118,7 +127,7 @@ const Otp_popup = ({ email, savetoken }) => {
                                 ref={(el) => (inputs.current[i] = el)}
                                 type="text"
                                 maxLength={1}
-                                className="border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 cursor-pointer"
+                                className="border-2 border-gray-300 rounded-[5px] w-10 h-10 text-center  p-1 cursor-pointer text-black"
                                 pattern="[0-9]*"
                                 inputMode="numeric"
                                 required
@@ -136,8 +145,8 @@ const Otp_popup = ({ email, savetoken }) => {
 
                 <div className='ml-5 md:ml-6 lg:ml-11 mt-3 flex justify-between w-[85%] md:w-[80%]'>
                     <div className='flex items-center justify-center gap-1'>
-                        <p className='font-semibold text-[12px] text-center'>Time Remaining : </p>
-                        <p className={`font-extrabold text-[12px] text-center ${displayTime.startsWith("0:") && parseInt(displayTime.split(":")[1]) < 20 ? "text-red-500" : "text-white"}`}>
+                        <p className='font-semibold text-[12px] text-center text-black'>Time Remaining : </p>
+                        <p className={`font-extrabold text-[12px] text-center ${displayTime.startsWith("0:") && parseInt(displayTime.split(":")[1]) < 20 ? "text-red-500" : "text-black"}`}>
                             {displayTime}
                         </p>
 
@@ -154,7 +163,10 @@ const Otp_popup = ({ email, savetoken }) => {
                     </div>
                 </div>
                 <div className='flex justify-center  mt-3'>
-                    <button type='submit' className='bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none'>Submit</button>
+                    <button type='submit' disabled={isSubmitting} className={`${isSubmitting
+                        ? "opacity-50 cursor-not-allowed"
+                        : "cursor-pointer hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/25 hover:scale-105 hover:-translate-y-0.3"
+                        } bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none`}>{isSubmitting ? "Submitting..." : "Submit"}</button>
                 </div>
 
             </form>

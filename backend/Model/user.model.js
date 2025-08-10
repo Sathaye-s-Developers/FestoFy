@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   },
   collegeName: {
     type: String,
-    required: true,
+    required: false,
   },
   password: {
     type: String,
@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema({
   college_code: {
     type: String,
     trim: true,
-    lowercase: true,
   },
   phone: { type: String, trim: true },
   department: { type: String },

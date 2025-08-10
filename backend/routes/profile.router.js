@@ -6,9 +6,9 @@ const verifyToken = require("../middlewares/token_varification");
 router.post("/set-profile", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
-    const { phone, department, year } = req.body;
+    const { department, year } = req.body;
 
-    if (!phone || !department || !year) {
+    if (!department || !year) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
@@ -16,7 +16,7 @@ router.post("/set-profile", verifyToken, async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { phone, department, year },
+      { department, year },
       { new: true }
     );
 

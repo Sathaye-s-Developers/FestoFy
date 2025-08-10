@@ -2,15 +2,22 @@ import React from 'react'
 import facebook from "../assets/facebook_icon.png"
 import linkdin from "../assets/linkedin_icon.png"
 import twitter from "../assets/twitter_icon.png"
-import { CheckCircle , Target,Heart ,Award } from "lucide-react"
+import { CheckCircle, Target, Heart, Award } from "lucide-react"
 
 const About = () => {
+  const Features = [
+    'Plan with ease',
+    'Engage participants',
+    'Simplify payments',
+    'Empower volunteers'
+  ];
   const achievements = [
     'Winner of Best EdTech Platform 2024',
     'Trusted by 500+ Educational Institutions',
     'Featured in TechCrunch and Forbes',
     '4.9/5 Rating from 10,000+ Users'
   ];
+
   const stats = [
     { number: '10K+', label: 'Events Organized' },
     { number: '500+', label: 'Colleges Trust Us' },
@@ -39,37 +46,33 @@ const About = () => {
 
   return (
     <div className="mb-20" id='About'>
-      <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-3xl border border-cyan-400/20 p-8 md:p-12">
+      <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-3xl border border-cyan-400/20 p-8 md:p-12 flex  flex-col items-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
           About <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Festofy</span>
         </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+        <div className="grid grid-cols-1 gap-4 mb-7 ">
           <div>
-            <h3 className="text-2xl font-semibold text-white mb-4">Our Story</h3>
+            <h3 className="text-2xl font-semibold text-white mb-4">Our Features</h3>
             <p className="text-gray-300 leading-relaxed mb-6">
-              Founded in 2022 by a team of passionate college students and tech enthusiasts, Festofy was born from the frustration of organizing campus events with outdated tools and fragmented systems. We experienced firsthand the challenges of coordinating teams, managing budgets, and engaging audiences.
-            </p>
-            <p className="text-gray-300 leading-relaxed">
-              Today, we're proud to serve over 500 educational institutions worldwide, helping them create memorable experiences that bring communities together. Our platform has facilitated over 10,000 successful events, reaching more than 1 million students globally.
+              Festofy is an all-in-one college event management platform that makes organizing fests simple and stress-free. From creating events and sending invites to handling payments, volunteers, and attendance tracking, we cover it all. Our mission is to make every college event more organized, engaging, and memorable.
             </p>
           </div>
 
           <div>
             <h3 className="text-2xl font-semibold text-white mb-4">Our Mission</h3>
             <p className="text-gray-300 leading-relaxed mb-6">
-              To revolutionize how educational institutions plan, promote, and execute events by providing an intuitive, comprehensive platform that eliminates complexity and maximizes engagement.
+              At Festofy, our mission is to simplify college event management by providing a smart, seamless, and user-friendly platform. We aim to help colleges create events that are not only well-organized but also engaging and memorable for every participant.
             </p>
-
-            <div className="space-y-3">
-              {achievements.map((achievement, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <CheckCircle className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                  <span className="text-gray-300">{achievement}</span>
-                </div>
-              ))}
-            </div>
           </div>
+        </div>
+        <div className="space-y-3 margin-auto mb-10">
+          {Features.map((achievement, index) => (
+            <div key={index} className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-cyan-400 flex-shrink-0" />
+              <span className="text-gray-300">{achievement}</span>
+            </div>
+          ))}
         </div>
 
         {/* Stats Section */}
@@ -83,7 +86,7 @@ const About = () => {
             </div>
           ))}
         </div>
-          <div>hello</div>
+        <div>hello</div>
         {/* Values Section */}
         <div>
           <h3 className="text-2xl font-semibold text-white mb-8 text-center">Our Values</h3>
@@ -102,7 +105,7 @@ const About = () => {
                     {value.description}
                   </p>
                 </div>
-                
+
               );
             })}
           </div>

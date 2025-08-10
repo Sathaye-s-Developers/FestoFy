@@ -5,8 +5,9 @@ const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const verifyToken = require("../middlewares/token_varification");
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
-//const match_clg = require("../functions/searching_clg_codes");
-// //Admin secreate code
+const clg_codes = require("../college_codes/codes");
+
+//Admin secreate code
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
 // super Admin
 const SUPER_ADMIN_SECRET_KEY = process.env.SUPER_ADMIN_SECRET_KEY;
@@ -14,7 +15,7 @@ const SUPER_ADMIN_SECRET_KEY = process.env.SUPER_ADMIN_SECRET_KEY;
 //  Register
 router.post("/signUp", async (req, res) => {
   try {
-    const { username, email, password, collegeName } = req.body;
+    const { username, email, password, college_code } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
@@ -43,11 +44,30 @@ router.post("/signUp", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Build a map for O(1) lookups
+    const collegeMap = {};
+    for (const college of clg_codes) {
+      collegeMap[college.college_code] = college.full_name;
+    }
+
+    // Function to get college name
+    function getCollegeNameByCode(code) {
+      return collegeMap[code] || false;
+    }
+
+    // Example usage
+    const clg_Name = getCollegeNameByCode(college_code);
+    if (clg_Name == false) {
+      return res.status(404).send({ message: "clg not listed" });
+    }
+    console.log(clg_Name);
+
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      collegeName,
+      collegeName: clg_Name,
+      college_code,
     });
 
     await newUser.save();
@@ -61,7 +81,7 @@ router.post("/signUp", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
     });
 
@@ -114,7 +134,7 @@ router.post("/login", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
     });
 
@@ -134,11 +154,11 @@ router.post("/login", async (req, res) => {
 });
 
 //logout
-router.post("/logout", (req, res) => {
+router.post("/logout", verifyToken, (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
   });
 
   res.status(200).json({ success: true, message: "Logged out successfully" });

@@ -12,10 +12,18 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
     const userId = req.user._id;
     const userEmail = req.user.email;
-    const { collegeName } = await User.findOne({ _id: userId });
+    const { username, collegeName } = await User.findOne({ _id: userId });
 
-    const { title, department, description, bannerUrl, dateRange, visibility } =
-      req.body;
+    const {
+      organiser_name,
+      title,
+      department,
+      description,
+      bannerUrl,
+      dateRange,
+      visibility,
+      event_mode, //event would be paid or free
+    } = req.body;
     //  console.log("req.user in /create route:", req.user);
     if (!title || !department || !description || !bannerUrl || !dateRange) {
       return res.status(400).send({ message: "All fields are required" });
@@ -32,6 +40,7 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
     }
 
     const newEvent = new Event({
+      organiser_name: organiser_name || username,
       email: userEmail,
       title: title.trim(),
       department,
@@ -42,6 +51,7 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       volunteers: [],
       createdBy: userId,
       visibility: visibility || "college", //college or explore  by default college
+      event_mode: event_mode || "free", //free pr paid
       createdByCollege: collegeName,
     });
 

@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
+  organiser_name: {
+    type: String,
+    required: false,
+    trim: true,
+    lowercase: true,
+  },
   email: {
     type: String,
     required: true,
@@ -30,6 +36,11 @@ const eventSchema = new mongoose.Schema({
   dateRange: {
     start: Date,
     end: Date,
+  },
+  event_mode: {
+    type: String,
+    enum: ["free", "paid"],
+    default: "free",
   },
 
   //Visibility logic: 'college' or 'explore'

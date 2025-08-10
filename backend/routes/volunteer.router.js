@@ -7,16 +7,6 @@ const SubEvent = require("../Model/subevent.model");
 const Event = require("../Model/event.module");
 const Volunteer = require("../Model/volunteer.model");
 
-// // Get all volunteers
-// router.get("/get", async (req, res) => {
-//   try {
-//     const volunteers = await Volunteer.find();
-//     res.status(200).json({ volunteers });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
-
 // Get all events a volunteer is registered to
 router.get("/registered-events/:volunteerId", async (req, res) => {
   try {
@@ -112,21 +102,73 @@ router.post("/register", verifyToken, async (req, res) => {
       { new: true }
     );
 
-    res
-      .status(201)
-      .json({
-        message: "Volunteer registered",
-        volunteer: savedVolunteer,
-        events: event,
-        subevents: subevent,
-      });
+    res.status(201).json({
+      message: "Volunteer registered",
+      volunteer: savedVolunteer,
+      events: event,
+      subevents: subevent,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+// Get all volunteers for a specific event
+router.get("/event/:eventId/volunteers", async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const volunteers = await Volunteer.find({ eventId });
+
+    if (!volunteers || volunteers.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No volunteers found for this event",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Volunteers fetched successfully",
+      volunteers,
+    });
+  } catch (err) {
+    console.error("Error fetching volunteers for event:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+//  Get all volunteers for a specific sub-event
+router.get(
+  "/subevent/:subEventId/volunteers",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const { subEventId } = req.params;
+
+      const volunteers = await Volunteer.find({ subEventIds: subEventId });
+
+      if (!volunteers || volunteers.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No volunteers found for this sub-event",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Volunteers fetched successfully",
+        volunteers,
+      });
+    } catch (err) {
+      console.error("Error fetching volunteers for sub-event:", err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
 // Delete a volunteer by ID
-router.delete("/delete/:volunteerId", async (req, res) => {
+router.delete("/delete/:volunteerId", verifyToken, async (req, res) => {
   try {
     const { volunteerId } = req.params;
 
@@ -158,7 +200,7 @@ router.delete("/delete/:volunteerId", async (req, res) => {
   }
 });
 
-// Get all subevents a volunteer is linked to
+// Get all subevents a volunteer is linked to subevent
 router.get("/:id/subevents", async (req, res) => {
   try {
     const volunteer = await Volunteer.findById(req.params.id).populate(

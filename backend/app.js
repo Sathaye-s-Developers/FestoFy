@@ -31,10 +31,15 @@ setInterval(reloadWebsite, interval);
 //   })
 // );
 
-////////
+// ////////
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://192.168.56.1:5173",
+  "http://192.168.1.9:5173",
+  "http://127.0.0.1:5500", // VSCode Live Server
+  "http://127.0.0.1:5501", // Your actual Live Server port
   "https://festofy-frontend.onrender.com",
+  null, // to allow direct file:// access
 ];
 
 app.use(
