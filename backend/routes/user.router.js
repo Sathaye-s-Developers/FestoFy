@@ -60,7 +60,7 @@ router.post("/signUp", async (req, res) => {
     if (clg_Name == false) {
       return res.status(404).send({ message: "clg not listed" });
     }
-    console.log(clg_Name);
+    //console.log(clg_Name);
 
     const newUser = new User({
       username,
@@ -73,22 +73,28 @@ router.post("/signUp", async (req, res) => {
     await newUser.save();
 
     const token = jwt.sign(
-      { _id: newUser._id, email: newUser.email, role: newUser.role },
+      {
+        _id: newUser._id,
+        email: newUser.email,
+        role: newUser.role,
+        collegeName: newUser.collegeName,
+      },
       JWT_SECRET,
       { expiresIn: "2d" }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+      secure: process.env.NODE_ENV === "production", // true only in prod
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // lax in dev
+      maxAge: 2 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(201).json({
       success: true,
       message: "User registered successfully.",
       username: newUser.username,
+      collegeName: newUser.collegeName,
     });
   } catch (err) {
     console.error(err);
@@ -125,7 +131,12 @@ router.post("/login", async (req, res) => {
 
     // Create JWT
     const token = jwt.sign(
-      { _id: user._id, email: user.email, role: user.role },
+      {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        collegeName: user.collegeName,
+      },
       JWT_SECRET,
       { expiresIn: "2d" }
     );
@@ -133,9 +144,9 @@ router.post("/login", async (req, res) => {
     // Set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+      secure: process.env.NODE_ENV === "production", // true only in prod
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // lax in dev
+      maxAge: 2 * 24 * 60 * 60 * 1000,
     });
 
     //SEND RESPONSE
@@ -144,6 +155,7 @@ router.post("/login", async (req, res) => {
       message: "Login successful",
       username: user.username,
       role: user.role,
+      collegeName: user.collegeName,
     });
   } catch (err) {
     console.error(err);

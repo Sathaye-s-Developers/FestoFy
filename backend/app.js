@@ -39,7 +39,7 @@ const allowedOrigins = [
   "http://127.0.0.1:5500", // VSCode Live Server
   "http://127.0.0.1:5501", // Your actual Live Server port
   "https://festofy-frontend.onrender.com",
-  null, // to allow direct file:// access
+  //  null, // to allow direct file:// access
 ];
 
 app.use(

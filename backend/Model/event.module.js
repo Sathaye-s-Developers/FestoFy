@@ -45,7 +45,8 @@ const eventSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    require: false,
+    required: false,
+    default: 0,
   },
   event_mode: {
     type: String,
@@ -85,7 +86,7 @@ const eventSchema = new mongoose.Schema({
   ],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "users",
   },
   createdAt: {
     type: Date,
