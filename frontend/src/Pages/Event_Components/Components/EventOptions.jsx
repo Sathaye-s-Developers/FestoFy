@@ -1,18 +1,18 @@
 import React, { useContext, useState } from 'react'
 import { CgProfile } from "react-icons/cg";
 import { EventAppContext } from '../../../Context/EventContext';
-import { User, Calendar, LogOut, Settings, Bell, Star } from 'lucide-react';
+import { Calendar, LogOut, Settings, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Link } from "react-router-dom"
 
 const EventOptions = ({ popupRef }) => {
     const Navigate = useNavigate()
-    const { details, randcolor, settoken, profileOptions, setprofileOptions,api,setdetails,setisAuthenticated } = useContext(EventAppContext)
+    const { details, randcolor, settoken, profileOptions, setprofileOptions, api, setdetails, setisAuthenticated } = useContext(EventAppContext)
     const logout = async (e) => {
         try {
             e.preventDefault();
-            await api.post("/Festofy/user/logout", { withCredentials: true }); // backend clears the cookie
-            setdetails({ username: "", email: "" }); // clear context user
+            await api.post("/Festofy/user/logout", { withCredentials: true });
+            setdetails({ username: "", email: "" });
             setisAuthenticated(false)
             localStorage.removeItem("ULRKGDAPS")
         } catch (err) {
@@ -42,8 +42,8 @@ const EventOptions = ({ popupRef }) => {
                         </div>
                         <hr className='border-t border-white mt-5 w-full' />
                         <div className='w-full flex flex-col justify-between h-full mt-2'>
-                            <div className='flex flex-col '>
-                                <Link to="/Profile">
+                            <div className='flex flex-col'>
+                                <Link onClick={()=>{setprofileOptions(false)}} to="/Profile">
                                     <div className="flex items-center justify-center gap-2 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
                                         <CgProfile className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
                                         <span className="font-medium">Your Profile</span>
@@ -55,6 +55,13 @@ const EventOptions = ({ popupRef }) => {
                                     <Calendar className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300 transition-colors" />
                                     <span className="font-medium">Your Events</span>
                                 </button>
+
+                                <Link onClick={()=>{setprofileOptions(false)}} to="/InterCollegateEvents">
+                                    <button className="flex items-center justify-center gap-3 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
+                                        <Globe className="w-4 h-4 text-pink-400 group-hover:text-pink-300 transition-colors" />
+                                        <span className="font-medium">InterCollegate Events</span>
+                                    </button>
+                                </Link>
 
                                 <button className="flex items-center justify-center gap-3 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
                                     <Settings className="w-4 h-4 text-pink-400 group-hover:text-pink-300 transition-colors" />

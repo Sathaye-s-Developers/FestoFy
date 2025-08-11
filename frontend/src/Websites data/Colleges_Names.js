@@ -216,7 +216,7 @@ export const college_Name = [
   }
 ];
 
-export function getCollegeByCode(code) {
-  return college_Name.find(college => college.college_code === code);
+export function getCollegeByCode(college_code) {
+  return college_Name.find(college => college.college_code === college_code);
 }
 

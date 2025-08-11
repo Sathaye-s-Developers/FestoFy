@@ -5,7 +5,7 @@ import Select from 'react-select'
 import { RxCross2 } from "react-icons/rx";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register, handleSubmit, setValue,control }) => {
+const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register, handleSubmit, setValue,control,Controller }) => {
     const { closePopup, setpassword } = useContext(EventAppContext)
 
     const [addpassword, setaddpassword] = useState(false)

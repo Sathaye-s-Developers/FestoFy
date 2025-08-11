@@ -44,8 +44,7 @@ const EventContext = (props) => {
             setrandcolor(randomColor(param));
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
-            }
-
+            }   
             setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code })
 
         } catch (err) {
