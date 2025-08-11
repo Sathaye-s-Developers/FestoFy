@@ -1,23 +1,27 @@
 const mongoose = require("mongoose");
+const { trim } = require("validator");
 
 const eventSchema = new mongoose.Schema({
+  organiser_name: {
+    type: String,
+    required: false,
+    trim: true,
+    lowercase: true,
+  },
   email: {
     type: String,
     required: true,
     trim: true,
     lowercase: true,
-
     minlength: [13, "Email must be at least 13 characters long"],
   },
   title: {
     type: String,
     required: true,
     trim: true,
-    unique: true,
   },
   department: {
     type: String,
-    required: false,
     trim: true,
   },
   description: {
@@ -30,14 +34,42 @@ const eventSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  location: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   dateRange: {
     start: Date,
     end: Date,
   },
+  price: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  event_mode: {
+    type: String,
+    enum: ["free", "paid"],
+    default: "free",
+  },
+
+  //Visibility logic: 'college' or 'explore'
+  visibility: {
+    type: String,
+    enum: ["college", "explore"],
+    default: "college",
+  },
+
+  createdByCollege: {
+    type: String,
+    required: true, //filtering collage event
+  },
+
   subEvents: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "SubEvent", // update as needed
+      ref: "SubEvent",
     },
   ],
   volunteers: [
@@ -46,7 +78,6 @@ const eventSchema = new mongoose.Schema({
       ref: "Volunteer",
     },
   ],
-
   participants: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -55,7 +86,7 @@ const eventSchema = new mongoose.Schema({
   ],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // update as needed
+    ref: "users",
   },
   createdAt: {
     type: Date,
@@ -63,6 +94,4 @@ const eventSchema = new mongoose.Schema({
   },
 });
 
-const Event = mongoose.model("Event", eventSchema);
-
-module.exports = Event;
+module.exports = mongoose.model("Event", eventSchema);

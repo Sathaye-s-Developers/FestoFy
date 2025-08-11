@@ -56,20 +56,26 @@ const homeRoutes = require("./routes/home.router");
 const userRoutes = require("./routes/user.router");
 const otpRoutes = require("./routes/otp.router");
 const eventRoutes = require("./routes/event.router");
+const rating = require("./routes/rating.router");
 const subeventRoutes = require("./routes/subevent.router");
 const participationRoutes = require("./routes/participation.router");
 const forgotPasswordRoutes = require("./routes/forgot_password");
 const volunteerRoutes = require("./routes/volunteer.router");
+const setProfile = require("./routes/profile.router");
+const payment = require("./routes/payment");
 
 //  Mount Routes
 app.use("/", homeRoutes);
 app.use("/Festofy/user", userRoutes);
+app.use("/Festofy/user/profile", setProfile);
 app.use("/Festofy/user/otp", otpRoutes);
 app.use("/Festofy/user/event", eventRoutes);
+app.use("/Festofy/user/event/rating", rating);
 app.use("/Festofy/user/event/subevent", subeventRoutes);
 app.use("/Festofy/user/event/participation", participationRoutes);
 app.use("/Festofy/user/password", forgotPasswordRoutes);
 app.use("/Festofy/user/event/subevent/volunteer", volunteerRoutes);
+app.use("/Festofy/user/payment", payment);
 
 //  Start Express server
 const PORT = process.env.PORT || 3000;
