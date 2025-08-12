@@ -1,38 +1,46 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middlewares/token_varification");
-
+const is_admin = require("../middlewares/is_admin");
 const User = require("../Model/user.model");
 const SubEvent = require("../Model/subevent.model");
 const Event = require("../Model/event.module");
 const Volunteer = require("../Model/volunteer.model");
 
 // Get all events a volunteer is registered to
-router.get("/registered-events/:volunteerId", async (req, res) => {
-  try {
-    const { volunteerId } = req.params;
+router.get(
+  "/registered-events/:volunteerId",
+  verifyToken,
+  is_admin,
+  async (req, res) => {
+    try {
+      const { volunteerId } = req.params;
 
-    const events = await Event.find({ volunteers: volunteerId })
-      .populate("subEvents")
-      .select("title department dateRange subEvents");
+      const events = await Event.find({ volunteers: volunteerId })
+        .populate("subEvents")
+        .select("title department dateRange subEvents");
 
-    res.json({ success: true, events });
-  } catch (err) {
-    console.error("Error fetching volunteer events:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+      res.json({ success: true, events });
+    } catch (err) {
+      console.error("Error fetching volunteer events:", err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
   }
-});
+);
 
 // Register a volunteer
 router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
-    const { eventId, subEventId } = req.body;
+    const { roll_no, eventId, subEventId } = req.body;
 
     if (!eventId || !subEventId) {
       return res
         .status(400)
         .json({ error: "Event ID and SubEvent ID are required" });
+    }
+    if (!roll_no) {
+      return res.status(400).json({ error: "roll_no are required" });
     }
 
     const user = await User.findById(userId);
@@ -49,6 +57,40 @@ router.post("/register", verifyToken, async (req, res) => {
       return res
         .status(409)
         .json({ error: "Already registered for this subevent" });
+    }
+
+    //volunteer limits check
+    const subEvent = await SubEvent.findById(subEventId);
+    if (!subEvent)
+      return res.status(404).json({ error: "Sub-event not found" });
+
+    const currentVolunteerCount = await Volunteer.countDocuments({
+      subEventIds: subEventId,
+    });
+
+    if (
+      subEvent.maxVolunteers &&
+      currentVolunteerCount >= subEvent.maxVolunteers
+    ) {
+      return res.status(400).json({
+        error: "Volunteer limit reached for this subevent",
+      });
+    }
+
+    //Event-level volunteer limit
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ error: "Event not found" });
+
+    const currentEventVolunteerCount = await Volunteer.countDocuments({
+      eventId,
+    });
+    if (
+      event.maxVolunteers &&
+      currentEventVolunteerCount >= event.maxVolunteers
+    ) {
+      return res.status(400).json({
+        error: "Volunteer limit reached for this event",
+      });
     }
 
     // Check if a volunteer record exists for same user & event
@@ -84,19 +126,20 @@ router.post("/register", verifyToken, async (req, res) => {
       year: user.year,
       eventId,
       subEventIds: [subEventId],
+      roll_no,
     });
 
     const savedVolunteer = await newVolunteer.save();
 
     // Link to Event
-    const event = await Event.findByIdAndUpdate(
+    const linkedEvnet = await Event.findByIdAndUpdate(
       eventId,
       { $push: { volunteers: savedVolunteer._id } },
       { new: true }
     );
 
     // Link to SubEvent
-    const subevent = await SubEvent.findByIdAndUpdate(
+    const linkedSubevent = await SubEvent.findByIdAndUpdate(
       subEventId,
       { $push: { volunteers: savedVolunteer._id } },
       { new: true }
@@ -105,8 +148,8 @@ router.post("/register", verifyToken, async (req, res) => {
     res.status(201).json({
       message: "Volunteer registered",
       volunteer: savedVolunteer,
-      events: event,
-      subevents: subevent,
+      events: linkedEvnet,
+      subevents: linkedSubevent,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -114,7 +157,7 @@ router.post("/register", verifyToken, async (req, res) => {
 });
 
 // Get all volunteers for a specific event
-router.get("/event/:eventId/volunteers", async (req, res) => {
+router.get("/event/:eventId/volunteers", verifyToken, async (req, res) => {
   try {
     const { eventId } = req.params;
 
@@ -201,7 +244,7 @@ router.delete("/delete/:volunteerId", verifyToken, async (req, res) => {
 });
 
 // Get all subevents a volunteer is linked to subevent
-router.get("/:id/subevents", async (req, res) => {
+router.get("/:id/subevents", verifyToken, async (req, res) => {
   try {
     const volunteer = await Volunteer.findById(req.params.id).populate(
       "subEventIds"

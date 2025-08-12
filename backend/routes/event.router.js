@@ -30,7 +30,10 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       visibility = "college", // Default to college visibility
       price = 0,
       event_mode = "free", // Default to free event
+      maxVolunteers,
+      maxParticipants,
     } = req.body;
+    console.log(maxVolunteers);
 
     // Validate required fields
     const requiredFields = [
@@ -84,6 +87,8 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       visibility,
       price,
       event_mode,
+      maxVolunteers,
+      maxParticipants,
       createdByCollege: collegeName,
     });
 
@@ -281,7 +286,7 @@ router.get("/:eventId", verifyToken, async (req, res) => {
 });
 
 // Update event with security checks
-router.put("/update/:eventId", verifyToken, async (req, res) => {
+router.put("/update/:eventId", verifyToken, isAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
     const userId = req.user._id;
@@ -302,15 +307,28 @@ router.put("/update/:eventId", verifyToken, async (req, res) => {
       });
     }
 
-    // Prevent changing college for college-visibility events
-    if (
-      updatedData.visibility &&
-      updatedData.visibility === "explore" &&
-      !updatedData.createdByCollege
-    ) {
-      return res.status(400).json({
-        error: "College name is required when changing to explore visibility",
-      });
+    //  allow `collegeName` from clients and map to `createdByCollege`
+    if (updatedData.collegeName && !updatedData.createdByCollege) {
+      updatedData.createdByCollege = updatedData.collegeName;
+      delete updatedData.collegeName;
+    }
+
+    //  rules
+    // If visibility is set to "college" -> ensure createdByCollege exists (use provided or fallback to requester's college)
+    if (updatedData.visibility === "college") {
+      if (!updatedData.createdByCollege) {
+        // prefer existing event college, otherwise use user's college from token
+        updatedData.createdByCollege =
+          currentEvent.createdByCollege || req.user.collegeName;
+      }
+    }
+
+    // If visibility is set to "explore" -> remove any createdByCollege (optional) so it's global
+    if (updatedData.visibility === "explore") {
+      if ("createdByCollege" in updatedData) {
+        // remove to avoid improper restriction
+        delete updatedData.createdByCollege;
+      }
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(eventId, updatedData, {

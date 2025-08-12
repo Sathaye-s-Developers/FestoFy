@@ -61,6 +61,10 @@ const eventSchema = new mongoose.Schema({
     default: "college",
   },
 
+  //max limit for participants and volunteers
+  maxParticipants: { type: Number, default: 1000 }, // Event-level limit
+  maxVolunteers: { type: Number, default: 1000 }, // Event-level limit
+
   createdByCollege: {
     type: String,
     required: true, //filtering collage event

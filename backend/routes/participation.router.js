@@ -17,7 +17,10 @@ router.post("/register", verifyToken, async (req, res) => {
     }
 
     if (!eventId) {
-      return res.status(400).json({ error: "Event ID is required" });
+      return res.status(400).json({ error: "Event  ID is required" });
+    }
+    if (!subEventId) {
+      return res.status(400).json({ error: "SubEvent  ID is required" });
     }
 
     const user = await User.findById(userId);
@@ -50,6 +53,37 @@ router.post("/register", verifyToken, async (req, res) => {
       }
     }
 
+    // 4. Check limits
+    if (subEventId) {
+      if (subEventId) {
+        const subEvent = await SubEvent.findById(subEventId);
+        if (!subEvent)
+          return res.status(404).json({ error: "Sub-event not found" });
+
+        const currentCount = await Participation.countDocuments({ subEventId });
+        if (
+          subEvent.maxParticipants &&
+          currentCount >= subEvent.maxParticipants
+        ) {
+          return res
+            .status(400)
+            .json({ error: "Sub-event participant limit reached" });
+        }
+      } else {
+        const event = await Event.findById(eventId);
+        if (!event) return res.status(404).json({ error: "Event not found" });
+
+        const currentCount = await Participation.countDocuments({
+          eventId,
+          subEventId: { $exists: false },
+        });
+        if (event.maxParticipants && currentCount >= event.maxParticipants) {
+          return res
+            .status(400)
+            .json({ error: "Event participant limit reached" });
+        }
+      }
+    }
     // Save new participant
     const newParticipant = new Participation({
       participantName: user.username,

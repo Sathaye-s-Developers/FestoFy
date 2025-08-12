@@ -3,7 +3,7 @@ const router = express.Router();
 const verifyToken = require("../middlewares/token_varification");
 const Rating = require("../Model/rating.model");
 const Event = require("../Model/event.module");
-const User = require("../Model/user.model");
+//const { users } = require("../Model/user.model");
 
 // Add or Update Rating for an Event
 router.post("/:eventId", verifyToken, async (req, res) => {
