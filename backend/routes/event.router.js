@@ -32,8 +32,8 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       event_mode = "free", // Default to free event
       maxVolunteers,
       maxParticipants,
+      tags,
     } = req.body;
-    console.log(maxVolunteers);
 
     // Validate required fields
     const requiredFields = [
@@ -50,6 +50,26 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       return res.status(400).json({
         error: "All fields are required",
         missingFields,
+      });
+    }
+    const startDate = new Date(dateRange.start);
+    const endDate = new Date(dateRange.end);
+
+    // Remove time for date-only comparison
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Ensure start date is strictly in the future
+    if (startDate <= today) {
+      return res.status(400).json({
+        error: "Start date must be after today's date",
+      });
+    }
+
+    // Ensure end date is after start date
+    if (endDate <= startDate) {
+      return res.status(400).json({
+        error: "End date must be after start date",
       });
     }
 
@@ -89,6 +109,7 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       event_mode,
       maxVolunteers,
       maxParticipants,
+      tags,
       createdByCollege: collegeName,
     });
 

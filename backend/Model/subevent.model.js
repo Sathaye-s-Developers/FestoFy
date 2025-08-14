@@ -11,6 +11,11 @@ const subEventSchema = new mongoose.Schema({
     trim: true,
   },
 
+  price: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
   event_mode: {
     type: String,
     enum: ["free", "paid"],
@@ -27,6 +32,7 @@ const subEventSchema = new mongoose.Schema({
     type: String,
   },
 
+  //max limit for participants and volunteers
   maxParticipants: { type: Number, default: 1000 },
   maxVolunteers: { type: Number, default: 1000 },
 

@@ -20,11 +20,10 @@ const participationSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "cancelled"],
       default: "pending",
     },
-    type: {
-      type: String,
-      enum: ["college", "explore"],
-      required: true,
-    },
+    // type: {
+    //   type: String,
+    //   enum: ["college", "explore"],
+    // },
 
     //  Razorpay payment fields
     isPaid: { type: Boolean, default: false },

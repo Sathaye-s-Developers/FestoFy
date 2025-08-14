@@ -33,6 +33,8 @@ setInterval(reloadWebsite, interval);
 
 // ////////
 const allowedOrigins = [
+  "http://localhost:5173", //testing react app
+  "chrome-extension://amknoiejhlmhancpahfcfcfhllgkpbld", //hopscotch
   "http://127.0.0.1:5501/index.html",
   "http://192.168.1.9:5173",
   "http://127.0.0.1:5500", // VSCode Live Server

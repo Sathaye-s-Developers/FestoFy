@@ -8,8 +8,16 @@ const verifyToken = require("../middlewares/token_varification");
 // Create SubEvent
 router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
-    const { title, description, date, time, location, eventId, free_paid } =
-      req.body;
+    const {
+      title,
+      description,
+      date,
+      time,
+      location,
+      eventId,
+      event_mode = "free",
+      price = 0,
+    } = req.body;
 
     if (!eventId || !title || !date || !description || !time || !location) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -40,7 +48,8 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       time,
       location,
       eventId,
-      event_mode: "free" || free_paid,
+      price,
+      event_mode,
     });
 
     const savedSubEvent = await newSubEvent.save();

@@ -176,48 +176,6 @@ router.post("/logout", verifyToken, (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
-//verify user to get its able or not
-router.get("/verifyUser", verifyToken, async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const user = await User.findById(userId).select("-password");
-
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    if (user.role === "admin" || user.role === "superadmin") {
-      return res.status(400).json({ message: "User is already an admin" });
-    }
-
-    if (user.isAdminRequested) {
-      return res
-        .status(400)
-        .json({ message: "Admin request already submitted" });
-    }
-
-    user.isAdminRequested = true;
-    user.adminRequest = {
-      status: "pending",
-      reason: "Requested by user", // or leave blank
-      requestedAt: new Date(),
-    };
-
-    await user.save();
-
-    // Emit to all connected SuperAdmin sockets
-    const io = req.app.get("io");
-    io.emit("new_admin_request", {
-      _id: user._id,
-      name: user.username,
-      email: user.email,
-    });
-
-    res.json({ message: "Admin access request submitted successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 //get user
 
 router.get("/user_details", verifyToken, async (req, res) => {
@@ -241,4 +199,47 @@ router.get("/all_users", verifyToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+//verify user to get its able or not
+// router.get("/verifyUser", verifyToken, async (req, res) => {
+//   try {
+//     const userId = req.user._id;
+//     const user = await User.findById(userId).select("-password");
+
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     if (user.role === "admin" || user.role === "superadmin") {
+//       return res.status(400).json({ message: "User is already an admin" });
+//     }
+
+//     if (user.isAdminRequested) {
+//       return res
+//         .status(400)
+//         .json({ message: "Admin request already submitted" });
+//     }
+
+//     user.isAdminRequested = true;
+//     user.adminRequest = {
+//       status: "pending",
+//       reason: "Requested by user", // or leave blank
+//       requestedAt: new Date(),
+//     };
+
+//     await user.save();
+
+//     // Emit to all connected SuperAdmin sockets
+//     const io = req.app.get("io");
+//     io.emit("new_admin_request", {
+//       _id: user._id,
+//       name: user.username,
+//       email: user.email,
+//     });
+
+//     res.json({ message: "Admin access request submitted successfully" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
 module.exports = router;

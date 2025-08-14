@@ -54,6 +54,14 @@ const eventSchema = new mongoose.Schema({
     default: "free",
   },
 
+  tags: [
+    {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+  ],
+
   //Visibility logic: 'college' or 'explore'
   visibility: {
     type: String,

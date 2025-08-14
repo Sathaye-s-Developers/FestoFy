@@ -19,9 +19,9 @@ router.post("/register", verifyToken, async (req, res) => {
     if (!eventId) {
       return res.status(400).json({ error: "Event  ID is required" });
     }
-    if (!subEventId) {
-      return res.status(400).json({ error: "SubEvent  ID is required" });
-    }
+    // if (!subEventId) {
+    //   return res.status(400).json({ error: "SubEvent  ID is required" });
+    // }
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -92,8 +92,7 @@ router.post("/register", verifyToken, async (req, res) => {
       college: user.collegeName,
       eventId,
       subEventId: subEventId,
-      type: req.body.type || "college",
-      status: "pending",
+      //   type: req.body.type || "college",
     });
 
     const savedParticipant = await newParticipant.save();
