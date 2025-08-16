@@ -199,47 +199,34 @@ router.get("/all_users", verifyToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// make admin by admin key
+router.post("/role_admin", verifyToken, async (req, res) => {
+  try {
+    const { adminCode } = req.body;
+    const userId = req.user._id;
 
-//verify user to get its able or not
-// router.get("/verifyUser", verifyToken, async (req, res) => {
-//   try {
-//     const userId = req.user._id;
-//     const user = await User.findById(userId).select("-password");
+    // find user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-//     if (!user) return res.status(404).json({ message: "User not found" });
+    // check admin code
+    if (!adminCode || adminCode !== process.env.ADMIN_SECRET_CODE) {
+      return res.status(403).json({ error: "Invalid admin code" });
+    }
 
-//     if (user.role === "admin" || user.role === "superadmin") {
-//       return res.status(400).json({ message: "User is already an admin" });
-//     }
+    // assign role
+    if (user.role !== "admin") {
+      user.role = "admin";
+      await user.save();
+    }
 
-//     if (user.isAdminRequested) {
-//       return res
-//         .status(400)
-//         .json({ message: "Admin request already submitted" });
-//     }
-
-//     user.isAdminRequested = true;
-//     user.adminRequest = {
-//       status: "pending",
-//       reason: "Requested by user", // or leave blank
-//       requestedAt: new Date(),
-//     };
-
-//     await user.save();
-
-//     // Emit to all connected SuperAdmin sockets
-//     const io = req.app.get("io");
-//     io.emit("new_admin_request", {
-//       _id: user._id,
-//       name: user.username,
-//       email: user.email,
-//     });
-
-//     res.json({ message: "Admin access request submitted successfully" });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
+    res.json({ message: "User promoted to admin successfully", user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 module.exports = router;

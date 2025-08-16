@@ -75,6 +75,7 @@ const subeventRoutes = require("./routes/subevent.router");
 const participationRoutes = require("./routes/participation.router");
 const forgotPasswordRoutes = require("./routes/forgot_password");
 const volunteerRoutes = require("./routes/volunteer.router");
+const AttendanceRoutes = require("./routes/attendence.router");
 const setProfile = require("./routes/profile.router");
 const payment = require("./routes/payment");
 
@@ -89,6 +90,8 @@ app.use("/Festofy/user/event/subevent", subeventRoutes);
 app.use("/Festofy/user/event/participation", participationRoutes);
 app.use("/Festofy/user/password", forgotPasswordRoutes);
 app.use("/Festofy/user/event/volunteer", volunteerRoutes);
+app.use("/Festofy/user/event/volunteer/attendance", AttendanceRoutes);
+
 app.use("/Festofy/user/payment", payment);
 
 //  Start Express server

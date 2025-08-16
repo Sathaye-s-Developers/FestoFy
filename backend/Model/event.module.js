@@ -96,6 +96,23 @@ const eventSchema = new mongoose.Schema({
       ref: "Participation",
     },
   ],
+
+  attendance: [
+    {
+      volunteerId: { type: mongoose.Schema.Types.ObjectId, ref: "Volunteer" },
+      date: { type: Date, required: true },
+      status: { type: String, enum: ["present", "absent"], default: "present" },
+    },
+  ],
+
+  attendance: [
+    {
+      volunteerId: { type: mongoose.Schema.Types.ObjectId, ref: "Volunteer" },
+      date: { type: Date, required: true },
+      status: { type: String, enum: ["present", "absent"], default: "present" },
+    },
+  ],
+
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
