@@ -74,7 +74,7 @@ app.use("/Festofy/user/event/rating", rating);
 app.use("/Festofy/user/event/subevent", subeventRoutes);
 app.use("/Festofy/user/event/participation", participationRoutes);
 app.use("/Festofy/user/password", forgotPasswordRoutes);
-app.use("/Festofy/user/event/subevent/volunteer", volunteerRoutes);
+app.use("/Festofy/user/event/volunteer", volunteerRoutes);
 app.use("/Festofy/user/payment", payment);
 
 //  Start Express server

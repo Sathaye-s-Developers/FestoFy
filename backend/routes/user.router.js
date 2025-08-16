@@ -362,6 +362,8 @@ router.post("/login", async (req, res) => {
     let role = "user";
     if (adminCode && adminCode === ADMIN_SECRET_CODE) {
       role = "admin";
+    }else if(adminCode && adminCode !== ADMIN_SECRET_CODE){
+      return res.status(401).json({message:"Invalid Special Key"})
     }
     if (superAdminKey && superAdminKey === SUPER_ADMIN_SECRET_KEY) {
       role = "superadmin";

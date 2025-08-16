@@ -10,7 +10,29 @@ const subEventSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-
+  location: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  subEventCategory: {
+    type: String,
+    trim: true,
+  },
+  requirements: {
+    type: String,
+    trim: true,
+  },
+  prizes: {
+    type: [String],
+    trim: true,
+  },
+  maxParticipants: { type: Number, default: 1000 },
+  duration: {
+    type: String,
+    required: false,
+    trim: true,
+  },
   event_mode: {
     type: String,
     enum: ["free", "paid"],
@@ -20,12 +42,21 @@ const subEventSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  price: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
   time: {
     type: String, // optional: store as string "10:30 AM"
   },
   location: {
     type: String,
   },
+
+  maxParticipants: { type: Number, default: 1000 },
+  maxVolunteers: { type: Number, default: 1000 },
+
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Event",

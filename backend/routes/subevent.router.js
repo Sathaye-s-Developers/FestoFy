@@ -8,17 +8,17 @@ const verifyToken = require("../middlewares/token_varification");
 // 🔹 Create SubEvent
 router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
-    const { title, description, date, time, location, eventId } = req.body;
+    const { title, description, date, time, location, eventId ,price=0,duration,SubEventType,requirements,prizes,maxParticipants,subEventCategory} = req.body;
 
     if (!eventId || !title || !date) {
       return res
         .status(400)
-        .json({ error: "Missing required fields (eventId, title, date)" });
+        .json({ success:false,error: "Missing required fields (eventId, title, date)" });
     }
 
     const eventExists = await Event.findById(eventId);
     if (!eventExists) {
-      return res.status(404).json({ error: " Event not found" });
+      return res.status(404).json({success:false, error: " Event not found" });
     }
 
     const newSubEvent = new SubEvent({
@@ -28,6 +28,13 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       time,
       location,
       eventId,
+      price,
+      duration,
+      SubEventType,
+      requirements,
+      prizes,
+      maxParticipants,
+      subEventCategory
     });
 
     const savedSubEvent = await newSubEvent.save();
@@ -39,11 +46,14 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
     );
 
     res.status(201).json({
+      success:true,
       message: "SubEvent created and linked to Event",
       subEvent: savedSubEvent,
       updatedEvent,
     });
   } catch (err) {
+    success:false,
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 });

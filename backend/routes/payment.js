@@ -1,55 +1,117 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 require("dotenv").config();
+const mongoose = require("mongoose");
 const Participation = require("../Model/participation.model");
 const User = require("../Model/user.model");
 const Event = require("../Model/event.module");
 const SubEvent = require("../Model/subevent.model");
 const verifyToken = require("../middlewares/token_varification");
 
-// Razorpay instance
+// Initialize Razorpay with environment variables
 const razorpay = new Razorpay({
-  key_id: process.env.ROZARPAY_ID,
-  key_secret: process.env.ROZARPAY_SECRET,
+  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_1DP5mmOlF5G5ag", // Test key fallback
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// routes/payment.router.js
+// Payment request validation schema
+const validatePaymentRequest = (data) => {
+  if (!data.eventId) return { error: "Event ID is required" };
+  if (data.subEventId && !mongoose.Types.ObjectId.isValid(data.subEventId)) {
+    return { error: "Invalid SubEvent ID" };
+  }
+  return { error: null };
+};
 
+// Create payment order
 router.post("/create-order", verifyToken, async (req, res) => {
   try {
+    const validation = validatePaymentRequest(req.body);
+    if (validation.error) {
+      return res.status(400).json({ error: validation.error });
+    }
+
     const { eventId, subEventId } = req.body;
-    if (!eventId)
-      return res.status(400).json({ error: "Event ID is required" });
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    if (subEventId) {
-      const subEvent = await SubEvent.findById(subEventId);
-      if (!subEvent)
-        return res.status(404).json({ error: "SubEvent not found" });
-      amount = subEvent.price || 10;
-    } else {
-      const event = await Event.findById(eventId);
-      if (!event) return res.status(404).json({ error: "Event not found" });
-      amount = event.price || 0;
+    try {
+      // Check event/sub-event existence and get price
+      let amount = 0;
+      let event, subEvent;
+
+      event = await Event.findById(eventId).session(session);
+      if (!event) throw new Error("Event not found");
+
+      if (subEventId) {
+        subEvent = await SubEvent.findOne({
+          _id: subEventId,
+          eventId,
+        }).session(session);
+        if (!subEvent) throw new Error("SubEvent not found");
+        amount = subEvent.price || 0;
+      } else {
+        amount = event.price || 0;
+      }
+
+      if (amount <= 0) {
+        throw new Error("This is not a paid event");
+      }
+
+      // Check existing participation
+      const user = await User.findById(req.user._id).session(session);
+      const existing = await Participation.findOne({
+        participantEmail: user.email,
+        eventId,
+        ...(subEventId && { subEventId }),
+      }).session(session);
+
+      if (existing) {
+        throw new Error("Already registered for this event");
+      }
+
+      // Create Razorpay order
+      const order = await razorpay.orders.create({
+        amount: Math.round(amount * 100), // Convert to paise
+        currency: "INR",
+        receipt: `receipt_${eventId}_${Date.now()}`,
+        notes: {
+          eventId,
+          subEventId: subEventId || "none",
+          userId: req.user._id.toString(),
+        },
+      });
+
+      await session.commitTransaction();
+      res.json({
+        success: true,
+        order,
+        amount,
+        currency: "INR",
+      });
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      session.endSession();
     }
-
-    if (amount <= 0) {
-      return res.status(400).json({ error: "This is not a paid event" });
-    }
-
-    const order = await razorpay.orders.create({
-      amount: amount * 100, // already in paise
-      currency: "INR",
-      receipt: `receipt_order_${Date.now()}`,
-    });
-
-    res.json({ success: true, order });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Order creation error:", err);
+    res.status(400).json({
+      success: false,
+      error: err.message,
+      code: err.code || "PAYMENT_ERROR",
+    });
   }
 });
 
+// Verify payment and save participation
 router.post("/verify-payment", verifyToken, async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const {
       razorpay_order_id,
@@ -58,96 +120,141 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
       phone,
       eventId,
       subEventId,
-      type,
+      type = "college",
     } = req.body;
 
-    if (!eventId || !phone)
-      return res.status(400).json({ error: "Event ID and phone are required" });
+    // Basic validation
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      throw new Error("Missing payment verification data");
+    }
 
-    const user = await User.findById(req.user._id);
-    if (!user) return res.status(404).json({ error: "User not found" });
+    // Verify payment with Razorpay
+    const payment = await razorpay.payments.fetch(razorpay_payment_id);
+    if (payment.status !== "captured") {
+      throw new Error("Payment not captured");
+    }
 
-    // Validate signature
-    const generated_signature = crypto
-      .createHmac("sha256", process.env.ROZARPAY_SECRET)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
+    // Verify signature
+    const generatedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
-    const isValid = generated_signature === razorpay_signature;
-
-    if (!isValid) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid signature" });
+    if (generatedSignature !== razorpay_signature) {
+      throw new Error("Invalid payment signature");
     }
 
-    // Check for duplicate registration
-    const existing = await Participation.findOne(
-      subEventId
-        ? { participantEmail: user.email, eventId, subEventId }
-        : {
-            participantEmail: user.email,
-            eventId,
-            subEventId: { $exists: false },
-          }
-    );
+    // Get user and event details
+    const [user, event] = await Promise.all([
+      User.findById(req.user._id).session(session),
+      Event.findById(eventId).session(session),
+    ]);
+
+    if (!user || !event) {
+      throw new Error("User or Event not found");
+    }
+
+    // Check for duplicate participation
+    const existing = await Participation.findOne({
+      participantEmail: user.email,
+      eventId,
+      ...(subEventId && { subEventId }),
+    }).session(session);
 
     if (existing) {
-      return res.status(409).json({ error: "Already registered" });
+      throw new Error("Already registered for this event");
     }
 
-    // Get amount
-    let amount = 0;
-    if (subEventId) {
-      const subEvent = await SubEvent.findById(subEventId);
-      if (!subEvent)
-        return res.status(404).json({ error: "SubEvent not found" });
-      amount = subEvent.price || 0;
-    } else {
-      const event = await Event.findById(eventId);
-      if (!event) return res.status(404).json({ error: "Event not found" });
-      amount = event.price || 0;
-    }
+    // Get actual amount from order
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+    const amount = order.amount / 100; // Convert to rupees
 
-    // Save paid participant
-    const newParticipant = new Participation({
+    // Create participation record
+    const participation = new Participation({
       participantName: user.username,
       participantEmail: user.email,
       participantPhone: phone,
       college: user.collegeName,
       eventId,
-      subEventId: subEventId,
+      ...(subEventId && { subEventId }),
       isPaid: true,
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id,
-      amount: amount,
+      amount,
       paidAt: new Date(),
       status: "confirmed",
-      type: type || "college",
+      type,
+      paymentDetails: payment,
     });
 
-    const savedParticipant = await newParticipant.save();
+    // Save participation and update event
+    const savedParticipation = await participation.save({ session });
 
-    // Link to Event/SubEvent
     await Event.findByIdAndUpdate(eventId, {
-      $push: { participants: savedParticipant._id },
-    });
+      $push: { participants: savedParticipation._id },
+    }).session(session);
 
     if (subEventId) {
       await SubEvent.findByIdAndUpdate(subEventId, {
-        $push: { participants: savedParticipant._id },
-      });
+        $push: { participants: savedParticipation._id },
+      }).session(session);
     }
 
-    return res.json({
+    await session.commitTransaction();
+
+    res.json({
       success: true,
-      message: "Payment verified and registration successful!",
-      data: savedParticipant,
+      message: "Payment verified and registration successful",
+      participation: savedParticipation,
+      receiptUrl: payment.receipt_url,
     });
   } catch (err) {
-    console.error("Payment verify error:", err);
-    res.status(500).json({ success: false, message: err.message });
+    await session.abortTransaction();
+    console.error("Payment verification error:", err);
+    res.status(400).json({
+      success: false,
+      error: err.message,
+      code: err.code || "VERIFICATION_ERROR",
+    });
+  } finally {
+    session.endSession();
   }
 });
+
+// Webhook for payment notifications
+
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    const signature = req.headers["x-razorpay-signature"];
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+    const isValid = crypto
+      .createHmac("sha256", secret)
+      .update(req.body)
+      .digest("hex");
+
+    if (isValid !== signature) {
+      return res.status(400).json({ status: "Invalid signature" });
+    }
+
+    const paymentData = JSON.parse(req.body);
+    // Handle different webhook events
+    switch (paymentData.event) {
+      case "payment.captured":
+        // Handle successful payment
+        break;
+      case "payment.failed":
+        // Handle failed payment
+        break;
+      case "refund.created":
+        // Handle refund
+        break;
+    }
+
+    res.json({ status: "success" });
+  }
+);
 
 module.exports = router;
