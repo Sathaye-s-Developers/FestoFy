@@ -7,21 +7,21 @@ import { useParams } from 'react-router';
 import { useCallback } from 'react';
 
 const Sub_Event_pg = () => {
-  const { api, loading, setloading } = useContext(EventAppContext)
+  const { api} = useContext(EventAppContext)
   const { eventId } = useParams();
   const [EventInfo, setEventInfo] = useState([])
   const [subEventInfo, setsubEventInfo] = useState([])
 
   const FetchsingleEvent = async () => {
-    setloading(true)
+    // setloading(true)
     try {
       const response = await api.get(`/Festofy/user/event/${eventId}`, {}, { withCredentials: true, })
       setEventInfo(response.data.event)
       setsubEventInfo(response.data.event.subEvents)
-      setloading(false)
+      // setloading(false)
     } catch (err) {
       console.log(err)
-      setloading(false)
+      // setloading(false)
     }
 
   }
@@ -98,8 +98,6 @@ const Sub_Event_pg = () => {
   }, [])
 
   return (
-    <>
-      {loading ? <></> :
         <div className='min-h-screen bg-black'>
           <E_Nav_Back />
           {EventInfo && (
@@ -269,8 +267,6 @@ const Sub_Event_pg = () => {
           </div>
 
         </div >
-      }
-    </>
   )
 }
 
