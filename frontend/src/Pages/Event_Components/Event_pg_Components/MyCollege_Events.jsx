@@ -67,7 +67,7 @@ const MyCollege_Events = () => {
 
     useEffect(() => {
         EventFetcher()
-    }, [EventFetcher])
+    }, [])
     return (
         <div>
             <div className="min-h-screen pt-24 pb-16 px-6">
