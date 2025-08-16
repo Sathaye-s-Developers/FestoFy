@@ -58,7 +58,6 @@ const EventContext = (props) => {
     const EventFetcher = async () => {
         try {
             const response = await api.get("/Festofy/user/event/my-college-events", {}, { withCredentials: true, })
-
             const events = [...response.data.events]
             const FetchedArray = events.map((event) => ({
                 Id: event._id,

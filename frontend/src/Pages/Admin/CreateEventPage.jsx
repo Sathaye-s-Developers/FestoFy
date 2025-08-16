@@ -16,7 +16,7 @@ const CreateEventPage = () => {
   const Navigate = useNavigate()
   const { register, handleSubmit, setValue, setError, control, watch, formState: { errors } } = useForm({
     defaultValues: {
-      mode: "onSubmit",   
+      mode: "onSubmit",
       reValidateMode: "onSubmit",
       category: "",
       Tags: []
@@ -415,18 +415,16 @@ const CreateEventPage = () => {
               {/* Tags */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Event Tags</label>
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap gap-2 mb-3 max-w-full">
                   {tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="flex items-center space-x-2 px-3 py-1 bg-cyan-500/20 border border-cyan-400/30 rounded-lg text-cyan-400 text-sm"
+                      className="flex items-center space-x-2 px-3 py-1 bg-cyan-500/20 border border-cyan-400/30 rounded-lg text-cyan-400 text-sm break-words max-w-full"
                     >
-                      <span>{tag}</span>
+                      <span className="truncate max-w-[120px]">{tag}</span>
                       <button
                         type="button"
-                        onClick={() => {
-                          removeTag(tag)
-                        }}
+                        onClick={() => removeTag(tag)}
                         className="hover:text-red-400 transition-colors duration-200"
                       >
                         <X className="w-3 h-3" />
@@ -440,23 +438,23 @@ const CreateEventPage = () => {
                   {...register("Tags", { required: "Please add at least one tag" })}
                 />
 
-                <div className="flex space-x-2">
+                <div className="flex w-full space-x-2 flex-wrap sm:flex-nowrap">
                   <input
                     type="text"
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
-                    className="flex-1 px-4 py-2 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                    className="flex-1 min-w-0 px-4 py-2 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
                     placeholder="Add tags (e.g., AI, Workshop, Competition)"
                   />
                   <button
                     type="button"
-                    // onClick={addTag}
                     onClick={addTag}
-                    className="px-4 py-2 bg-cyan-500 text-white rounded-xl hover:bg-cyan-400 transition-colors duration-300"
+                    className="px-3 py-2 bg-cyan-500 text-white rounded-xl hover:bg-cyan-400 transition-colors duration-300"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
+
                 {errors.Tags && (
                   <p className="text-red-500 text-sm mt-1">{errors.Tags.message}</p>
                 )}
