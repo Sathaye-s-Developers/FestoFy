@@ -3,8 +3,33 @@ import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Hear
 import { useContext } from 'react';
 import { EventAppContext } from '../../../Context/EventContext';
 import { useEffect } from 'react';
+import { Link } from "react-router-dom"
+import { useCallback } from 'react';
+
+const categories = [
+    { name: 'All', icon: Calendar, color: 'cyan' },
+    { name: 'Cultural', icon: Music, color: 'pink' },
+    { name: 'Technical', icon: Code, color: 'blue' },
+    { name: 'Sports', icon: Trophy, color: 'green' },
+    { name: 'Arts', icon: Palette, color: 'purple' },
+    { name: 'Gaming', icon: Gamepad2, color: 'orange' },
+    { name: 'Academic', icon: BookOpen, color: 'indigo' },
+    { name: 'Entertainment', icon: Mic, color: 'red' }
+];
+
+const colorMap = {
+    cyan: 'from-cyan-500/20 to-cyan-600/20 border-cyan-400/30 text-cyan-400',
+    pink: 'from-pink-500/20 to-pink-600/20 border-pink-400/30 text-pink-400',
+    blue: 'from-blue-500/20 to-blue-600/20 border-blue-400/30 text-blue-400',
+    green: 'from-green-500/20 to-green-600/20 border-green-400/30 text-green-400',
+    purple: 'from-purple-500/20 to-purple-600/20 border-purple-400/30 text-purple-400',
+    orange: 'from-orange-500/20 to-orange-600/20 border-orange-400/30 text-orange-400',
+    indigo: 'from-indigo-500/20 to-indigo-600/20 border-indigo-400/30 text-indigo-400',
+    red: 'from-red-500/20 to-red-600/20 border-red-400/30 text-red-400'
+};
+
 const MyCollege_Events = () => {
-    const { api } = useContext(EventAppContext)
+    const { api, EventArray, EventFetcher } = useContext(EventAppContext)
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -12,53 +37,12 @@ const MyCollege_Events = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [likedEvents, setLikedEvents] = useState([]);
     const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
-    const [EventArray, setEventArray] = useState([])
-    // const [filteredEvents, setFilteredEvents] = useState([]);
 
-    const categories = [
-        { name: 'All', icon: Calendar, color: 'cyan' },
-        { name: 'Cultural', icon: Music, color: 'pink' },
-        { name: 'Technical', icon: Code, color: 'blue' },
-        { name: 'Sports', icon: Trophy, color: 'green' },
-        { name: 'Arts', icon: Palette, color: 'purple' },
-        { name: 'Gaming', icon: Gamepad2, color: 'orange' },
-        { name: 'Academic', icon: BookOpen, color: 'indigo' },
-        { name: 'Entertainment', icon: Mic, color: 'red' }
-    ];
 
     const filters = ['All', 'Today', 'This Week', 'This Month', 'Free', 'Paid', 'Featured'];
 
-    const EventFetcher = async () => {
-        try {
-            const response = await api.get("/Festofy/user/event/my-college-events", {}, { withCredentials: true, })
-
-            const events = [...response.data.events]
-            const FetchedArray = events.map((event) => ({
-                Id: event._id,
-                Title: event.title,
-                Description: event.description,
-                Date: event.dateRange.start || "",
-                Time: event.dateRange.start || "",
-                Address: event.location,     //temp
-                category: "Technical",
-                Attendees: "200",
-                MaxAttendess: "250",
-                Price: 50, //rating                  //temp
-                Rating: 4.5,                                   //temp
-                EventLogo: event.bannerUrl,//tags
-                tags: ['AI', 'Coding', 'Innovation', 'Workshops'],    //temp
-                Featured: false,                                //temp
-                EventOrganiser: event.organiser_name,
-                College: event.createdByCollege,
-                Event_Mode: event.event_mode
-            }))
-            setEventArray(FetchedArray)
-        } catch (err) {
-            console.log(err)
-        }
-    }
     const filteredEvents = useMemo(() => {
-        return EventArray.filter(event => {
+        return EventArray.filter((event, index) => {
             const matchesSearch = event.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 event.Description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 event.College.toLowerCase().includes(searchTerm.toLowerCase());
@@ -74,28 +58,16 @@ const MyCollege_Events = () => {
         });
     }, [EventArray, searchTerm, selectedCategory, selectedFilter]);
 
-    const getColorClasses = (color) => {
-        const colorMap = {
-            cyan: 'from-cyan-500/20 to-cyan-600/20 border-cyan-400/30 text-cyan-400',
-            pink: 'from-pink-500/20 to-pink-600/20 border-pink-400/30 text-pink-400',
-            blue: 'from-blue-500/20 to-blue-600/20 border-blue-400/30 text-blue-400',
-            green: 'from-green-500/20 to-green-600/20 border-green-400/30 text-green-400',
-            purple: 'from-purple-500/20 to-purple-600/20 border-purple-400/30 text-purple-400',
-            orange: 'from-orange-500/20 to-orange-600/20 border-orange-400/30 text-orange-400',
-            indigo: 'from-indigo-500/20 to-indigo-600/20 border-indigo-400/30 text-indigo-400',
-            red: 'from-red-500/20 to-red-600/20 border-red-400/30 text-red-400'
-        };
-        return colorMap[color] || colorMap.cyan;
-    };
+    const getColorClasses = useCallback((color) => colorMap[color] || colorMap.cyan, []);
 
-    const getCategoryColor = (categoryName) => {
-        const category = categories.find(cat => cat.name === categoryName);
-        return category?.color || 'cyan';
-    };
+    const getCategoryColor = useCallback(
+        (categoryName) => categories.find(cat => cat.name === categoryName)?.color || 'cyan',
+        []
+    );
+
     useEffect(() => {
         EventFetcher()
-        console.log("hello")
-    }, [])
+    }, [EventFetcher])
     return (
         <div>
             <div className="min-h-screen pt-24 pb-16 px-6">
@@ -301,10 +273,11 @@ const MyCollege_Events = () => {
                                     </div>
 
                                     {/* Register Button */}
-                                    <button className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
+                                    <Link to={`/SubEvent/${EventArray[index].Id}`}><button className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
                                         <span>Register Now</span>
                                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                                    </button>
+                                    </button></Link>
+
                                 </div>
                             </div>)
                         })}

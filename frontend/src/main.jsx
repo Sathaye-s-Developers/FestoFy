@@ -9,7 +9,7 @@ import { CookiesProvider } from "react-cookie";
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <CookiesProvider>
       <BrowserRouter>
         <EventContext>
@@ -19,5 +19,5 @@ createRoot(document.getElementById('root')).render(
         </EventContext>
       </BrowserRouter>
     </CookiesProvider>
-  </StrictMode>,
+  // </StrictMode>,
 )

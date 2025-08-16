@@ -3,12 +3,13 @@ import { RxCross2 } from "react-icons/rx";
 import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 import Otp_popup from './Otp_popup'
-import { useForm,Controller} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 
 import Forgot_pass from "./Forgotpass_component/Forgot_pass"
 import Forgot_OtpPopup from './Forgotpass_component/Forgot_OtpPopup';
 import LoginForm from './LoginForm';
 import NewPassword_popup from './Forgotpass_component/NewPassword_popup';
+import { useNavigate } from 'react-router';
 const Login_PopUp = () => {
     const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails } = useContext(EventAppContext)
     const [login, setlogin] = useState("logout")
@@ -19,6 +20,7 @@ const Login_PopUp = () => {
     const [regemail, setregemail] = useState("")
     const [email, setemail] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const Navigate=useNavigate()
     const {
         register,
         handleSubmit,
@@ -35,7 +37,7 @@ const Login_PopUp = () => {
 
         if (otp) return <Otp_popup email={email} setotp={setotp} login={login} />//token used
 
-        return <LoginForm login={login} setlogin={setlogin}  onsubmit={onsubmit} control={control} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} Controller={Controller} />
+        return <LoginForm login={login} setlogin={setlogin} onsubmit={onsubmit} control={control} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} Controller={Controller} />
     }
 
     const Allclose = () => {
@@ -52,6 +54,7 @@ const Login_PopUp = () => {
             username: formData.Username,
             email: formData.Email,
             password: formData.Password,
+            adminCode: formData.Special_key
         };
 
         if (login === "login") {
@@ -68,15 +71,26 @@ const Login_PopUp = () => {
             const response = await axios.post(newurl, payload, {
                 withCredentials: true,
             })
+            console.log(response.data.role)
             if (login === "logout") {
-                if (response.data.success) {
+                if (response.data.role==="admin") {
                     setprogress(70)
                     setIsSubmitting(true);
                     setRegister(false)
                     setisAuthenticated(true)
                     localStorage.setItem("ULRKGDAPS", "ABCEFG123")
-                    setprogress(100)
                     await fetchUserDetails()
+                    Navigate("/Admin")
+                    setprogress(100)
+
+                } else if (response.data.success) {
+                    setprogress(70)
+                    setIsSubmitting(true);
+                    setRegister(false)
+                    setisAuthenticated(true)
+                    localStorage.setItem("ULRKGDAPS", "ABCEFG123")
+                    await fetchUserDetails()
+                    setprogress(100)
                 }
             } else {
                 if (response.data.success) {

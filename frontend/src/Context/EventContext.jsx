@@ -28,6 +28,7 @@ const EventContext = (props) => {
     const [otp, setotp] = useState(false)
     const [password, setpassword] = useState(false)
     const [loading, setloading] = useState(true)
+    const [EventArray, setEventArray] = useState([])
 
     const [isAuthenticated, setisAuthenticated] = useState(false)
     const param = {
@@ -44,7 +45,7 @@ const EventContext = (props) => {
             setrandcolor(randomColor(param));
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
-            }   
+            }
             setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code })
 
         } catch (err) {
@@ -53,6 +54,40 @@ const EventContext = (props) => {
             setloading(false); // only stop loading after fetch completes or errors
         }
     }, [api]);
+
+    const EventFetcher = async () => {
+        try {
+            const response = await api.get("/Festofy/user/event/my-college-events", {}, { withCredentials: true, })
+
+            const events = [...response.data.events]
+            const FetchedArray = events.map((event) => ({
+                Id: event._id,
+                Title: event.title,
+                Description: event.description,
+                Date: event.dateRange.start || "",
+                Time: event.dateRange.start || "",
+                Address: event.location,     //temp
+                category: event.department,
+                Attendees: "50",
+                MaxAttendess: event.maxParticipants,
+                Price: 50, //rating                  //temp
+                Rating: 4.5,                                   //temp
+                EventLogo: event.bannerUrl,
+                tags: event.tags,
+                Featured: false,                                //temp
+                EventOrganiser: event.organiser_name,
+                College: event.createdByCollege,
+                Event_Mode: event.event_mode
+            }))
+            setEventArray(FetchedArray)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const closePopup = useCallback(() => {
+        setRegister(false);
+    }, []);
 
     useEffect(() => {
         const code = localStorage.getItem("ULRKGDAPS");
@@ -64,14 +99,11 @@ const EventContext = (props) => {
 
     }, [fetchUserDetails]);
 
-
-    const closePopup = useCallback(() => {
-        setRegister(false);
-    }, []);
-
     const contextvalue = useMemo(() => ({
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading
-    }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading]);
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher,
+    }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading,
+        EventArray, setEventArray, EventFetcher,
+    ]);
 
 
     // const contextvalue = {

@@ -114,7 +114,7 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register
 
                             </div>}
 
-                        {login === "logout" ? <input type="text" placeholder='Special Key (Optional)' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' {...register("Special_key")} autoComplete='college-code' /> : null}
+                        {login === "logout" ? <input type="text" placeholder='Special Key (Optional)' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' {...register("Special_key")} autoComplete='Special_key' /> : null}
                         {errorMsg && (<div className='w-[80%] mb-3'><p className='text-red-600'>{errorMsg}</p></div>)}
                         {login === "logout" ?
                             <div className='flex flex-col items-end w-[80%]'>

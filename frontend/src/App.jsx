@@ -9,8 +9,9 @@ import LoadingBar from "react-top-loading-bar";
 import Profilepg from './Pages/Event_Components/Components/Profilepg'
 import Loading_comp from "./Components/Loading_comp"
 
-import Design_CreateEvent from './Pages/Event_Components/Pages/Design_CreateEvent'
 import InterCollege_Events from './Pages/Event_Components/Event_pg_Components/InterCollege_Events'
+import Sub_Event_pg from './Pages/Event_Components/Event_pg_Components/Sub_Event_pg'
+import AdminPg from './Pages/Admin/AdminPg'
 
 const App = () => {
   const { register, loading, options, setprogress, progress, isAuthenticated } = useContext(EventAppContext)
@@ -32,11 +33,13 @@ const App = () => {
         {/* <Route path='/' element={<Loading_comp><Home /></Loading_comp>} /> */}
         <Route path='/' element={<Home />} />
         <Route path='/Home' element={<Home />} />
-        <Route path='/Event' element={isAuthenticated ? <Event /> : <Home />} />
+        <Route path='/Event/*' element={isAuthenticated ? <Event /> : <Home />} />
         {/* <Route path='/Event' element={<Event />} /> */}
-        <Route path='/CreateEvent' element={<Design_CreateEvent />} />
+
         <Route path='/Profile' element={isAuthenticated ? <Profilepg /> : <Home />} />
         <Route path='/InterCollegateEvents' element={isAuthenticated ? <InterCollege_Events /> : <Home />} />
+        <Route path='/SubEvent/:eventId' element={isAuthenticated ? <Sub_Event_pg /> : <Home />} />
+        <Route path='/Admin/*' element={isAuthenticated ? <AdminPg/> : <Home />} />
       </Routes>
     </div >
   )
