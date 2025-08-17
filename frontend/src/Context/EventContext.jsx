@@ -8,11 +8,6 @@ export const EventAppContext = createContext(null)
 const EventContext = (props) => {
     const [hue, setHue] = useState('red');
     const [lum, setLum] = useState('light');
-    // const param = {
-    //     luminosity: lum,
-    //     hue: hue,
-    // };
-    const [cookies, setCookie, removeCookie] = useCookies(['Login']);
 
     const api = useMemo(() => axios.create({
         baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
@@ -29,7 +24,8 @@ const EventContext = (props) => {
     const [password, setpassword] = useState(false)
     const [loading, setloading] = useState(true)
     const [EventArray, setEventArray] = useState([])
-
+    const [key, setkey] = useState(false)
+    const [admin, setadmin] = useState(false)
     const [isAuthenticated, setisAuthenticated] = useState(false)
     const param = {
         luminosity: lum,
@@ -46,7 +42,10 @@ const EventContext = (props) => {
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
             }
-            setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code })
+            setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code, role: response.data.user.role })
+            if (response.data.user.role === "admin") {
+                setadmin(true);
+            }
 
         } catch (err) {
             setisAuthenticated(false)
@@ -99,9 +98,9 @@ const EventContext = (props) => {
     }, [fetchUserDetails]);
 
     const contextvalue = useMemo(() => ({
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher,
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin
     }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading,
-        EventArray, setEventArray, EventFetcher,
+        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin
     ]);
 
 

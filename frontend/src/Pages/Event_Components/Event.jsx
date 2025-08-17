@@ -35,7 +35,6 @@ const Event = () => {
                 <Main_Event/>
                 <MyCollege_Events />
                 {profileOptions && <EventOptions popupRef={popupRef} />}
-
             </div>
         </div>
     )

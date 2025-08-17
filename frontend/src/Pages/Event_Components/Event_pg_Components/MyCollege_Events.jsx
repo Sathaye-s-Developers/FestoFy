@@ -171,7 +171,6 @@ const MyCollege_Events = () => {
                                         alt={event.Title}
                                         className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                                     />
-
                                     {/* Featured Badge */}
                                     {event.Featured && (
                                         <div className="absolute top-4 left-4 flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-yellow-500/90 to-orange-500/90 rounded-full">
@@ -275,6 +274,12 @@ const MyCollege_Events = () => {
                                     {/* Register Button */}
                                     <Link to={`/SubEvent/${EventArray[index].Id}`}><button className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
                                         <span>Register Now</span>
+                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                    </button></Link>
+
+
+                                    <Link to={`/SubEvent/${EventArray[index].Id}`}><button className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
+                                        <span>Register For Voleenter</span>
                                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                                     </button></Link>
 

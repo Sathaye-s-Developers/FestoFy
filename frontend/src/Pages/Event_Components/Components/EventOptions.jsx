@@ -7,12 +7,13 @@ import { Link } from "react-router-dom"
 
 const EventOptions = ({ popupRef }) => {
     const Navigate = useNavigate()
-    const { details, randcolor, settoken, profileOptions, setprofileOptions, api, setdetails, setisAuthenticated } = useContext(EventAppContext)
+    const { details, randcolor, settoken, profileOptions, setprofileOptions, api, setdetails, setisAuthenticated, key, setkey } = useContext(EventAppContext)
+
     const logout = async (e) => {
         try {
             e.preventDefault();
             await api.post("/Festofy/user/logout", { withCredentials: true });
-            setdetails({ username: "", email: "" });
+            setdetails({ username: "", email: "", role: "" });
             setisAuthenticated(false)
             localStorage.removeItem("ULRKGDAPS")
         } catch (err) {
@@ -43,20 +44,26 @@ const EventOptions = ({ popupRef }) => {
                         <hr className='border-t border-white mt-5 w-full' />
                         <div className='w-full flex flex-col justify-between h-full mt-2'>
                             <div className='flex flex-col'>
-                                <Link onClick={()=>{setprofileOptions(false)}} to="/Profile">
+                                <Link onClick={() => { setprofileOptions(false) }} to="/Profile">
                                     <div className="flex items-center justify-center gap-2 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
                                         <CgProfile className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
                                         <span className="font-medium">Your Profile</span>
                                     </div>
                                 </Link>
 
+                                <Link onClick={() => {
+                                    if (details.role !== "admin") {
+                                        setkey(true)
+                                    }
+                                    setprofileOptions(false)
+                                }} to={details.role === "admin" ? "/Admin" : "/Event"}>
+                                    <button className="flex items-center justify-center gap-2 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
+                                        <Calendar className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300 transition-colors" />
+                                        <span className="font-medium">Your Events</span>
+                                    </button>
+                                </Link>
 
-                                <button className="flex items-center justify-center gap-2 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
-                                    <Calendar className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300 transition-colors" />
-                                    <span className="font-medium">Your Events</span>
-                                </button>
-
-                                <Link onClick={()=>{setprofileOptions(false)}} to="/InterCollegateEvents">
+                                <Link onClick={() => { setprofileOptions(false) }} to="/InterCollegateEvents">
                                     <button className="flex items-center justify-center gap-3 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
                                         <Globe className="w-4 h-4 text-pink-400 group-hover:text-pink-300 transition-colors" />
                                         <span className="font-medium">InterCollegate Events</span>

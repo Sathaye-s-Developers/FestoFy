@@ -28,7 +28,6 @@ const LoginForm = ({ login, setlogin, onsubmit, errorMsg, isSubmitting, register
             <div className='p-5 flex justify-between font-[Nunito]'>
                 <h1 className='font-bold ml-5 text-[18px] text-black'>{login === "logout" ? "Login" : "SignUp"}</h1>
                 <RxCross2 onClick={closePopup} color='black' />
-
             </div>
             <div className='font-[Nunito]'>
                 <form onSubmit={handleSubmit(onsubmit)}>

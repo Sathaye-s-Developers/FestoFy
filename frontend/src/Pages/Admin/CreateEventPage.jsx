@@ -293,6 +293,7 @@ const CreateEventPage = () => {
                   </div>
                 )}
               </div>
+              <p>1918x867px</p>
 
             </div>
 

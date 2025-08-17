@@ -111,7 +111,7 @@ const Sub_Event_pg = () => {
                   src={EventInfo.bannerUrl}
                   alt={EventInfo.title}
                   loading="lazy"
-                  className="object-contain rounded-xl"
+                  className="object-contain rounded-xl w-52 h-52"
                 />
 
                 <div className="flex flex-col p-4 items-start w-full">
@@ -127,7 +127,7 @@ const Sub_Event_pg = () => {
                     ))}
                   </div>
                   <p className="text-gray-400 mb-4">~~Hosted By {EventInfo.organiser_name}</p>
-                  <div className={`px-4 py-1 w-24 bg-gradient-to-r ${getColorClasses(getCategoryColor(EventInfo.department))} rounded-full border`}>
+                  <div className={`px-4 py-1 bg-gradient-to-r ${getColorClasses(getCategoryColor(EventInfo.department))} rounded-full border`}>
                     <span className="text-sm font-semibold text-center">{EventInfo.department}</span>
                   </div>
                 </div>

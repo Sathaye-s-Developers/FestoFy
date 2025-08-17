@@ -4,14 +4,13 @@ import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 import Otp_popup from './Otp_popup'
 import { useForm, Controller } from "react-hook-form";
-
 import Forgot_pass from "./Forgotpass_component/Forgot_pass"
 import Forgot_OtpPopup from './Forgotpass_component/Forgot_OtpPopup';
 import LoginForm from './LoginForm';
 import NewPassword_popup from './Forgotpass_component/NewPassword_popup';
 import { useNavigate } from 'react-router';
 const Login_PopUp = () => {
-    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails } = useContext(EventAppContext)
+    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails,setadmin} = useContext(EventAppContext)
     const [login, setlogin] = useState("logout")
 
     const [Forgototp, setForgototp] = useState(false)
@@ -20,7 +19,7 @@ const Login_PopUp = () => {
     const [regemail, setregemail] = useState("")
     const [email, setemail] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const Navigate=useNavigate()
+    const Navigate = useNavigate()
     const {
         register,
         handleSubmit,
@@ -71,9 +70,9 @@ const Login_PopUp = () => {
             const response = await axios.post(newurl, payload, {
                 withCredentials: true,
             })
-            console.log(response.data.role)
             if (login === "logout") {
-                if (response.data.role==="admin") {
+                if (response.data.role === "admin") {
+                    setadmin(true)
                     setprogress(70)
                     setIsSubmitting(true);
                     setRegister(false)
@@ -82,7 +81,6 @@ const Login_PopUp = () => {
                     await fetchUserDetails()
                     Navigate("/Admin")
                     setprogress(100)
-
                 } else if (response.data.success) {
                     setprogress(70)
                     setIsSubmitting(true);
