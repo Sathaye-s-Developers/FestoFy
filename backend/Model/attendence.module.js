@@ -2,32 +2,42 @@ const mongoose = require("mongoose");
 
 const attendanceSchema = new mongoose.Schema(
   {
-    volunteer: {
+    volunteerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Volunteer",
       required: true,
     },
-    event: {
+    eventId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Event",
       required: true,
     },
-    subEvent: {
+    subEventId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubEvent",
       required: true,
     },
-    date: { type: Date, required: true },
-    status: { type: String, enum: ["Present", "Absent"], default: "Absent" },
+    date: {
+      type: Date,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["present", "absent"],
+      required: true,
+    },
+    markedBy: {
+      type: mongoose.Schema.Types.ObjectId, // Admin who marked
+      ref: "User",
+    },
   },
   { timestamps: true }
 );
 
-// Unique: volunteer + subEvent + date
+// Unique constraint: same volunteer can’t be marked twice in the same subEvent for the same date
 attendanceSchema.index(
-  { volunteer: 1, subEvent: 1, date: 1 },
+  { volunteerId: 1, subEventId: 1, date: 1 },
   { unique: true }
 );
 
-const Attendance = mongoose.model("Attendance", attendanceSchema);
-module.exports = Attendance;
+module.exports = mongoose.model("Attendance", attendanceSchema);

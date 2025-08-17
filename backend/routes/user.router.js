@@ -199,6 +199,7 @@ router.get("/all_users", verifyToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 // make admin by admin key
 router.post("/role_admin", verifyToken, async (req, res) => {
   try {
@@ -222,7 +223,26 @@ router.post("/role_admin", verifyToken, async (req, res) => {
       await user.save();
     }
 
-    res.json({ message: "User promoted to admin successfully", user });
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        collegeName: user.collegeName,
+      },
+      JWT_SECRET,
+      { expiresIn: "2d" }
+    );
+
+    // Set token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true only in prod
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // lax in dev
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ message: "User promoted to admin successfully", user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
