@@ -362,8 +362,8 @@ router.post("/login", async (req, res) => {
     let role = "user";
     if (adminCode && adminCode === ADMIN_SECRET_CODE) {
       role = "admin";
-    }else if(adminCode && adminCode !== ADMIN_SECRET_CODE){
-      return res.status(401).json({message:"Invalid Special Key"})
+    } else if (adminCode && adminCode !== ADMIN_SECRET_CODE) {
+      return res.status(401).json({ message: "Invalid Special Key" })
     }
     if (superAdminKey && superAdminKey === SUPER_ADMIN_SECRET_KEY) {
       role = "superadmin";
@@ -402,7 +402,7 @@ router.post("/login", async (req, res) => {
       username: user.username,
       role: user.role,
       collegeName: user.collegeName,
-      token:token
+      token: token
     });
   } catch (err) {
     console.error(err);
@@ -486,6 +486,35 @@ router.get("/all_users", verifyToken, async (req, res) => {
     res.status(200).json({ message: " All users fetched", users });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/role_admin", verifyToken, async (req, res) => {
+  try {
+    const { adminCode } = req.body;
+    const userId = req.user._id;
+
+    // find user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success:false,error: "User Not Found" });
+    }
+
+    // check admin code
+    if (!adminCode || adminCode !== process.env.ADMIN_SECRET_CODE) {
+      return res.status(403).json({ success:false,error: "Invalid Admin Code" });
+    }
+
+    // assign role
+    if (user.role !== "admin") {
+      user.role = "admin";
+      await user.save();
+    }
+
+    res.json({success:true, message: "User Promoted To Admin Successfully", user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({success:false, error: "Server Error" });
   }
 });
 module.exports = router;
