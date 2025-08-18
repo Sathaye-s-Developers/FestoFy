@@ -6,7 +6,7 @@ import { Link } from "react-router-dom"
 import { EventAppContext } from '../../Context/EventContext';
 
 const YourEvent = () => {
-    const { api, EventArray,setEventArray } = useContext(EventAppContext)
+    const { api, EventArray, setEventArray } = useContext(EventAppContext)
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -94,9 +94,9 @@ const YourEvent = () => {
         return category?.color || 'cyan';
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         EventFetcher()
-    },[])
+    }, [])
 
     return (
         <div>
@@ -119,123 +119,120 @@ const YourEvent = () => {
                                         className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 overflow-hidden hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 animate-fadeInUp"
                                         style={{ animationDelay: `${index * 100}ms` }}
                                     >
-                                        {/* Event Image */}
-                                        <div className="relative overflow-hidden">
-                                            <img
-                                                src={event.EventLogo}
-                                                alt={event.Title}
-                                                className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                                            />
+                                        <Link to={`/SubEvent/${EventArray[index].Id}`}>
+                                            {/* Event Image */}
+                                            <div className="relative overflow-hidden">
+                                                <img
+                                                    src={event.EventLogo}
+                                                    alt={event.Title}
+                                                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                                />
 
-                                            {/* Featured Badge */}
-                                            {event.Featured && (
-                                                <div className="absolute top-4 left-4 flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-yellow-500/90 to-orange-500/90 rounded-full">
-                                                    <Zap className="w-3 h-3 text-white" />
-                                                    <span className="text-white text-xs font-semibold">Featured</span>
-                                                </div>
-                                            )}
-
-                                            {/* Action Buttons */}
-                                            <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <button
-                                                    onClick={() => toggleLike(event.Id)}
-                                                    className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isLiked
-                                                        ? 'bg-red-500/80 border-red-400 text-white'
-                                                        : 'bg-black/40 border-white/20 text-white hover:bg-red-500/80'
-                                                        }`}
-                                                >
-                                                    <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                                                </button>
-                                                <button
-                                                    onClick={() => toggleBookmark(event.Id)}
-                                                    className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isBookmarked
-                                                        ? 'bg-cyan-500/80 border-cyan-400 text-white'
-                                                        : 'bg-black/40 border-white/20 text-white hover:bg-cyan-500/80'
-                                                        }`}
-                                                >
-                                                    <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                                                </button>
-                                                <button className="p-2 rounded-full bg-black/40 border border-white/20 text-white hover:bg-white/20 transition-all duration-300">
-                                                    <Share2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-
-                                            {/* Price Badge */}
-                                            <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-sm rounded-full">
-                                                <span className="text-white text-sm font-semibold">
-                                                    {event.Price === 0 ? 'Free' : `₹${event.Price}`}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Event Content */}
-                                        <div className="p-6">
-                                            {/* Category and Rating */}
-                                            <div className="flex items-center justify-between mb-3">
-                                                <div className={`px-3 py-1 bg-gradient-to-r ${colorClasses} rounded-full border`}>
-                                                    <span className="text-xs font-semibold">{event.category}</span>
-                                                </div>
-                                                <div className="flex items-center space-x-1">
-                                                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                                    <span className="text-white text-sm font-medium">{event.Rating}</span>
-                                                </div>
-                                            </div>
-
-                                            {/* Event Title */}
-                                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors duration-300">
-                                                {event.Title}
-                                            </h3>
-
-                                            {/* Event Description */}
-                                            <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                                                {event.Description}
-                                            </p>
-
-                                            {/* Event Details */}
-                                            <div className="space-y-2 mb-4">
-                                                <div className="flex items-center space-x-2 text-gray-300 text-sm">
-                                                    <Calendar className="w-4 h-4 text-cyan-400" />
-                                                    <span>{new Date(event.Date).toISOString().split("T")[0]}</span>
-                                                </div>
-
-                                                <div className="flex items-center space-x-2 text-gray-300 text-sm">
-                                                    <MapPin className="w-4 h-4 text-cyan-400" />
-                                                    <span className="truncate">{event.Address}</span>
-                                                </div>
-                                                <div className="flex items-center space-x-2 text-gray-300 text-sm">
-                                                    <Users className="w-4 h-4 text-cyan-400" />
-                                                    <span>100/{event.MaxAttendess} attending</span>
-                                                </div>
-                                            </div>
-
-                                            {/* Tags */}
-                                            <div className="flex flex-wrap gap-2 mb-4">
-                                                {event.tags.slice(0, 3).map((tag, tagIndex) => (
-                                                    <div key={tagIndex} className="flex items-center space-x-1 px-2 py-1 bg-slate-700/50 rounded-lg">
-                                                        <Tag className="w-3 h-3 text-gray-400" />
-                                                        <span className="text-xs text-gray-400">{tag}</span>
+                                                {/* Featured Badge */}
+                                                {event.Featured && (
+                                                    <div className="absolute top-4 left-4 flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-yellow-500/90 to-orange-500/90 rounded-full">
+                                                        <Zap className="w-3 h-3 text-white" />
+                                                        <span className="text-white text-xs font-semibold">Featured</span>
                                                     </div>
-                                                ))}
+                                                )}
+
+                                                {/* Action Buttons */}
+                                                <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <button
+                                                        onClick={() => toggleLike(event.Id)}
+                                                        className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isLiked
+                                                            ? 'bg-red-500/80 border-red-400 text-white'
+                                                            : 'bg-black/40 border-white/20 text-white hover:bg-red-500/80'
+                                                            }`}
+                                                    >
+                                                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => toggleBookmark(event.Id)}
+                                                        className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isBookmarked
+                                                            ? 'bg-cyan-500/80 border-cyan-400 text-white'
+                                                            : 'bg-black/40 border-white/20 text-white hover:bg-cyan-500/80'
+                                                            }`}
+                                                    >
+                                                        <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
+                                                    </button>
+                                                    <button className="p-2 rounded-full bg-black/40 border border-white/20 text-white hover:bg-white/20 transition-all duration-300">
+                                                        <Share2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+
+                                                {/* Price Badge */}
+                                                <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-sm rounded-full">
+                                                    <span className="text-white text-sm font-semibold">
+                                                        {event.Price === 0 ? 'Free' : `₹${event.Price}`}
+                                                    </span>
+                                                </div>
                                             </div>
 
-                                            {/* College and Organizer */}
-                                            <div className="text-xs text-gray-500 mb-4">
-                                                <div>Organized by <span className="text-cyan-400">{event.EventOrganiser}</span></div>
-                                                {/* <div>at <span className="text-cyan-400">{event.college}</span></div> */}
+                                            {/* Event Content */}
+                                            <div className="p-6">
+                                                {/* Category and Rating */}
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className={`px-3 py-1 bg-gradient-to-r ${colorClasses} rounded-full border`}>
+                                                        <span className="text-xs font-semibold">{event.category}</span>
+                                                    </div>
+                                                    <div className="flex items-center space-x-1">
+                                                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                                                        <span className="text-white text-sm font-medium">{event.Rating}</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Event Title */}
+                                                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors duration-300">
+                                                    {event.Title}
+                                                </h3>
+
+                                                {/* Event Description */}
+                                                <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                                                    {event.Description}
+                                                </p>
+
+                                                {/* Event Details */}
+                                                <div className="space-y-2 mb-4">
+                                                    <div className="flex items-center space-x-2 text-gray-300 text-sm">
+                                                        <Calendar className="w-4 h-4 text-cyan-400" />
+                                                        <span>{new Date(event.Date).toISOString().split("T")[0]}</span>
+                                                    </div>
+
+                                                    <div className="flex items-center space-x-2 text-gray-300 text-sm">
+                                                        <MapPin className="w-4 h-4 text-cyan-400" />
+                                                        <span className="truncate">{event.Address}</span>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2 text-gray-300 text-sm">
+                                                        <Users className="w-4 h-4 text-cyan-400" />
+                                                        <span>100/{event.MaxAttendess} attending</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Tags */}
+                                                <div className="flex flex-wrap gap-2 mb-4">
+                                                    {event.tags.slice(0, 3).map((tag, tagIndex) => (
+                                                        <div key={tagIndex} className="flex items-center space-x-1 px-2 py-1 bg-slate-700/50 rounded-lg">
+                                                            <Tag className="w-3 h-3 text-gray-400" />
+                                                            <span className="text-xs text-gray-400">{tag}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* College and Organizer */}
+                                                <div className="text-xs text-gray-500 mb-4">
+                                                    <div>Organized by <span className="text-cyan-400">{event.EventOrganiser}</span></div>
+                                                    {/* <div>at <span className="text-cyan-400">{event.college}</span></div> */}
+                                                </div>
+
+                                                {/* Register Button */}
+                                                <Link to={`/Admin/CreateSubEvent/${EventArray[index].Id}`}><button className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
+                                                    <span>Create SubEvent</span>
+                                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                                </button></Link>
+
                                             </div>
-
-                                            {/* Register Button */}
-                                            <Link to={`/Admin/CreateSubEvent/${EventArray[index].Id}`}><button className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
-                                                <span>Create SubEvent</span>
-                                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                                            </button></Link>
-
-                                            <Link to={`/SubEvent/${EventArray[index].Id}`}><button className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3  text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
-                                                <span>View SubEvent</span>
-                                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                                            </button></Link>
-
-                                        </div>
+                                        </Link>
                                     </div>)
                                 })}
                             </div>
