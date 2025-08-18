@@ -4,7 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { EventAppContext } from "../../Context/EventContext";
 
-const loading_comp = ({ loading }) => {
+const loading_comp2 = ({ loading }) => {
   const { isAuthenticated } = useContext(EventAppContext);
 
   const override = {

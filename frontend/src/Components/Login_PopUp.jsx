@@ -102,7 +102,7 @@ const Login_PopUp = () => {
                             setprogress(100)
                         }
                         setIsSubmitting(false);
-
+                        await fetchUserDetails()
                     } catch (err) {
                         setprogress(0);
                         if (err.response && (err.response.status === 409 || err.response.status === 401)) {

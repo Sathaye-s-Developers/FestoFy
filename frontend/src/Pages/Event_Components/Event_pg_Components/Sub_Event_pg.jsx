@@ -5,14 +5,19 @@ import axios from 'axios';
 import E_Nav_Back from '../Components/E_Nav_Back';
 import { useParams } from 'react-router';
 import { useCallback } from 'react';
+import { LiaUniversitySolid } from "react-icons/lia";
+import { AiOutlineGlobal } from "react-icons/ai";
+
 // import loading_comp from "../../Admin/loading_comp"
+import { MdOutlineDescription } from "react-icons/md";
+
 
 const Sub_Event_pg = () => {
   const { api } = useContext(EventAppContext)
   const { eventId } = useParams();
   const [EventInfo, setEventInfo] = useState(null)
   const [subEventInfo, setsubEventInfo] = useState(null)
-  const [loading,setloading]=useState(true)
+  const [loading, setloading] = useState(true)
 
   const getColorClasses = (color) => {
     const colorMap = {
@@ -88,7 +93,7 @@ const Sub_Event_pg = () => {
     } catch (err) {
       console.log(err)
     } finally {
-      setloading(false); 
+      setloading(false);
     }
 
   }
@@ -99,34 +104,44 @@ const Sub_Event_pg = () => {
 
   return (
     <div className='min-h-screen bg-black'>
-      <loading_comp loading={loading}/>
+      <loading_comp loading={loading} />
       <E_Nav_Back />
       {EventInfo && (
         < div>
           <div className="w-full overflow-hidden animate-scaleIn ">
-            {/* Modal Header */}
             <div className="p-8 ml-12 mr-12 mt- bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-3xl border border-cyan-400/20">
-              <div className="flex flex-col items-start md:flex-row gap-6 rounded-[20px] overflow-hidden">
+              <div className='flex items-center gap-4 ml-4'>
                 <img
                   src={EventInfo.bannerUrl}
                   alt={EventInfo.title}
                   loading="lazy"
-                  className="object-contain rounded-xl w-52 h-52"
+                  className="object-contain rounded-xl w-15 h-15"
                 />
-
+                <h2 className={`text-2xl md:text-3xl font-bold ${getColorClasses(getCategoryColor(EventInfo.department))}  mb-3`}>{EventInfo.title}</h2>
+              </div>
+              <div className="flex flex-col items-start md:flex-row gap-6 rounded-[20px] overflow-hidden">
                 <div className="flex flex-col p-4 items-start w-full">
-                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{EventInfo.title}</h2>
-                  <p className="text-gray-300 mb-4">{EventInfo.description}</p>
-                  <p className="text-gray-300 mb-4">Participants Allowed : {EventInfo.visibility === "college" ? "Only Your College Students Allowed" : "All College Students Allowed"}</p>
+                  <p className="text-gray-300 mb-4 font-bold">Event Details :</p>
+                  <div className='flex gap-2'>
+                    <MdOutlineDescription className="w-6 h-6 text-cyan-400" />
+                    <p className="text-gray-300 mb-4">{EventInfo.description}</p>
+                  </div>
+                  <div className='flex gap-2'>
+                    <div>
+                      {EventInfo.visibility === "college" ? <LiaUniversitySolid className="w-6 h-6 text-cyan-400" /> : <AiOutlineGlobal className="w-6 h-6 text-cyan-400" />}
+                    </div>
+                    <p className="text-gray-300 mb-4">Participants Allowed : {EventInfo.visibility === "college" ? "Only Your College Students Allowed" : "All College Students Allowed"}</p>
+                  </div>
+
                   <div className="flex flex-wrap gap-2 mb-4">
                     {EventInfo?.tags?.slice(0, 3).map((tag, tagIndex) => (
-                      <div key={tagIndex} className="flex items-center space-x-1 px-2 py-1 bg-slate-700/50 rounded-lg">
+                      <div key={tagIndex} className="flex items-center space-x-1 px-3 py-1 bg-slate-700/50 rounded-lg">
                         <Tag className="w-3 h-3 text-gray-400" />
                         <span className="text-xs text-gray-400">{tag}</span>
                       </div>
                     ))}
                   </div>
-                  <p className="text-gray-400 mb-4">~~Hosted By {EventInfo.organiser_name}</p>
+                  <p className="text-gray-400 mb-4">~~ Hosted By {EventInfo.organiser_name}</p>
                   <div className={`px-4 py-1 bg-gradient-to-r ${getColorClasses(getCategoryColor(EventInfo.department))} rounded-full border`}>
                     <span className="text-sm font-semibold text-center">{EventInfo.department}</span>
                   </div>
@@ -138,9 +153,11 @@ const Sub_Event_pg = () => {
       )
       }
 
-      {subEventInfo?.length === 0 && (
-        <div className="text-gray-400 text-center mt-16 text-4xl">No SubEvents Found</div>
-      )}
+      {
+        subEventInfo?.length === 0 && (
+          <div className="text-gray-400 text-center mt-16 text-4xl">No SubEvents Found</div>
+        )
+      }
 
 
       {/* subevent comp */}
