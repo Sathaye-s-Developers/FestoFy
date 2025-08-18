@@ -22,7 +22,7 @@ const CreateSub_EventPg = () => {
     })
 
     const onsubmit = async (data) => {
-        const dateObj = new Date(data.Date); // make Date from string input
+        const dateObj = new Date(data.Date); 
         const payload = {
             title: data.Title,
             description: data.Description,
@@ -37,6 +37,7 @@ const CreateSub_EventPg = () => {
             location: data.Location,
             subEventCategory: data.category
         }
+        console.log(payload)
         try {
             const response = await api.post("/Festofy/user/event/subevent/create", payload, { withCredentials: true, })
             if (response.data.success) {

@@ -4,7 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { EventAppContext } from "../../Context/EventContext";
 
-const loading_comp2 = ({ loading }) => {
+const Loading_comp2 = ({ loading,children}) => {
   const { isAuthenticated } = useContext(EventAppContext);
 
   const override = {
@@ -21,5 +21,6 @@ const loading_comp2 = ({ loading }) => {
 
   if (!isAuthenticated) return <Navigate to="/Home" />;
 
-  return children || <div>⚠ No child component provided</div>;
+  return children || <div className="hidden">⚠ No child component provided</div>;
 };
+export default Loading_comp2;

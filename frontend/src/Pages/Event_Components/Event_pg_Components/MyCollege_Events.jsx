@@ -272,15 +272,10 @@ const MyCollege_Events = () => {
                                             {/* <div>at <span className="text-cyan-400">{event.college}</span></div> */}
                                         </div>
 
-                                        {/* Register Button */}
-
-
-
-                                        <Link to={`/SubEvent/${EventArray[index].Id}`}><button className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
+                                        <button className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold">
                                             <span>Register For Voleenter</span>
                                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                                        </button></Link>
-
+                                        </button>
                                     </div>
                                 </Link>
                             </div>)

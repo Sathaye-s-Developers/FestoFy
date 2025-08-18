@@ -1,16 +1,15 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { EventAppContext } from '../../../Context/EventContext'
 import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap, X, CheckCircle } from 'lucide-react';
+import { FaIndianRupeeSign } from "react-icons/fa6";
 import axios from 'axios';
 import E_Nav_Back from '../Components/E_Nav_Back';
 import { useParams } from 'react-router';
 import { useCallback } from 'react';
 import { LiaUniversitySolid } from "react-icons/lia";
 import { AiOutlineGlobal } from "react-icons/ai";
-
-// import loading_comp from "../../Admin/loading_comp"
 import { MdOutlineDescription } from "react-icons/md";
-
+import Loading_comp2 from '../../Admin/loading_comp2';
 
 const Sub_Event_pg = () => {
   const { api } = useContext(EventAppContext)
@@ -104,7 +103,8 @@ const Sub_Event_pg = () => {
 
   return (
     <div className='min-h-screen bg-black'>
-      <loading_comp loading={loading} />
+      {/* <loading_comp loading={loading} /> */}
+      <Loading_comp2 loading={loading}/>
       <E_Nav_Back />
       {EventInfo && (
         < div>
@@ -204,6 +204,10 @@ const Sub_Event_pg = () => {
                     <MapPin className="w-4 h-4 text-cyan-400" />
                     <span>{subEvent.location}</span>
                   </div>
+                  <div className="flex items-center space-x-3 text-gray-300 text-sm">
+                    <FaIndianRupeeSign className="w-4 h-4 text-cyan-400" />
+                    <span>Entry Fee: {subEvent.price===0?"Free":subEvent.price}</span>
+                  </div>
                 </div>
 
                 {/* Participants Progress */}
@@ -251,7 +255,7 @@ const Sub_Event_pg = () => {
                           <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
                             {prizeIndex + 1}
                           </div>
-                          <span className="text-yellow-400 text-sm font-medium">{prize}</span>
+                          <span className="text-yellow-400 text-sm font-medium">{prize.replace(/\$/g, '')}</span>
                         </div>
                       ))}
                     </div>
