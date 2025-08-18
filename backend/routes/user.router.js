@@ -497,12 +497,12 @@ router.post("/role_admin", verifyToken, async (req, res) => {
     // find user
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ success:false,error: "User Not Found" });
+      return res.status(404).json({success:false, error: "User not found" });
     }
 
     // check admin code
     if (!adminCode || adminCode !== process.env.ADMIN_SECRET_CODE) {
-      return res.status(403).json({ success:false,error: "Invalid Admin Code" });
+      return res.status(403).json({ success:false,error: "Invalid admin code" });
     }
 
     // assign role
@@ -511,10 +511,29 @@ router.post("/role_admin", verifyToken, async (req, res) => {
       await user.save();
     }
 
-    res.json({success:true, message: "User Promoted To Admin Successfully", user });
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        collegeName: user.collegeName,
+      },
+      JWT_SECRET,
+      { expiresIn: "2d" }
+    );
+
+    // Set token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true only in prod
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // lax in dev
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({success:true, message: "User promoted to admin successfully", user });
   } catch (err) {
     console.error(err);
-    res.status(500).json({success:false, error: "Server Error" });
+    res.status(500).json({success:false, error: "Server error" });
   }
 });
 module.exports = router;
