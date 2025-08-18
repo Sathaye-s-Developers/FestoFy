@@ -17,6 +17,9 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       eventId,
       event_mode = "free",
       price = 0,
+      participation_type = "solo",
+      maxParticipants = 1000,
+      maxVolunteers = 1000,
     } = req.body;
 
     if (!eventId || !title || !date || !description || !time || !location) {
@@ -50,6 +53,9 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       eventId,
       price,
       event_mode,
+      participation_type,
+      maxParticipants,
+      maxVolunteers,
     });
 
     const savedSubEvent = await newSubEvent.save();
@@ -107,7 +113,19 @@ router.get("/section/:eventType", verifyToken, async (req, res) => {
 //  Update SubEvent
 router.patch("/update", verifyToken, isAdmin, async (req, res) => {
   try {
-    const { subEventId, title, description, date, time, location } = req.body;
+    const {
+      subEventId,
+      title,
+      description,
+      date,
+      time,
+      price,
+      event_mode,
+      location,
+      participation_type,
+      maxParticipants,
+      maxVolunteers,
+    } = req.body;
 
     if (!subEventId) {
       return res.status(400).json({ error: "subEventId is required" });
@@ -119,6 +137,12 @@ router.patch("/update", verifyToken, isAdmin, async (req, res) => {
     if (date) updateFields.date = date;
     if (time) updateFields.time = time;
     if (location) updateFields.location = location;
+    if (participation_type)
+      updateFields.participation_type = participation_type;
+    if (maxParticipants) updateFields.maxParticipants = maxParticipants;
+    if (maxVolunteers) updateFields.maxVolunteers = maxVolunteers;
+    if (price) updateFields.price = price;
+    if (event_mode) updateFields.event_mode = event_mode;
 
     const updated = await SubEvent.findByIdAndUpdate(subEventId, updateFields, {
       new: true,

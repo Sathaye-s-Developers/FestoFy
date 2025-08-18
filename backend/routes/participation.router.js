@@ -9,91 +9,110 @@ const verifyToken = require("../middlewares/token_varification");
 router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
-    const { phone, eventId, subEventId } = req.body;
+    const {
+      phone,
+      eventId,
+      subEventId,
+      teamName = null,
+      members = null,
+      collegeName = null,
+      contact = null,
+    } = req.body;
 
+    //  Validate phone
     const phoneRegex = /^[6-9]\d{9}$/;
     if (!phoneRegex.test(phone)) {
       return res.status(400).json({ error: "Invalid phone number" });
     }
 
     if (!eventId) {
-      return res.status(400).json({ error: "Event  ID is required" });
+      return res.status(400).json({ error: "Event ID is required" });
     }
-    // if (!subEventId) {
-    //   return res.status(400).json({ error: "SubEvent  ID is required" });
-    // }
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // Check if already registered
+    let subEvent = null;
     if (subEventId) {
-      const existing = await Participation.findOne({
-        participantEmail: user.email,
-        eventId,
-        subEventId,
-      });
+      subEvent = await SubEvent.findById(subEventId);
+      if (!subEvent)
+        return res.status(404).json({ error: "Sub-event not found" });
+    }
 
-      if (existing) {
-        return res
-          .status(409)
-          .json({ error: "Already registered for this sub-event" });
+    // Check if already registered
+    let existing;
+    if (subEvent) {
+      if (subEvent.participation_type === "team") {
+        existing = await Participation.findOne({
+          eventId,
+          subEventId,
+          teamName,
+        });
+      } else {
+        existing = await Participation.findOne({
+          eventId,
+          subEventId,
+          participantEmail: user.email,
+        });
       }
     } else {
-      const existing = await Participation.findOne({
-        participantEmail: user.email,
+      existing = await Participation.findOne({
         eventId,
-        subEventId: { $exists: false },
+        subEventId: null,
+        participantEmail: user.email,
       });
-
-      if (existing) {
-        return res
-          .status(409)
-          .json({ error: "Already registered for this event" });
-      }
     }
 
-    // 4. Check limits
-    if (subEventId) {
-      if (subEventId) {
-        const subEvent = await SubEvent.findById(subEventId);
-        if (!subEvent)
-          return res.status(404).json({ error: "Sub-event not found" });
-
-        const currentCount = await Participation.countDocuments({ subEventId });
-        if (
-          subEvent.maxParticipants &&
-          currentCount >= subEvent.maxParticipants
-        ) {
-          return res
-            .status(400)
-            .json({ error: "Sub-event participant limit reached" });
-        }
-      } else {
-        const event = await Event.findById(eventId);
-        if (!event) return res.status(404).json({ error: "Event not found" });
-
-        const currentCount = await Participation.countDocuments({
-          eventId,
-          subEventId: { $exists: false },
-        });
-        if (event.maxParticipants && currentCount >= event.maxParticipants) {
-          return res
-            .status(400)
-            .json({ error: "Event participant limit reached" });
-        }
-      }
+    if (existing) {
+      return res
+        .status(409)
+        .json({ error: "Already registered for this event/sub-event" });
     }
-    // Save new participant
-    const newParticipant = new Participation({
-      participantName: user.username,
-      participantEmail: user.email,
-      participantPhone: phone,
-      college: user.collegeName,
+
+    // Check participant limits
+    let currentCount = await Participation.countDocuments({
       eventId,
-      subEventId: subEventId,
-      //   type: req.body.type || "college",
+      ...(subEventId ? { subEventId } : { subEventId: null }),
     });
+
+    const maxAllowed = subEventId
+      ? subEvent?.maxParticipants
+      : (await Event.findById(eventId))?.maxParticipants;
+
+    if (maxAllowed && currentCount >= maxAllowed) {
+      return res.status(400).json({ error: "Participant limit reached" });
+    }
+
+    // Create participation
+    let newParticipant;
+    if (subEvent?.participation_type === "team") {
+      if (!teamName || !members || members.length === 0) {
+        return res.status(400).json({
+          error: "Team name and members are required for team participation",
+        });
+      }
+
+      newParticipant = new Participation({
+        eventId,
+        subEventId,
+        participantName: user.username,
+        participantEmail: user.email,
+        participantPhone: phone,
+        college: user.collegeName,
+        team: { teamName, members, collegeName, contact },
+        members,
+        collegeName,
+      });
+    } else {
+      newParticipant = new Participation({
+        eventId,
+        subEventId,
+        participantName: user.username,
+        participantEmail: user.email,
+        participantPhone: phone,
+        college: user.collegeName,
+      });
+    }
 
     const savedParticipant = await newParticipant.save();
 

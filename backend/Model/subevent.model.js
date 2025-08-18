@@ -32,6 +32,8 @@ const subEventSchema = new mongoose.Schema({
     type: String,
   },
 
+  participation_type: { type: String, enum: ["solo", "team"], default: "solo" },
+
   //max limit for participants and volunteers
   maxParticipants: { type: Number, default: 1000 },
   maxVolunteers: { type: Number, default: 1000 },

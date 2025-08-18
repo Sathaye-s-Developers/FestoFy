@@ -20,6 +20,21 @@ const participationSchema = new mongoose.Schema(
       enum: ["pending", "confirmed", "cancelled"],
       default: "pending",
     },
+
+    team: {
+      teamName: String,
+      members: [
+        {
+          name: String,
+          email: String,
+          phone: String,
+          roll_no: String,
+          college_Name: String,
+          contact: String,
+        },
+      ],
+    },
+
     // type: {
     //   type: String,
     //   enum: ["college", "explore"],
