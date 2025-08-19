@@ -197,7 +197,7 @@ const InterCollege_Events = () => {
                             const colorClasses = getColorClasses(categoryColor);
                             return (<div
                                 key={event.Id}
-                                className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 overflow-hidden hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 animate-fadeInUp"
+                                className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 overflow-hidden hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 animate-fadeInUp"
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
                                 <Link to={`/SubEvent/${EventArray[index].Id}`}>

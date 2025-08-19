@@ -27,6 +27,8 @@ const EventContext = (props) => {
     const [key, setkey] = useState(false)
     const [admin, setadmin] = useState(false)
     const [isAuthenticated, setisAuthenticated] = useState(false)
+    const [share, setshare] = useState({Isshare:false,eventId:""})
+
     const param = {
         luminosity: lum,
         hue: hue,
@@ -98,9 +100,9 @@ const EventContext = (props) => {
     }, [fetchUserDetails]);
 
     const contextvalue = useMemo(() => ({
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin,share, setshare
     }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading,
-        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin
+        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin,share, setshare
     ]);
 
 

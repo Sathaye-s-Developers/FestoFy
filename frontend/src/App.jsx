@@ -13,9 +13,10 @@ import InterCollege_Events from './Pages/Event_Components/Event_pg_Components/In
 import Sub_Event_pg from './Pages/Event_Components/Event_pg_Components/Sub_Event_pg'
 import AdminPg from './Pages/Admin/AdminPg'
 import SuperKeyPopup from './Pages/Event_Components/Components/SuperKeyPopup'
+import Share_Popup from './Components/Share_Popup'
 
 const App = () => {
-  const { register, loading, options, setprogress, progress, isAuthenticated, admin, key } = useContext(EventAppContext)
+  const { register, loading, options, setprogress, progress, isAuthenticated, admin, key ,share} = useContext(EventAppContext)
   if (loading) {
     return <Loading_comp />;
   }
@@ -31,6 +32,7 @@ const App = () => {
       {register === true ? <Login_PopUp /> : <></>}
       {options === true ? <Mobile_Options /> : <></>}
       {key ? <SuperKeyPopup /> : <></>}
+      {share.Isshare ? <Share_Popup /> : <></>}
       <Routes>
         {/* <Route path='/' element={<Loading_comp><Home /></Loading_comp>} /> */}
         <Route path='/' element={<Home />} />

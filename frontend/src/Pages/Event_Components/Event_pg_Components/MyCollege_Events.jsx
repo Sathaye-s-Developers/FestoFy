@@ -29,7 +29,7 @@ const colorMap = {
 };
 
 const MyCollege_Events = () => {
-    const { api, EventArray, EventFetcher } = useContext(EventAppContext)
+    const { api, EventArray, EventFetcher,setshare} = useContext(EventAppContext)
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -161,7 +161,7 @@ const MyCollege_Events = () => {
                             const colorClasses = getColorClasses(categoryColor);
                             return (<div
                                 key={event.Id}
-                                className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 overflow-hidden hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 animate-fadeInUp"
+                                className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 overflow-hidden hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 animate-fadeInUp"
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
                                 <Link to={`/SubEvent/${EventArray[index].Id}`}>
@@ -181,7 +181,7 @@ const MyCollege_Events = () => {
                                         )}
 
                                         {/* Action Buttons */}
-                                        <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <div className="absolute top-4 right-4 flex space-x-2 transition-opacity duration-300">
                                             <button
                                                 onClick={() => toggleLike(event.Id)}
                                                 className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isLiked
@@ -191,7 +191,7 @@ const MyCollege_Events = () => {
                                             >
                                                 <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
                                             </button>
-                                            <button
+                                            {/* <button
                                                 onClick={() => toggleBookmark(event.Id)}
                                                 className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isBookmarked
                                                     ? 'bg-cyan-500/80 border-cyan-400 text-white'
@@ -199,8 +199,12 @@ const MyCollege_Events = () => {
                                                     }`}
                                             >
                                                 <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                                            </button>
-                                            <button className="p-2 rounded-full bg-black/40 border border-white/20 text-white hover:bg-white/20 transition-all duration-300">
+                                            </button> */}
+                                            <button onClick={(e)=>{
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                setshare({Isshare:true,eventId:event.Id})
+                                                }} className="p-2 rounded-full bg-black/40 border border-white/20 text-white hover:bg-white/20 transition-all duration-300">
                                                 <Share2 className="w-4 h-4" />
                                             </button>
                                         </div>

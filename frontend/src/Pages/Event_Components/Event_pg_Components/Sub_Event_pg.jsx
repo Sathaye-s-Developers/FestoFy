@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { EventAppContext } from '../../../Context/EventContext'
-import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap, X, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap, X, CheckCircle, Link } from 'lucide-react';
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import axios from 'axios';
 import E_Nav_Back from '../Components/E_Nav_Back';
@@ -264,25 +264,26 @@ const Sub_Event_pg = () => {
                   )}
 
 
-
-                  <button
-                    disabled={availability.status === 'full'}
-                    className={`w-full flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 ${availability.status === 'full'
-                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500'
-                      }`}
-                  >
-                    {availability.status === 'full' ? (
-                      <>
-                        <span>Fully Booked</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Register Now</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
+                  <Link to="">
+                    <button
+                      disabled={availability.status === 'full'}
+                      className={`w-full flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 ${availability.status === 'full'
+                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500'
+                        }`}
+                    >
+                      {availability.status === 'full' ? (
+                        <>
+                          <span>Fully Booked</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Register Now</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </Link>
                 </div>
               );
             })}
