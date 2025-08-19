@@ -10,7 +10,6 @@ router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
     const {
-      phone,
       eventId,
       subEventId,
       teamName = null,
@@ -18,12 +17,6 @@ router.post("/register", verifyToken, async (req, res) => {
       collegeName = null,
       contact = null,
     } = req.body;
-
-    //  Validate phone
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!phoneRegex.test(phone)) {
-      return res.status(400).json({ error: "Invalid phone number" });
-    }
 
     if (!eventId) {
       return res.status(400).json({ error: "Event ID is required" });
@@ -97,7 +90,7 @@ router.post("/register", verifyToken, async (req, res) => {
         subEventId,
         participantName: user.username,
         participantEmail: user.email,
-        participantPhone: phone,
+        participantPhone: user.phone,
         college: user.collegeName,
         team: { teamName, members, collegeName, contact },
         members,
@@ -109,7 +102,7 @@ router.post("/register", verifyToken, async (req, res) => {
         subEventId,
         participantName: user.username,
         participantEmail: user.email,
-        participantPhone: phone,
+        participantPhone: user.phone,
         college: user.collegeName,
       });
     }
