@@ -3,11 +3,9 @@ const router = require("express").Router();
 const {
   generateOTP,
   sendOTP,
-  sendConfirmationEmail,
   sendForgotPasswordEmail,
 } = require("../email_services/EmailService");
 const User = require("../Model/user.model");
-const verifyToken = require("../middlewares/token_varification");
 
 const otpStore = new Map(); // { email: { otp, expiresAt } }
 
@@ -26,21 +24,21 @@ router.post("/register-login", async (req, res) => {
 
     otpStore.set(email, {
       otp,
-      expiresAt: Date.now() + 5 * 60 * 1000,
+      expiresAt: Date.now() + 5 * 60 * 1000, // 5 min expiry
     });
 
-    // Respond immediately, send email asynchronously for faster response
     res.status(200).json({ success: true, message: "OTP is being sent" });
 
-    // Send OTP email in background
+    // send mail in background
     sendOTP(email, otp).catch((err) =>
       console.error("OTP (register) send failed:", err)
     );
   } catch (err) {
     console.error("OTP (register) send failed:", err);
-    // Only log error, response already sent
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
   }
 });
+
 //  Send OTP for Forgot Password
 router.post("/forgot", async (req, res) => {
   const { email } = req.body;
@@ -81,39 +79,37 @@ router.post("/forgot", async (req, res) => {
 });
 
 //  Verify OTP (protected, requires login)
-router.post("/verify-otp", verifyToken, async (req, res) => {
+router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
-  if (!email || !otp)
+
+  if (!email || !otp) {
     return res
       .status(400)
       .json({ success: false, message: "Email and OTP required" });
+  }
 
   const stored = otpStore.get(email);
-  if (!stored)
+  if (!stored) {
     return res
       .status(400)
       .json({ success: false, message: "OTP expired or not found" });
+  }
+
   if (Date.now() > stored.expiresAt) {
     otpStore.delete(email);
     return res.status(400).json({ success: false, message: "OTP expired" });
   }
+
   if (stored.otp !== otp) {
     return res.status(400).json({ success: false, message: "Invalid OTP" });
   }
 
   otpStore.delete(email);
 
-  // Registration confirm email (send in background for speed)
-  const user = await User.findById(req.user._id).select("-password");
-  if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
+  // store that this email is verified
+  otpStore.set(`${email}_verified`, true);
 
-  res.json({ success: true, message: "OTP verified" });
-
-  // Send confirmation email asynchronously
-  sendConfirmationEmail(email, user.username).catch((e) =>
-    console.error("Confirmation email failed:", e)
-  );
+  res.json({ success: true, message: "OTP verified successfully" });
 });
 
 // Public OTP Verification (no login)
@@ -168,4 +164,5 @@ router.post("/verify-otp-public", async (req, res) => {
   });
 });
 
+router.otpStore = otpStore;
 module.exports = router;

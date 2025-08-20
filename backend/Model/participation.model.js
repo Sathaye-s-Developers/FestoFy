@@ -27,7 +27,6 @@ const participationSchema = new mongoose.Schema(
         {
           name: String,
           email: String,
-          phone: String,
           roll_no: String,
           college_Name: String,
           contact: String,

@@ -6,6 +6,8 @@ const validator = require("validator");
 const verifyToken = require("../middlewares/token_varification");
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 const clg_codes = require("../college_codes/codes");
+const { sendConfirmationEmail } = require("../email_services/EmailService");
+const { otpStore } = require("./otp.router");
 
 //Admin secreate code
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
@@ -19,6 +21,20 @@ router.post("/signUp", async (req, res) => {
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required." });
+    }
+
+    //  ensure OTP verification first
+    const isVerified = otpStore.get(`${email}_verified`);
+    if (!isVerified) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please verify OTP before signup" });
+    }
+
+    let lower_email = email.toLowerCase();
+
+    if (lower_email === "festofy011@gmail.com") {
+      return res.status(409).send("This email is reserved");
     }
 
     const existingUser = await User.findOne({ username });
@@ -50,17 +66,14 @@ router.post("/signUp", async (req, res) => {
       collegeMap[college.college_code] = college.full_name;
     }
 
-    // Function to get college name
     function getCollegeNameByCode(code) {
       return collegeMap[code] || false;
     }
 
-    // Example usage
     const clg_Name = getCollegeNameByCode(college_code);
-    if (clg_Name == false) {
-      return res.status(404).send({ message: "clg not listed" });
+    if (!clg_Name) {
+      return res.status(404).send({ message: "College not listed" });
     }
-    //console.log(clg_Name);
 
     const newUser = new User({
       username,
@@ -79,16 +92,24 @@ router.post("/signUp", async (req, res) => {
         role: newUser.role,
         collegeName: newUser.collegeName,
       },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "2d" }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // true only in prod
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // lax in dev
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 2 * 24 * 60 * 60 * 1000,
     });
+
+    // cleanup verified flag
+    otpStore.delete(`${email}_verified`);
+
+    // Send confirmation mail
+    sendConfirmationEmail(email, username).catch((e) =>
+      console.error("Confirmation email failed:", e)
+    );
 
     return res.status(201).json({
       success: true,
@@ -101,7 +122,6 @@ router.post("/signUp", async (req, res) => {
     res.status(500).json({ success: false, message: "Error during SignUp" });
   }
 });
-
 // Login
 router.post("/login", async (req, res) => {
   try {
