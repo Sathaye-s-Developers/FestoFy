@@ -4,6 +4,7 @@ const User = require("../Model/user.model");
 const Event = require("../Model/event.module");
 const SubEvent = require("../Model/subevent.model");
 const verifyToken = require("../middlewares/token_varification");
+const Volunteer = require("../Model/volunteer.model");
 
 // Register participant for event or sub-event
 router.post("/register", verifyToken, async (req, res) => {
@@ -11,7 +12,7 @@ router.post("/register", verifyToken, async (req, res) => {
     const userId = req.user._id;
     const {
       eventId,
-      subEventId,
+      subEventId = null,
       teamName = null,
       members = null,
       collegeName = null,
@@ -24,6 +25,20 @@ router.post("/register", verifyToken, async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
+
+    // user are already register as Volunteer
+    const alreadyVolunteer = await Volunteer.findOne({
+      email: user.email,
+      eventId,
+      subEventId,
+    });
+
+    if (alreadyVolunteer) {
+      return res.status(400).json({
+        error:
+          "User is already a volunteer in this event, cannot register as participant",
+      });
+    }
 
     let subEvent = null;
     if (subEventId) {

@@ -6,7 +6,7 @@ const User = require("../Model/user.model");
 const SubEvent = require("../Model/subevent.model");
 const Event = require("../Model/event.module");
 const Volunteer = require("../Model/volunteer.model");
-
+const Participation = require("../Model/participation.model");
 // Get all events a volunteer is registered to
 router.get(
   "/registered-events/:volunteerId",
@@ -32,7 +32,7 @@ router.get(
 router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
-    const { roll_no, eventId, subEventId } = req.body;
+    const { roll_no, eventId, subEventId = null } = req.body;
 
     if (!eventId || !subEventId) {
       return res
@@ -45,6 +45,20 @@ router.post("/register", verifyToken, async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
+
+    // user are already register as participant
+    const alreadyParticipant = await Participation.findOne({
+      email: user.email,
+      eventId,
+      subEventId,
+    });
+
+    if (alreadyParticipant) {
+      return res.status(400).json({
+        error:
+          "User is already a participant in this event, cannot register as volunteer",
+      });
+    }
 
     // Check if already registered for the same subevent
     const existing = await Volunteer.findOne({
