@@ -6,6 +6,10 @@ const validator = require("validator");
 const verifyToken = require("../middlewares/token_varification");
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 const clg_codes = require("../college_codes/codes");
+const SubEvent = require("../Model/subevent.model");
+const Participation = require("../Model/participation.model");
+const Volunteer = require("../Model/volunteer.model");
+//const Event = require("../Model/event.module");
 
 //Admin secreate code
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
@@ -197,7 +201,7 @@ router.get("/user_details", verifyToken, async (req, res) => {
   }
 });
 
-//  Get All Users (Admin/SuperAdmin only)
+//  Get All Users (Admin/SuperAdmin/SubEventHead)
 router.get("/all_users", verifyToken, async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -211,7 +215,8 @@ router.get("/all_users", verifyToken, async (req, res) => {
 // make admin by admin key
 router.post("/role_admin", verifyToken, async (req, res) => {
   try {
-    const { adminCode } = req.body;
+    const { adminCode, subEventId, subEventHeadCode } = req.body;
+
     const userId = req.user._id;
 
     // find user
@@ -221,13 +226,31 @@ router.post("/role_admin", verifyToken, async (req, res) => {
     }
 
     // check admin code
-    if (!adminCode || adminCode !== process.env.ADMIN_SECRET_CODE) {
-      return res.status(403).json({ error: "Invalid admin code" });
+    if (adminCode) {
+      if (adminCode !== process.env.ADMIN_SECRET_CODE) {
+        return res.status(403).json({ error: "Invalid admin code" });
+      }
+
+      user.role = "admin";
+      await user.save();
     }
 
-    // assign role
-    if (user.role !== "admin") {
-      user.role = "admin";
+    // Check for SubEventHead Role
+    if (subEventHeadCode && subEventId) {
+      const subEvent = await SubEvent.findById(subEventId);
+      // console.log(subEvent);
+      if (!subEvent) {
+        return res.status(404).json({ error: "SubEvent not found" });
+      }
+
+      if (subEvent.headKey !== subEventHeadCode) {
+        return res.status(403).json({ error: "Invalid sub-event head key" });
+      }
+
+      subEvent.head = user._id; // Assign as head
+      await subEvent.save();
+
+      user.role = "subEventHead"; // mark user role
       await user.save();
     }
 
@@ -250,10 +273,47 @@ router.post("/role_admin", verifyToken, async (req, res) => {
       maxAge: 2 * 24 * 60 * 60 * 1000,
     });
 
-    return res.json({ message: "User promoted to admin successfully", user });
+    return res.json({ message: "Role assigned successfully", user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+//all user information
+
+router.get("/participations", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    // console.log(userId);
+
+    // 1. Fetch user basic info
+    const user = await User.findById(userId).select("name email collegeName");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // 2. Fetch all participations
+    const participations = await Participation.find({ userId })
+      .populate("eventId", "title description")
+      .populate("subEventId", "title description date");
+
+    // 3. Fetch all volunteer roles
+    const volunteers = await Volunteer.find({ userId })
+      .populate("eventId", "title description")
+      .populate("subEventId", "title description date");
+
+    // 4. Combine everything
+    const result = {
+      user,
+      participations,
+      volunteers,
+    };
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

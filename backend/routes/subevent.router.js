@@ -110,6 +110,31 @@ router.get("/section/:eventType", verifyToken, async (req, res) => {
   }
 });
 
+//set head key
+
+// Set SubEvent Head Key (only by Event Admin)
+router.post("/set_SubEventHead", verifyToken, isAdmin, async (req, res) => {
+  try {
+    const { headKey, subEventId } = req.body;
+    // Find sub-event and populate event
+    const subEvent = await SubEvent.findById(subEventId).populate("eventId");
+    if (!subEvent) {
+      return res.status(404).json({ message: "SubEvent not found" });
+    }
+    // Update subEvent with new headKey
+    subEvent.headKey = headKey;
+    await subEvent.save();
+
+    return res.status(200).json({
+      message: "Head key set successfully for SubEvent",
+      subEvent,
+    });
+  } catch (err) {
+    console.error("Error setting SubEvent Head key:", err);
+    return res.status(500).json({ message: "Server error", error: err });
+  }
+});
+
 //  Update SubEvent
 router.patch("/update", verifyToken, isAdmin, async (req, res) => {
   try {

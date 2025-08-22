@@ -139,11 +139,19 @@ router.post("/register", verifyToken, async (req, res) => {
       department: user.department,
       year: user.year,
       eventId,
+      userId,
       subEventIds: [subEventId],
       roll_no,
     });
 
     const savedVolunteer = await newVolunteer.save();
+
+    //link to user
+    const linkeduser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { volunteers: savedVolunteer._id } },
+      { new: true }
+    );
 
     // Link to Event
     const linkedEvnet = await Event.findByIdAndUpdate(
@@ -164,6 +172,7 @@ router.post("/register", verifyToken, async (req, res) => {
       volunteer: savedVolunteer,
       events: linkedEvnet,
       subevents: linkedSubevent,
+      user: linkeduser,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -229,31 +238,43 @@ router.delete("/delete/:volunteerId", verifyToken, async (req, res) => {
   try {
     const { volunteerId } = req.params;
 
-    const deletedVolunteer = await Volunteer.findByIdAndDelete(volunteerId);
-    if (!deletedVolunteer) {
+    const volunteer = await Volunteer.findById(volunteerId);
+    if (!volunteer) {
       return res
         .status(404)
         .json({ success: false, message: "Volunteer not found." });
     }
 
-    // Remove reference from Events and SubEvents
-    await Event.updateMany(
-      { volunteers: volunteerId },
-      { $pull: { volunteers: volunteerId } }
+    // Remove reference from User
+    await User.updateOne(
+      { _id: volunteer.userId },
+      { $pull: { volunteers: volunteer._id } }
     );
 
-    await SubEvent.updateMany(
-      { volunteers: volunteerId },
-      { $pull: { volunteers: volunteerId } }
-    );
+    // Remove reference from Event
+    if (volunteer.eventId) {
+      await Event.findByIdAndUpdate(volunteer.eventId, {
+        $pull: { volunteers: volunteer._id },
+      });
+    }
+
+    // Remove reference from SubEvent
+    if (volunteer.subEventId) {
+      await SubEvent.findByIdAndUpdate(volunteer.subEventId, {
+        $pull: { volunteers: volunteer._id },
+      });
+    }
+
+    // Now delete the volunteer document
+    await volunteer.deleteOne();
 
     res.status(200).json({
       success: true,
-      message: "Volunteer deleted successfully.",
+      message: "Volunteer deleted and unlinked successfully.",
     });
   } catch (err) {
     console.error("Error deleting volunteer:", err);
-    res.status(500).json({ success: false, message: "Server error." });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

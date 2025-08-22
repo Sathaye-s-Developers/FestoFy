@@ -24,6 +24,11 @@ const volunteerSchema = new mongoose.Schema({
       ref: "SubEvent",
     },
   ],
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+  },
   registeredAt: {
     type: Date,
     default: Date.now,

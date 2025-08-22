@@ -13,6 +13,11 @@ const participationSchema = new mongoose.Schema(
       required: true,
     },
     subEventId: { type: mongoose.Schema.Types.ObjectId, ref: "SubEvent" }, // optional
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
 
     registeredAt: { type: Date, default: Date.now },
     status: {

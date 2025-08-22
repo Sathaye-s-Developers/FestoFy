@@ -26,10 +26,20 @@ const subEventSchema = new mongoose.Schema({
     required: true,
   },
   time: {
-    type: String, // optional: store as string "10:30 AM"
+    type: String,
   },
   location: {
     type: String,
+  },
+
+  head: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    default: null,
+  },
+  headKey: {
+    type: String, // secret key for becoming head
+    default: null,
   },
 
   participation_type: { type: String, enum: ["solo", "team"], default: "solo" },

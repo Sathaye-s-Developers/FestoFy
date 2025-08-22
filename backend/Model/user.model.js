@@ -39,8 +39,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: "user",
-    enum: ["user", "admin", "superadmin"],
+    enum: ["user", "subEventHead", "admin", "superadmin"],
   },
+
+  subEventIds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubEvent",
+    },
+  ],
+
+  // link to volunteer & participant roles
+  participations: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Participation" },
+  ],
+  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Volunteer" }],
+
   isAdminRequested: {
     type: Boolean,
     default: false,

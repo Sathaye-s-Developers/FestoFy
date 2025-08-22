@@ -10,6 +10,7 @@ const Volunteer = require("../Model/volunteer.model");
 router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
+
     const {
       eventId,
       subEventId = null,
@@ -103,6 +104,7 @@ router.post("/register", verifyToken, async (req, res) => {
       newParticipant = new Participation({
         eventId,
         subEventId,
+        userId,
         participantName: user.username,
         participantEmail: user.email,
         participantPhone: user.phone,
@@ -113,6 +115,7 @@ router.post("/register", verifyToken, async (req, res) => {
       });
     } else {
       newParticipant = new Participation({
+        userId,
         eventId,
         subEventId,
         participantName: user.username,
@@ -123,6 +126,11 @@ router.post("/register", verifyToken, async (req, res) => {
     }
 
     const savedParticipant = await newParticipant.save();
+
+    //link to user
+    await User.findByIdAndUpdate(userId, {
+      $push: { participations: savedParticipant._id },
+    });
 
     // Link to Event
     await Event.findByIdAndUpdate(eventId, {
@@ -211,6 +219,11 @@ router.delete("/delete/:id", verifyToken, async (req, res) => {
     //  Remove from Event
     await Event.findByIdAndUpdate(participant.eventId, {
       $pull: { participants: participant._id },
+    });
+
+    //remove  form user
+    await User.findByIdAndUpdate(participant.userId, {
+      $pull: { participations: participant._id },
     });
 
     // Remove from SubEvent
