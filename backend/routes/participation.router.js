@@ -10,7 +10,6 @@ const Volunteer = require("../Model/volunteer.model");
 router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
-
     const {
       eventId,
       subEventId = null,
@@ -33,7 +32,6 @@ router.post("/register", verifyToken, async (req, res) => {
       eventId,
       subEventId,
     });
-
     if (alreadyVolunteer) {
       return res.status(400).json({
         error:
@@ -41,6 +39,20 @@ router.post("/register", verifyToken, async (req, res) => {
       });
     }
 
+    //  Check if already registered (user-based, not just email/teamName)
+    const alreadyRegistered = await Participation.findOne({
+      userId,
+      eventId,
+      subEventId: subEventId || null, // null means main event
+    });
+
+    if (alreadyRegistered) {
+      return res
+        .status(409)
+        .json({ error: "You are already registered for this event/sub-event" });
+    }
+
+    // Proceed with subEvent checks
     let subEvent = null;
     if (subEventId) {
       subEvent = await SubEvent.findById(subEventId);
@@ -48,70 +60,35 @@ router.post("/register", verifyToken, async (req, res) => {
         return res.status(404).json({ error: "Sub-event not found" });
     }
 
-    // Check if already registered
-    let existing;
-    if (subEvent) {
-      if (subEvent.participation_type === "team") {
-        existing = await Participation.findOne({
-          eventId,
-          subEventId,
-          teamName,
-        });
-      } else {
-        existing = await Participation.findOne({
-          eventId,
-          subEventId,
-          participantEmail: user.email,
-        });
-      }
-    } else {
-      existing = await Participation.findOne({
-        eventId,
-        subEventId: null,
-        participantEmail: user.email,
-      });
-    }
-
-    if (existing) {
-      return res
-        .status(409)
-        .json({ error: "Already registered for this event/sub-event" });
-    }
-
     // Check participant limits
     let currentCount = await Participation.countDocuments({
       eventId,
       ...(subEventId ? { subEventId } : { subEventId: null }),
     });
-
     const maxAllowed = subEventId
       ? subEvent?.maxParticipants
       : (await Event.findById(eventId))?.maxParticipants;
-
     if (maxAllowed && currentCount >= maxAllowed) {
       return res.status(400).json({ error: "Participant limit reached" });
     }
 
-    // Create participation
+    // Save participation
     let newParticipant;
     if (subEvent?.participation_type === "team") {
-      if (!teamName || !members || members.length === 0) {
-        return res.status(400).json({
-          error: "Team name and members are required for team participation",
-        });
+      if (!teamName || !members?.length) {
+        return res
+          .status(400)
+          .json({ error: "Team name and members required for team event" });
       }
-
       newParticipant = new Participation({
+        userId,
         eventId,
         subEventId,
-        userId,
         participantName: user.username,
         participantEmail: user.email,
         participantPhone: user.phone,
         college: user.collegeName,
         team: { teamName, members, collegeName, contact },
-        members,
-        collegeName,
       });
     } else {
       newParticipant = new Participation({
@@ -127,17 +104,13 @@ router.post("/register", verifyToken, async (req, res) => {
 
     const savedParticipant = await newParticipant.save();
 
-    //link to user
+    // Update references
     await User.findByIdAndUpdate(userId, {
       $push: { participations: savedParticipant._id },
     });
-
-    // Link to Event
     await Event.findByIdAndUpdate(eventId, {
       $push: { participants: savedParticipant._id },
     });
-
-    // Link to SubEvent
     if (subEventId) {
       await SubEvent.findByIdAndUpdate(subEventId, {
         $push: { participants: savedParticipant._id },

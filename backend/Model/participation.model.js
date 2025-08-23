@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const participationSchema = new mongoose.Schema(
   {
-    participantName: { type: String, required: true },
+    participantName: { type: String },
     participantEmail: { type: String, required: true, lowercase: true },
     participantPhone: { type: String, required: true },
     college: { type: String, required: true },
@@ -54,21 +54,16 @@ const participationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Ensure no duplicate registration
-participationSchema.index(
-  { participantEmail: 1, subEventId: 1 },
-  {
-    unique: true,
-    partialFilterExpression: { subEventId: { $exists: true } },
-  }
-);
-
+// Event-level unique participation
 participationSchema.index(
   { participantEmail: 1, eventId: 1 },
-  {
-    unique: true,
-    partialFilterExpression: { subEventId: { $exists: false } },
-  }
+  { unique: true, partialFilterExpression: { subEventId: { $exists: false } } }
+);
+
+// Sub-event-level unique participation
+participationSchema.index(
+  { participantEmail: 1, eventId: 1, subEventId: 1 },
+  { unique: true, partialFilterExpression: { subEventId: { $exists: true } } }
 );
 
 module.exports = mongoose.model("Participation", participationSchema);

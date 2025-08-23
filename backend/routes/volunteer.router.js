@@ -79,7 +79,7 @@ router.post("/register", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "Sub-event not found" });
 
     const currentVolunteerCount = await Volunteer.countDocuments({
-      subEventIds: subEventId,
+      subEventId: subEventId,
     });
 
     if (
@@ -112,8 +112,8 @@ router.post("/register", verifyToken, async (req, res) => {
 
     if (volunteer) {
       // Just push the new subEventId if not already included
-      if (!volunteer.subEventIds.includes(subEventId)) {
-        volunteer.subEventIds.push(subEventId);
+      if (!volunteer.subEventId.includes(subEventId)) {
+        volunteer.subEventId.push(subEventId);
         await volunteer.save();
 
         await SubEvent.findByIdAndUpdate(
@@ -140,7 +140,7 @@ router.post("/register", verifyToken, async (req, res) => {
       year: user.year,
       eventId,
       userId,
-      subEventIds: [subEventId],
+      subEventId: [subEventId],
       roll_no,
     });
 
@@ -259,12 +259,13 @@ router.delete("/delete/:volunteerId", verifyToken, async (req, res) => {
     }
 
     // Remove reference from SubEvent
-    if (volunteer.subEventId) {
-      await SubEvent.findByIdAndUpdate(volunteer.subEventId, {
-        $pull: { volunteers: volunteer._id },
-      });
+    if (volunteer.subEventId && volunteer.subEventId.length > 0) {
+      for (const subEvent of volunteer.subEventId) {
+        await SubEvent.findByIdAndUpdate(subEvent, {
+          $pull: { volunteers: volunteer._id },
+        });
+      }
     }
-
     // Now delete the volunteer document
     await volunteer.deleteOne();
 
@@ -287,7 +288,7 @@ router.get("/:id/subevents", verifyToken, async (req, res) => {
     if (!volunteer) {
       return res.status(404).json({ error: "Volunteer not found" });
     }
-    res.status(200).json({ subEvents: volunteer.subEventIds });
+    res.status(200).json({ subEvents: volunteer.subEventId });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

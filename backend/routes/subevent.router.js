@@ -111,7 +111,6 @@ router.get("/section/:eventType", verifyToken, async (req, res) => {
 });
 
 //set head key
-
 // Set SubEvent Head Key (only by Event Admin)
 router.post("/set_SubEventHead", verifyToken, isAdmin, async (req, res) => {
   try {

@@ -18,7 +18,7 @@ const volunteerSchema = new mongoose.Schema({
     ref: "Event",
     required: true,
   },
-  subEventIds: [
+  subEventId: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubEvent",
