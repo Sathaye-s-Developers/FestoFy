@@ -162,6 +162,7 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
 
     // Save participation
     const newParticipant = new Participation({
+      userId: req.user._id,
       participantName: user.username,
       participantEmail: user.email,
       participantPhone: phone,
@@ -178,6 +179,10 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
 
     const savedParticipant = await newParticipant.save();
 
+    // Update references
+    await User.findByIdAndUpdate(userId, {
+      $push: { participations: savedParticipant._id },
+    });
     // Link to Event
     await Event.findByIdAndUpdate(eventId, {
       $push: { participants: savedParticipant._id },
