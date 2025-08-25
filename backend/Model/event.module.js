@@ -59,9 +59,9 @@ const eventSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  agenda:{
-    type:String,
-    trim:true
+  agenda: {
+    type: String,
+    trim: true
   },
   event_mode: {
     type: String,
@@ -75,7 +75,10 @@ const eventSchema = new mongoose.Schema({
     enum: ["college", "explore"],
     default: "college",
   },
-
+  phone: {
+    type: String,
+    trim: true
+  },
   //max limit for participants and volunteers
   maxParticipants: { type: Number, default: 1000 }, // Event-level limit
   maxVolunteers: { type: Number, default: 1000 }, // Event-level limit
@@ -103,6 +106,15 @@ const eventSchema = new mongoose.Schema({
       ref: "Participation",
     },
   ],
+
+  attendance: [
+    {
+      volunteerId: { type: mongoose.Schema.Types.ObjectId, ref: "Volunteer" },
+      date: { type: Date, required: true },
+      status: { type: String, enum: ["present", "absent"], default: "present" },
+    },
+  ],
+
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",

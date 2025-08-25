@@ -16,6 +16,18 @@ const userSchema = new mongoose.Schema({
     unique: true,
     minlength: [13, 'email must be at least 13 characters long']
   },
+  department: {
+    type: String,
+    trim: true,
+  },
+  year: {
+    type: String,
+    trim: true,
+  },
+  phone: {
+    type: String,
+    trim: true
+  },
   collegeName: {
     type: String,
     required: false,
@@ -35,8 +47,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
     default: "user",
-    enum: ["user", "admin", "superadmin"],
+    enum: ["user", "subEventHead", "admin", "superadmin"],
   },
+  subEventIds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubEvent",
+    },
+  ],
+
+  // link to volunteer & participant roles
+  participations: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Participation" },
+  ],
+
+  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Volunteer" }],
+
   isAdminRequested: {
     type: Boolean,
     default: false,

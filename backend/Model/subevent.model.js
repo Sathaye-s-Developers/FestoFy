@@ -50,8 +50,17 @@ const subEventSchema = new mongoose.Schema({
   time: {
     type: String, // optional: store as string "10:30 AM"
   },
-  location: {
-    type: String,
+
+
+  head: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    default: null,
+  },
+
+  headKey: {
+    type: String, // secret key for becoming head
+    default: null,
   },
 
   maxParticipants: { type: Number, default: 1000 },
@@ -79,6 +88,7 @@ const subEventSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  participation_type: { type: String, enum: ["solo", "team"], default: "solo" },
 });
 
 const SubEvent = mongoose.model("SubEvent", subEventSchema);

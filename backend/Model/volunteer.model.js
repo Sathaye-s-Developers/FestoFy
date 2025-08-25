@@ -8,6 +8,7 @@ const volunteerSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  position:{ type:String ,default:"volunteer"},
   phone: { type: String, trim: true },
   college: { type: String, required: true },
   department: { type: String },
@@ -18,12 +19,18 @@ const volunteerSchema = new mongoose.Schema({
     ref: "Event",
     required: true,
   },
-  subEventIds: [
+  subEventId: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubEvent",
     },
   ],
+  
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+  },
   registeredAt: {
     type: Date,
     default: Date.now,
