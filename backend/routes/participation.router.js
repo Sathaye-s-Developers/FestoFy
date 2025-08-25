@@ -131,7 +131,7 @@ router.post("/register", verifyToken, async (req, res) => {
 //  Get all participants for a specific sub-event
 router.get(
   "/subevent/:subEventId/participants",
-  is_admin,
+  verifyToken,
   sub_head,
   async (req, res) => {
     try {
@@ -159,29 +159,34 @@ router.get(
 );
 
 // GET all participants (main event + sub-events)
-router.get("/event/:eventId/all-participants", is_admin, async (req, res) => {
-  try {
-    const { eventId } = req.params;
+router.get(
+  "/event/:eventId/all-participants",
+  verifyToken,
+  is_admin,
+  async (req, res) => {
+    try {
+      const { eventId } = req.params;
 
-    const participants = await Participation.find({ eventId });
+      const participants = await Participation.find({ eventId });
 
-    if (!participants || participants.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No participants found for this event",
+      if (!participants || participants.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No participants found for this event",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "All participants for this event fetched successfully",
+        participants,
       });
+    } catch (err) {
+      console.error("Error fetching event participants:", err);
+      res.status(500).json({ success: false, message: "Server error" });
     }
-
-    res.status(200).json({
-      success: true,
-      message: "All participants for this event fetched successfully",
-      participants,
-    });
-  } catch (err) {
-    console.error("Error fetching event participants:", err);
-    res.status(500).json({ success: false, message: "Server error" });
   }
-});
+);
 
 //delete
 router.delete("/delete/:id", verifyToken, async (req, res) => {

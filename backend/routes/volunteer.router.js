@@ -184,8 +184,9 @@ router.post("/register", verifyToken, async (req, res) => {
 // Get all volunteers for a specific event
 router.get(
   "/event/:eventId/volunteers",
-  is_admin,
   verifyToken,
+  is_admin,
+
   async (req, res) => {
     try {
       const { eventId } = req.params;
@@ -214,14 +215,14 @@ router.get(
 //  Get all volunteers for a specific sub-event
 router.get(
   "/subevent/:subEventId/volunteers",
-  is_admin,
-  sub_head,
   verifyToken,
+  sub_head,
+
   async (req, res) => {
     try {
       const { subEventId } = req.params;
 
-      const volunteers = await Volunteer.find({ subEventIds: subEventId });
+      const volunteers = await Volunteer.find({ subEventId: subEventId });
 
       if (!volunteers || volunteers.length === 0) {
         return res.status(404).json({

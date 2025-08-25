@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "subEventHead", "admin", "superadmin"],
   },
 
-  subEventIds: [
+  subEventId: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubEvent",

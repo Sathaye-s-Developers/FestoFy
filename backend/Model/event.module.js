@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { trim } = require("validator");
 
 const eventSchema = new mongoose.Schema({
   organiser_name: {
