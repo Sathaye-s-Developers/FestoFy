@@ -97,7 +97,7 @@ async function sendConfirmationEmail(email, username) {
 async function sendForgotPasswordEmail(email, otp) {
   if (!email || !otp) throw new Error("Missing email or OTP");
 
-  const mailOptions = {
+  const ForgotPassword_OTP = {
     from: `"Festofy Team" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "🔐 Festofy Password Reset Request",
@@ -127,12 +127,12 @@ async function sendForgotPasswordEmail(email, otp) {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  await transporter.sendMail(ForgotPassword_OTP);
 }
 
 //  Send Password Changed Success Notification
 async function sendPasswordChangedConfirmation(email) {
-  const mailOptions = {
+  const changePassword_confirm = {
     from: `"Festofy Security" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "✅ Festofy Password Changed Successfully",
@@ -153,8 +153,72 @@ async function sendPasswordChangedConfirmation(email) {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  await transporter.sendMail(changePassword_confirm);
 }
+
+// Participation Ticket Email
+async function generateTicket(user, event, subEvent, participationId, email) {
+  function formatShortDate(date) {
+    return new Date(date).toDateString();
+  }
+  const newDate = formatShortDate(subEvent.date);
+
+  const ticket = {
+    from: `"Festofy Team" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `🎟 Your Festofy Ticket - ${event.title}`,
+    html: `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width:600px; margin:auto; background:#000; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.3); overflow:hidden; border:1px solid #333; color:#f5f5f5;">
+      
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg, #ff9800, #f44336); color:#fff; padding:20px; text-align:center;">
+        <h1 style="margin:0; font-size:24px;">🎟 Festofy Event Ticket</h1>
+        <p style="margin:5px 0 0; font-size:14px;">Exclusive Entry Pass</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding:20px;">
+        <p style="font-size:16px;">Hi <b>${user.username || user.name}</b>,</p>
+        <p style="font-size:14px; color:#ccc;">Thank you for registering! Please find your ticket details below:</p>
+
+        <div style="background:#111; border:1px dashed #ff9800; border-radius:12px; padding:20px; margin:20px 0;">
+          <p style="margin:6px 0; font-size:16px;"><b>Event:</b> ${
+            event.title
+          }</p>
+          <p style="margin:6px 0; font-size:16px;"><b>Sub-Event:</b> ${
+            subEvent?.title || "Main Event"
+          }</p>
+          <p style="margin:6px 0; font-size:16px;"><b>Date:</b> ${newDate}</p>
+          <p style="margin:6px 0; font-size:16px;"><b>Time:</b> ${
+            subEvent.time
+          }</p>
+          <p style="margin:6px 0; font-size:16px;"><b>Main Location:</b> ${
+            event.location
+          }</p>
+          ${
+            subEvent
+              ? `<p style="margin:6px 0; font-size:16px;"><b>Sub-Event Location:</b> ${subEvent.location}</p>`
+              : ""
+          }
+          <p style="margin:6px 0; font-size:16px; color:#ff9800;"><b>Ticket ID:</b> ${participationId}</p>
+        </div>
+
+        <p style="font-size:14px; color:#bbb;">📌 Please show this ticket (on your phone or printed) at the event entrance for verification.</p>
+        <p style="font-size:14px; color:#bbb;">We look forward to seeing you 🎉</p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background:#111; padding:15px; text-align:center; font-size:12px; color:#888;">
+        <p style="margin:0;">Festofy - Your College Event Hub</p>
+      </div>  
+    </div>
+  `,
+  };
+
+  await transporter.sendMail(ticket);
+}
+
+module.exports = generateTicket;
 
 //  Export functions
 module.exports = {
@@ -163,4 +227,5 @@ module.exports = {
   sendConfirmationEmail,
   sendForgotPasswordEmail,
   sendPasswordChangedConfirmation,
+  generateTicket,
 };

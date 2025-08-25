@@ -7,12 +7,14 @@ const verifyToken = require("../middlewares/token_varification");
 const Volunteer = require("../Model/volunteer.model");
 const is_admin = require("../middlewares/is_admin");
 const sub_head = require("../middlewares/Subevent_head");
+const { generateTicket } = require("../email_services/EmailService");
 // Register participant for event or sub-event
 router.post("/register", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
     const {
       eventId,
+
       subEventId = null,
       teamName = null,
       members = null,
@@ -117,6 +119,12 @@ router.post("/register", verifyToken, async (req, res) => {
         $push: { participants: savedParticipant._id },
       });
     }
+
+    //  Fetch details
+    const event = await Event.findById(eventId);
+
+    // Generate Ticket
+    generateTicket(user, event, subEvent, savedParticipant._id, user.email);
 
     res.status(201).json({
       success: true,
