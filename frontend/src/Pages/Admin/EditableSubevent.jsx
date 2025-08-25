@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap, X, Save, Plus, Trash2, Send, CheckCircle } from 'lucide-react';
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
@@ -6,24 +6,50 @@ import { EventAppContext } from '../../Context/EventContext';
 import group from "../../assets/group.png"
 import person from "../../assets/person.png"
 
-const CreateSub_EventPg = () => {
+const EditableSubevent = () => {
     const { api } = useContext(EventAppContext)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [newPrize, setnewPrize] = useState('');
     const [editingSubEvent, setEditingSubEvent] = useState(null);
     const Navigate = useNavigate()
-    const { eventId } = useParams()
-    const { register, handleSubmit, setValue, setError, control, watch, formState: { errors } } = useForm({
+    const { SubeventId } = useParams()
+    const { register, handleSubmit, setValue, setError, control, reset, watch, formState: { errors } } = useForm({
         defaultValues: {
             mode: "onSubmit",
             reValidateMode: "onSubmit",
             category: "",
-            ParticipationCategory:"",
+            ParticipationCategory: "",
             Prices: []
         }
     })
-
+    
+    const fetchSubEvent = async () => {
+        try {
+            const response = await api.get(`/Festofy/user/event/subevent/${SubeventId}`, { withCredentials: true, })
+            console.log(response.data.subEvent)
+            const subEvent=response.data.subEvent
+            reset({
+                Title: subEvent.title,
+                Description: subEvent.description,
+                Date: subEvent.date ? new Date(subEvent.date).toISOString().split("T")[0] : "", // format for <input type="date">
+                Time: subEvent.time,
+                Location: subEvent.location,
+                Duration: subEvent.duration,
+                EntryFee: subEvent.price,
+                MaxParticipants: subEvent.maxParticipants,
+                Requirements: subEvent.requirements,
+                category: subEvent.subEventCategory,
+                ParticipationCategory: subEvent.participation_type,
+                Prices: subEvent.prizes
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        fetchSubEvent()
+    }, [])
     const onsubmit = async (data) => {
         const dateObj = new Date(data.Date);
         const payload = {
@@ -31,7 +57,7 @@ const CreateSub_EventPg = () => {
             description: data.Description,
             date: new Date(dateObj.setUTCHours(0, 0, 0, 0)).toISOString(),
             time: data.Time,
-            eventId: eventId,
+            subEventId: SubeventId,
             price: data.EntryFee,
             duration: data.Duration,
             requirements: data.Requirements,
@@ -39,11 +65,11 @@ const CreateSub_EventPg = () => {
             maxParticipants: data.MaxParticipants,
             location: data.Location,
             subEventCategory: data.category,
-            participation_type:data.ParticipationCategory
+            participation_type: data.ParticipationCategory
         }
-        console.log(payload)
         try {
-            const response = await api.post("/Festofy/user/event/subevent/create", payload, { withCredentials: true, })
+            console.log(payload)
+            const response = await api.patch("/Festofy/user/event/subevent/update", payload, { withCredentials: true, })
             if (response.data.success) {
                 setIsSubmitting(true)
                 setIsSubmitted(true)
@@ -71,7 +97,7 @@ const CreateSub_EventPg = () => {
 
     const PaticipationTypes = [
         { value: 'solo', label: 'Solo', icon: person, color: 'blue' },
-        { value: 'team', label: 'Team', icon: group , color: 'red' },
+        { value: 'team', label: 'Team', icon: group, color: 'red' },
     ];
 
     const addPrize = () => {
@@ -100,7 +126,7 @@ const CreateSub_EventPg = () => {
 
     const Prices = watch("Prices", []);
     const selectedCategory = watch("category", "");
-    const ParticipationCategory=watch("ParticipationCategory","")
+    const ParticipationCategory = watch("ParticipationCategory", "")
 
     if (isSubmitted) {
         return (
@@ -236,14 +262,14 @@ const CreateSub_EventPg = () => {
                                                     type="button"
                                                     onClick={() => {
                                                         setValue("ParticipationCategory", type.value, { shouldValidate: true });
-                                                       
+
                                                     }}
                                                     className={`p-4 rounded-xl border transition-all duration-300 transform hover:scale-105 active:scale-95 text-center ${isSelected
                                                         ? `bg-gradient-to-r ${colorClasses} scale-105`
                                                         : 'bg-slate-700/30 border-gray-600 text-gray-300 hover:border-cyan-400/40'
                                                         }`}
                                                 >
-                                                    <img src={IconComponent}  className="invert w-6 h-6 mx-auto mb-2" />
+                                                    <img src={IconComponent} className="invert w-6 h-6 mx-auto mb-2" />
                                                     <span className="text-xs font-medium">{type.label}</span>
                                                 </button>
                                             );
@@ -415,12 +441,12 @@ const CreateSub_EventPg = () => {
                                     {isSubmitting ? (
                                         <>
                                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            <span>Creating SubEvent...</span>
+                                            <span>Updating SubEvent...</span>
                                         </>
                                     ) : (
                                         <>
                                             <Send className="w-4 h-4" />
-                                            <span>Create SubEvent</span>
+                                            <span>Update SubEvent</span>
                                         </>
                                     )}
                                     {/* <span>{editingSubEvent ? 'Update Sub-Event' : 'Create Sub-Event'}</span> */}
@@ -436,4 +462,4 @@ const CreateSub_EventPg = () => {
     )
 }
 
-export default CreateSub_EventPg
+export default EditableSubevent

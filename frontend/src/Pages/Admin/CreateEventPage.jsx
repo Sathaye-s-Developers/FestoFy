@@ -57,7 +57,8 @@ const CreateEventPage = () => {
       maxVolunteers: data.MaxVoleenter,
       maxParticipants: data.MaxAttendee,
       visibility: data.Visibility,
-      bannerUrl: imageUrl
+      bannerUrl: imageUrl,
+      phone: data.ContactNo
     }
     seteventForm(payload)
     console.log(payload)
@@ -306,6 +307,7 @@ const CreateEventPage = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Event Start Date *</label>
                   <input
                     type="date"
+                    min={new Date().toISOString().split("T")[0]}
                     {...register("StartDate", { required: "Fields Should Not be empty !" })}
                     className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
                   />
@@ -318,23 +320,12 @@ const CreateEventPage = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Event End Date *</label>
                   <input
                     type="date"
+                    min={watch("StartDate") || new Date().toISOString().split("T")[0]}
                     {...register("EndDate", { required: "Fields Should Not be empty !" })}
                     className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
                   />
                   {errors.EndDate && (
                     <p className="text-red-500 text-sm mt-1">{errors.EndDate.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Event Time *</label>
-                  <input
-                    type="time"
-                    {...register("Time", { required: "Fields Should Not be empty !" })}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                  />
-                  {errors.Time && (
-                    <p className="text-red-500 text-sm mt-1">{errors.Time.message}</p>
                   )}
                 </div>
 
@@ -350,19 +341,18 @@ const CreateEventPage = () => {
                     <p className="text-red-500 text-sm mt-1">{errors.EntryFee.message}</p>
                   )}
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Location *</label>
-                <input
-                  type="text"
-                  {...register("Location", { required: "Fields Should Not be empty !" })}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                  placeholder="e.g., Main Auditorium, Tech Campus"
-                />
-                {errors.Location && (
-                  <p className="text-red-500 text-sm mt-1">{errors.Location.message}</p>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Event Location *</label>
+                  <input
+                    type="text"
+                    {...register("Location", { required: "Fields Should Not be empty !" })}
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                    placeholder="e.g., Main Auditorium, Tech Campus"
+                  />
+                  {errors.Location && (
+                    <p className="text-red-500 text-sm mt-1">{errors.Location.message}</p>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -458,34 +448,6 @@ const CreateEventPage = () => {
 
                 {errors.Tags && (
                   <p className="text-red-500 text-sm mt-1">{errors.Tags.message}</p>
-                )}
-              </div>
-
-              {/* Requirements */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Requirements/Prerequisites</label>
-                <textarea
-                  {...register("Requirements", { required: "Fields Should Not be empty !" })}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 resize-none"
-                  placeholder="Any specific requirements or prerequisites for participants..."
-                />
-                {errors.Requirements && (
-                  <p className="text-red-500 text-sm mt-1">{errors.Requirements.message}</p>
-                )}
-              </div>
-
-              {/* Agenda */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Agenda/Schedule</label>
-                <textarea
-                  {...register("Agenda", { required: "Fields Should Not be empty !" })}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 resize-none"
-                  placeholder="Detailed agenda or schedule of the event..."
-                />
-                {errors.Agenda && (
-                  <p className="text-red-500 text-sm mt-1">{errors.Agenda.message}</p>
                 )}
               </div>
 

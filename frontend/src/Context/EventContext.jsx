@@ -27,7 +27,13 @@ const EventContext = (props) => {
     const [key, setkey] = useState(false)
     const [admin, setadmin] = useState(false)
     const [isAuthenticated, setisAuthenticated] = useState(false)
-    const [share, setshare] = useState({Isshare:false,eventId:""})
+    const [share, setshare] = useState({ Isshare: false, eventId: "" })
+    const [Voleenter, setVoleenter] = useState(false)
+    const [profile, setprofile] = useState(false)
+    const [EventNo, setEventNo] = useState("")
+    const [subEventNo,setsubEventNo]=useState("")
+    const [Participate,setParticipate]=useState(false)
+    const [eventhead,seteventhead]=useState(false)
 
     const param = {
         luminosity: lum,
@@ -44,7 +50,10 @@ const EventContext = (props) => {
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
             }
-            setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code, role: response.data.user.role })
+            const volunteers=response.data.user.volunteers
+            const participations=response.data.user.participations
+            
+            setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code, role: response.data.user.role, phone: response.data.user.phone, department: response.data.user.department, year: response.data.user.year,volunteers:volunteers,participations:participations})
             if (response.data.user.role === "admin") {
                 setadmin(true);
             }
@@ -100,9 +109,9 @@ const EventContext = (props) => {
     }, [fetchUserDetails]);
 
     const contextvalue = useMemo(() => ({
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin,share, setshare
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile,EventNo, setEventNo,subEventNo,setsubEventNo,Participate,setParticipate,eventhead,seteventhead
     }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading,
-        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin,share, setshare
+        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile,EventNo, setEventNo,subEventNo,setsubEventNo,Participate,setParticipate,eventhead,seteventhead
     ]);
 
 

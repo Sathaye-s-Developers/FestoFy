@@ -2,8 +2,10 @@ import React, { useMemo, useState } from 'react'
 import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap } from 'lucide-react';
 import { useContext } from 'react';
 import { useEffect } from 'react';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { EventAppContext } from '../../Context/EventContext';
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 const YourEvent = () => {
     const { api, EventArray, setEventArray } = useContext(EventAppContext)
@@ -15,6 +17,7 @@ const YourEvent = () => {
     const [likedEvents, setLikedEvents] = useState([]);
     const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
 
+    const navigate = useNavigate()
     // const [filteredEvents, setFilteredEvents] = useState([]);
 
     const categories = [
@@ -27,7 +30,7 @@ const YourEvent = () => {
         { name: 'Academic', icon: BookOpen, color: 'indigo' },
         { name: 'Entertainment', icon: Mic, color: 'red' }
     ];
-
+   
     const EventFetcher = async () => {
         try {
             const response = await api.get("/Festofy/user/event/admin-created-events", {}, { withCredentials: true, })
@@ -116,16 +119,30 @@ const YourEvent = () => {
                                     const colorClasses = getColorClasses(categoryColor);
                                     return (<div
                                         key={event.Id}
-                                        className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 overflow-hidden hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 animate-fadeInUp"
+                                        className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 overflow-hidden transition-all duration-300 transform animate-fadeInUp"
                                         style={{ animationDelay: `${index * 100}ms` }}
                                     >
-                                        <Link to={`/SubEvent/${EventArray[index].Id}`}>
+                                        <Link to={`/Admin/AdminSubEvent/${EventArray[index].Id}`}>
                                             {/* Event Image */}
                                             <div className="relative overflow-hidden">
+                                                <div className='absolute right-0 flex p-2 gap-1'>
+                                                    <button onClick={(e) => {
+                                                        e.preventDefault()
+                                                        e.stopPropagation();
+                                                        window.location.href = `/Admin/Editevent/${EventArray[index].Id}`;
+                                                    }}>
+                                                        <FaEdit size={30} className='text-cyan-600 cursor-pointer' />
+                                                    </button>
+                                                    <MdDelete onClick={(e)=>{
+                                                        e.preventDefault()
+                                                        e.stopPropagation()
+                                                        deleteEvent(EventArray[index].Id)
+                                                    }} size={30} className='text-red-500 cursor-pointer' />
+                                                </div>
                                                 <img
                                                     src={event.EventLogo}
                                                     alt={event.Title}
-                                                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                                    className="w-full h-48 object-cover transition-transform duration-300"
                                                 />
 
                                                 {/* Featured Badge */}
@@ -135,31 +152,6 @@ const YourEvent = () => {
                                                         <span className="text-white text-xs font-semibold">Featured</span>
                                                     </div>
                                                 )}
-
-                                                {/* Action Buttons */}
-                                                <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                    <button
-                                                        onClick={() => toggleLike(event.Id)}
-                                                        className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isLiked
-                                                            ? 'bg-red-500/80 border-red-400 text-white'
-                                                            : 'bg-black/40 border-white/20 text-white hover:bg-red-500/80'
-                                                            }`}
-                                                    >
-                                                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => toggleBookmark(event.Id)}
-                                                        className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isBookmarked
-                                                            ? 'bg-cyan-500/80 border-cyan-400 text-white'
-                                                            : 'bg-black/40 border-white/20 text-white hover:bg-cyan-500/80'
-                                                            }`}
-                                                    >
-                                                        <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                                                    </button>
-                                                    <button className="p-2 rounded-full bg-black/40 border border-white/20 text-white hover:bg-white/20 transition-all duration-300">
-                                                        <Share2 className="w-4 h-4" />
-                                                    </button>
-                                                </div>
 
                                                 {/* Price Badge */}
                                                 <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-sm rounded-full">
@@ -226,7 +218,11 @@ const YourEvent = () => {
                                                 </div>
 
                                                 <button
-                                                    onClick={() => navigate(`/Admin/CreateSubEvent/${event.Id}`)}
+                                                    onClick={(e) => {
+                                                        e.preventDefault()
+                                                        e.stopPropagation()
+                                                        navigate(`/Admin/CreateSubEvent/${event.Id}`)
+                                                    }}
                                                     className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold"
                                                 >
                                                     <span>Create SubEvent</span>

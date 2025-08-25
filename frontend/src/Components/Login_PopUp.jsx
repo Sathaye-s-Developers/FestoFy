@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { RxCross2 } from "react-icons/rx";
 import { EventAppContext } from '../Context/EventContext'
 import axios from 'axios'
 import Otp_popup from './Otp_popup'
@@ -9,10 +8,11 @@ import Forgot_OtpPopup from './Forgotpass_component/Forgot_OtpPopup';
 import LoginForm from './LoginForm';
 import NewPassword_popup from './Forgotpass_component/NewPassword_popup';
 import { useNavigate } from 'react-router';
-const Login_PopUp = () => {
-    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails,setadmin} = useContext(EventAppContext)
-    const [login, setlogin] = useState("logout")
+import SetProfile_Popup from './SetProfile_Popup';
 
+const Login_PopUp = () => {
+    const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails,setadmin,profile} = useContext(EventAppContext)
+    const [login, setlogin] = useState("logout")
     const [Forgototp, setForgototp] = useState(false)
     const [errorMsg, seterrorMsg] = useState("")
     const [newpassword, setnewpassword] = useState(false)
@@ -34,7 +34,9 @@ const Login_PopUp = () => {
 
         if (password) return <Forgot_pass Forgototp={Forgototp} setForgototp={setForgototp} setregemail={setregemail} />
 
-        if (otp) return <Otp_popup email={email} setotp={setotp} login={login} />//token used
+        if (otp) return <Otp_popup email={email} setotp={setotp} login={login} />
+
+        if (profile) return <SetProfile_Popup  />
 
         return <LoginForm login={login} setlogin={setlogin} onsubmit={onsubmit} control={control} errorMsg={errorMsg} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} setValue={setValue} register={register} handleSubmit={handleSubmit} Controller={Controller} />
     }

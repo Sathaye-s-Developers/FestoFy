@@ -14,9 +14,12 @@ import Sub_Event_pg from './Pages/Event_Components/Event_pg_Components/Sub_Event
 import AdminPg from './Pages/Admin/AdminPg'
 import SuperKeyPopup from './Pages/Event_Components/Components/SuperKeyPopup'
 import Share_Popup from './Components/Share_Popup'
+import Voleenter_Popup from './Pages/Event_Components/Components/Voleenter_Popup'
+import Participate_popup from './Pages/Event_Components/Components/Participate_popup'
+import RegisteredList from './Pages/Admin/RegisteredList'
 
 const App = () => {
-  const { register, loading, options, setprogress, progress, isAuthenticated, admin, key ,share} = useContext(EventAppContext)
+  const { register, loading, options, setprogress, progress, isAuthenticated, admin, key ,share,Voleenter,Participate,eventhead} = useContext(EventAppContext)
   if (loading) {
     return <Loading_comp />;
   }
@@ -33,6 +36,9 @@ const App = () => {
       {options === true ? <Mobile_Options /> : <></>}
       {key ? <SuperKeyPopup /> : <></>}
       {share.Isshare ? <Share_Popup /> : <></>}
+      {Voleenter ? <Voleenter_Popup/>:<></>}
+      {Participate ? <Participate_popup/>:<></>}
+      
       <Routes>
         {/* <Route path='/' element={<Loading_comp><Home /></Loading_comp>} /> */}
         <Route path='/' element={<Home />} />
@@ -44,6 +50,7 @@ const App = () => {
         <Route path='/InterCollegateEvents' element={isAuthenticated ? <InterCollege_Events /> : <Home />} />
         <Route path='/SubEvent/:eventId' element={isAuthenticated ? <Sub_Event_pg /> : <Home />} />
         <Route path='/Admin/*' element={(isAuthenticated && admin) ? <AdminPg /> : <Home />} />
+        <Route path='/EventHead/Registeries' element={(isAuthenticated && eventhead) ? <RegisteredList /> : <Home />} />
       </Routes>
     </div >
   )

@@ -8,10 +8,15 @@ import { EventAppContext } from '../../Context/EventContext';
 import Home from '../Home';
 import CreateEventPage from '../Admin/CreateEventPage'
 import CreateSub_EventPg from './CreateSub_EventPg';
+import Admin_SubEvent from './Admin_SubEvent';
+import RegisteredList from './RegisteredList';
+import Editableevent from './Editableevent';
+import EditableSubevent from './EditableSubevent';
+
 
 const AdminPg = () => {
     const [ActiveTab, setActiveTab] = useState("YourEvents")
-    const {isAuthenticated}=useContext(EventAppContext)
+    const { isAuthenticated } = useContext(EventAppContext)
     return (
         <div className='bg-black text-white'>
             <E_Nav_Back2 />
@@ -30,10 +35,14 @@ const AdminPg = () => {
                 </div>
                 <div className='w-full overflow-y-auto h-[calc(100vh-64px)]'>
                     <Routes>
-                        <Route path='' element={isAuthenticated?<YourEvent/>:<Home/>} />
-                        <Route path='CreateEvent' element={isAuthenticated?<CreateEventPage/>:<Home/>} />
-                        <Route path='MyEvents' element={isAuthenticated ? <YourEvent/>:<Home/>}/>
-                        <Route path="CreateSubEvent/:eventId" element={isAuthenticated?<CreateSub_EventPg/>:<Home/>}/>
+                        <Route path='' element={isAuthenticated ? <YourEvent /> : <Home />} />
+                        <Route path='CreateEvent' element={isAuthenticated ? <CreateEventPage /> : <Home />} />
+                        <Route path='MyEvents' element={isAuthenticated ? <YourEvent /> : <Home />} />
+                        <Route path="CreateSubEvent/:eventId" element={isAuthenticated ? <CreateSub_EventPg /> : <Home />} />
+                        <Route path="AdminSubEvent/:eventId" element={isAuthenticated ? <Admin_SubEvent /> : <Home />} />
+                        <Route path="AdminSubEvent/:eventId/:subeventId" element={isAuthenticated ? <RegisteredList /> : <Home />} />
+                        <Route path="Editevent/:eventId" element={isAuthenticated ? <Editableevent /> : <Home />} />
+                        <Route path="EditSubevent/:SubeventId" element={isAuthenticated ? <EditableSubevent /> : <Home />} />
                     </Routes>
                 </div>
 

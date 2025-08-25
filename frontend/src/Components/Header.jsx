@@ -3,32 +3,14 @@ import { EventAppContext } from '../Context/EventContext'
 import { Play } from 'lucide-react';
 import { useGSAP } from "@gsap/react"
 import gsap from 'gsap';
+import { useNavigate } from 'react-router';
 
 
 const Header = () => {
-    const { setRegister, token } = useContext(EventAppContext)
+    const { setRegister, isAuthenticated } = useContext(EventAppContext)
     const headerRef = useRef([]);
     const { contextSafe } = useGSAP();
-    // const headerAnimation = contextSafe(() => {
-    //     gsap.fromTo(
-    //         headerRef.current,
-    //         { y: 30, opacity: 0 },
-    //         {
-    //             y: 0,
-    //             opacity: 1,
-    //             duration: 1,
-    //             ease: "power3.out",
-    //             stagger: 0.25,
-    //             scrollTrigger: {
-    //                 trigger: headerRef.current[0], // start anim when heading enters
-    //                 start: "top 85%",
-    //                 toggleActions: "play none none reverse",
-    //                 once: true,
-    //             },
-    //             clearProps: "transform",
-    //         }
-    //     );
-    // });
+    const Navigate=useNavigate()
     useGSAP(
         (ctx) => {
             const anim = gsap.fromTo(
@@ -81,7 +63,7 @@ const Header = () => {
                     if (!isAuthenticated) {
                         setRegister(true)
                     } else {
-                        console.log("hello")
+                        Navigate("/Event")
                     }
                 }}>
                     <span className="relative z-10" >Get Started</span>
