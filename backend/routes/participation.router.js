@@ -5,7 +5,8 @@ const Event = require("../Model/event.module");
 const SubEvent = require("../Model/subevent.model");
 const verifyToken = require("../middlewares/token_varification");
 const Volunteer = require("../Model/volunteer.model");
-
+const is_admin = require("../middlewares/is_admin");
+const sub_head = require("../middlewares/Subevent_head");
 // Register participant for event or sub-event
 router.post("/register", verifyToken, async (req, res) => {
   try {
@@ -128,32 +129,37 @@ router.post("/register", verifyToken, async (req, res) => {
 });
 
 //  Get all participants for a specific sub-event
-router.get("/subevent/:subEventId/participants", async (req, res) => {
-  try {
-    const { subEventId } = req.params;
+router.get(
+  "/subevent/:subEventId/participants",
+  is_admin,
+  sub_head,
+  async (req, res) => {
+    try {
+      const { subEventId } = req.params;
 
-    const participants = await Participation.find({ subEventId });
+      const participants = await Participation.find({ subEventId });
 
-    if (!participants || participants.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No participants found for this sub-event",
+      if (!participants || participants.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No participants found for this sub-event",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Participants fetched successfully",
+        participants,
       });
+    } catch (err) {
+      console.error("Error fetching participants:", err);
+      res.status(500).json({ success: false, message: "Server error" });
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Participants fetched successfully",
-      participants,
-    });
-  } catch (err) {
-    console.error("Error fetching participants:", err);
-    res.status(500).json({ success: false, message: "Server error" });
   }
-});
+);
 
 // GET all participants (main event + sub-events)
-router.get("/event/:eventId/all-participants", async (req, res) => {
+router.get("/event/:eventId/all-participants", is_admin, async (req, res) => {
   try {
     const { eventId } = req.params;
 

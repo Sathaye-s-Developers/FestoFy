@@ -7,6 +7,8 @@ const SubEvent = require("../Model/subevent.model");
 const Event = require("../Model/event.module");
 const Volunteer = require("../Model/volunteer.model");
 const Participation = require("../Model/participation.model");
+const sub_head = require("../middlewares/Subevent_head");
+
 // Get all events a volunteer is registered to
 router.get(
   "/registered-events/:volunteerId",
@@ -180,33 +182,40 @@ router.post("/register", verifyToken, async (req, res) => {
 });
 
 // Get all volunteers for a specific event
-router.get("/event/:eventId/volunteers", verifyToken, async (req, res) => {
-  try {
-    const { eventId } = req.params;
+router.get(
+  "/event/:eventId/volunteers",
+  is_admin,
+  verifyToken,
+  async (req, res) => {
+    try {
+      const { eventId } = req.params;
 
-    const volunteers = await Volunteer.find({ eventId });
+      const volunteers = await Volunteer.find({ eventId });
 
-    if (!volunteers || volunteers.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No volunteers found for this event",
+      if (!volunteers || volunteers.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No volunteers found for this event",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Volunteers fetched successfully",
+        volunteers,
       });
+    } catch (err) {
+      console.error("Error fetching volunteers for event:", err);
+      res.status(500).json({ success: false, message: "Server error" });
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Volunteers fetched successfully",
-      volunteers,
-    });
-  } catch (err) {
-    console.error("Error fetching volunteers for event:", err);
-    res.status(500).json({ success: false, message: "Server error" });
   }
-});
+);
 
 //  Get all volunteers for a specific sub-event
 router.get(
   "/subevent/:subEventId/volunteers",
+  is_admin,
+  sub_head,
   verifyToken,
   async (req, res) => {
     try {

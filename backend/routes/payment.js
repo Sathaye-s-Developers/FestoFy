@@ -16,7 +16,6 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-//  Create Razorpay Order
 // Create Razorpay Order
 router.post("/create-order", verifyToken, async (req, res) => {
   try {
@@ -131,7 +130,7 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "Invalid payment signature" });
     }
 
-    // Fetch correct amount from DB (not trusting frontend)
+    // Fetch correct amount from DB
     let amount;
     if (subEventId) {
       const subEvent = await SubEvent.findById(subEventId).lean();

@@ -4,9 +4,11 @@ const Attendance = require("../Model/attendence.module");
 const Volunteer = require("../Model/volunteer.model");
 const SubEvent = require("../Model/subevent.model");
 const mongoose = require("mongoose");
+const sub_head = require("../middlewares/Subevent_head");
+const is_admin = require("../middlewares/is_admin");
 
 //  1. Mark / Update Attendance (Single Volunteer)
-router.post("/mark", verifyToken, async (req, res) => {
+router.post("/mark", verifyToken, sub_head, is_admin, async (req, res) => {
   try {
     const { volunteerId, subEventId, eventId, date, status } = req.body;
 
@@ -119,54 +121,60 @@ router.get(
 
 // Get Attendance (By Date or Range)
 
-router.get("/:eventId/:subEventId", verifyToken, async (req, res) => {
-  try {
-    const { eventId, subEventId } = req.params;
-    const { date, from, to, includeAbsent } = req.query;
+router.get(
+  "/:eventId/:subEventId",
+  verifyToken,
+  sub_head,
+  is_admin,
+  async (req, res) => {
+    try {
+      const { eventId, subEventId } = req.params;
+      const { date, from, to, includeAbsent } = req.query;
 
-    const filter = { event: eventId, subEvent: subEventId };
+      const filter = { event: eventId, subEvent: subEventId };
 
-    if (date) {
-      const d = new Date(date);
-      d.setHours(0, 0, 0, 0);
-      filter.date = d;
-    } else if (from && to) {
-      const start = new Date(from);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(to);
-      end.setHours(23, 59, 59, 999);
-      filter.date = { $gte: start, $lte: end };
+      if (date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        filter.date = d;
+      } else if (from && to) {
+        const start = new Date(from);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(to);
+        end.setHours(23, 59, 59, 999);
+        filter.date = { $gte: start, $lte: end };
+      }
+
+      let attendanceRecords = await Attendance.find(filter)
+        .populate("volunteer", "name email roll_no year department")
+        .sort({ date: -1 });
+
+      // Add default "Absent" volunteers if includeAbsent=true & single date query
+      if (includeAbsent === "true" && date) {
+        const attendanceVolunteerIds = attendanceRecords.map((a) =>
+          a.volunteer?._id?.toString()
+        );
+        const allVolunteers = await Volunteer.find({
+          subEvent: subEventId,
+        }).select("name email roll_no year department");
+
+        const absentVolunteers = allVolunteers.filter(
+          (v) => !attendanceVolunteerIds.includes(v._id.toString())
+        );
+        const absentRecords = absentVolunteers.map((v) => ({
+          volunteer: v,
+          status: "Absent",
+          date: new Date(date),
+        }));
+
+        attendanceRecords = [...attendanceRecords, ...absentRecords];
+      }
+
+      res.json({ success: true, attendance: attendanceRecords });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
-
-    let attendanceRecords = await Attendance.find(filter)
-      .populate("volunteer", "name email roll_no year department")
-      .sort({ date: -1 });
-
-    // Add default "Absent" volunteers if includeAbsent=true & single date query
-    if (includeAbsent === "true" && date) {
-      const attendanceVolunteerIds = attendanceRecords.map((a) =>
-        a.volunteer?._id?.toString()
-      );
-      const allVolunteers = await Volunteer.find({
-        subEvent: subEventId,
-      }).select("name email roll_no year department");
-
-      const absentVolunteers = allVolunteers.filter(
-        (v) => !attendanceVolunteerIds.includes(v._id.toString())
-      );
-      const absentRecords = absentVolunteers.map((v) => ({
-        volunteer: v,
-        status: "Absent",
-        date: new Date(date),
-      }));
-
-      attendanceRecords = [...attendanceRecords, ...absentRecords];
-    }
-
-    res.json({ success: true, attendance: attendanceRecords });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
   }
-});
+);
 
 module.exports = router;
