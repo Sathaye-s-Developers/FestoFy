@@ -108,7 +108,7 @@ const Participate_popup = () => {
                             if (verifyRes.data.success) {
                                 setisSubmitting(true);
                                 setParticipate(false)
-                                settoastCondition(true)
+                                window.location.reload()
 
                             } else {
                                 toast.error("Payment Failed")
@@ -139,7 +139,7 @@ const Participate_popup = () => {
                 if (response.data.success) {
                     setParticipate(false)
                     setisSubmitting(false)
-                    settoastCondition(true)
+                    window.location.reload()
                 }
 
 
