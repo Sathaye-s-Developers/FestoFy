@@ -106,7 +106,7 @@ const Participate_popup = () => {
                             );
 
                             if (verifyRes.data.success) {
-                                setisSubmitting(true);
+                                setisSubmitting(false);
                                 setParticipate(false)
                                 window.location.reload()
 
@@ -176,7 +176,7 @@ const Participate_popup = () => {
                                     {ismanual &&
                                         <div className='flex flex-col items-center'>
                                             <img src={qrlink} className='border-2' />
-                                            <input type="text" placeholder='Enter Transaction Id' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' autoComplete='transactionid' {...register("TransactionId", { required: "Please fill all fields" })} />
+                                            <input type="number" placeholder='Enter Transaction Id' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' autoComplete='transactionid' {...register("TransactionId", { required: "Please fill all fields" })} />
                                             {errors.TransactionId && (
                                                 <p className="text-red-500 text-sm mt-1">{errors.TransactionId.message}</p>
                                             )}
@@ -259,7 +259,7 @@ const Participate_popup = () => {
 
                                     {errormsg && (<div className='w-[80%] mb-3'><p className='text-red-600'>{errormsg}</p></div>)}
 
-                                    <button type='submit' disabled={errormsg} className={`${isSubmitting
+                                    <button type='submit' disabled={isSubmitting} className={`${isSubmitting
                                         ? "opacity-50 cursor-not-allowed"
                                         : "cursor-pointer hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/25 hover:scale-105 hover:-translate-y-0.3"
                                         } bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none`}>{isSubmitting ? `${ispaid ? "Paying..." : "Submitting..."}` : `${ispaid ? "Pay Now" : "Submit"}`}</button>
