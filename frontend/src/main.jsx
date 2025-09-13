@@ -19,5 +19,5 @@ createRoot(document.getElementById('root')).render(
         </EventContext>
       </BrowserRouter>
     </CookiesProvider>
-  // </StrictMode>,
+  // </StrictMode>, 
 )

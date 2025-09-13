@@ -4,6 +4,7 @@ const router = express.Router();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 require("dotenv").config();
+const { generateTicket } = require("../email_services/EmailService");
 
 const Participation = require("../Model/participation.model");
 const Event = require("../Model/event.module");
@@ -25,19 +26,19 @@ router.post("/create-order", verifyToken, async (req, res) => {
 
     // Validate eventId
     if (!eventId) {
-      return res.status(400).json({ error: "Event ID is required" });
+      return res.status(400).json({ success: false, error: "Event ID is required" });
     }
 
     // Validate phone number format
     const phoneRegex = /^[6-9]\d{9}$/;
     if (!phoneRegex.test(phone)) {
-      return res.status(400).json({ error: "Invalid phone number" });
+      return res.status(400).json({ success: false, error: "Invalid phone number" });
     }
 
     // Fetch user
     const user = await User.findById(userId).lean();
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ success: false, error: "User not found" });
     }
 
     let amount;
@@ -46,21 +47,21 @@ router.post("/create-order", verifyToken, async (req, res) => {
     if (subEventId) {
       const subEvent = await SubEvent.findById(subEventId).lean();
       if (!subEvent) {
-        return res.status(404).json({ error: "SubEvent not found" });
+        return res.status(404).json({ success: false, error: "SubEvent not found" });
       }
       amount = subEvent.price;
     } else {
       // Else, fetch from main event
       const event = await Event.findById(eventId).lean();
       if (!event) {
-        return res.status(404).json({ error: "Event not found" });
+        return res.status(404).json({ success: false, error: "Event not found" });
       }
       amount = event.price;
     }
 
     // Check if amount is valid
     if (!amount || isNaN(amount) || amount <= 0) {
-      return res.status(400).json({ error: "Invalid event/sub-event amount" });
+      return res.status(400).json({ success: false, error: "Invalid event/sub-event amount" });
     }
 
     // Prevent duplicate confirmed registrations
@@ -75,7 +76,7 @@ router.post("/create-order", verifyToken, async (req, res) => {
     if (alreadyRegistered) {
       return res
         .status(409)
-        .json({ error: "Already registered for this event/sub-event" });
+        .json({ success: false, error: "Already registered for this event/sub-event" });
     }
 
     // Create Razorpay order
@@ -98,7 +99,7 @@ router.post("/create-order", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error("Order creation failed:", err);
-    return res.status(500).json({ error: "Failed to create order" });
+    return res.status(500).json({ success: false, error: "Failed to create order" });
   }
 });
 
@@ -113,13 +114,14 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
       eventId,
       subEventId,
       phone,
+      roll_no
     } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({ error: "Missing payment details" });
     }
-
     const user = await User.findById(userId).lean();
+
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // Verify Razorpay signature
@@ -130,11 +132,12 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
     if (generatedSignature !== razorpay_signature) {
       return res.status(400).json({ error: "Invalid payment signature" });
     }
+    // Fetch event/subEvent & price
+    let subEvent = null;
+    let amount = 0;
 
-    // Fetch correct amount from DB (not trusting frontend)
-    let amount;
     if (subEventId) {
-      const subEvent = await SubEvent.findById(subEventId).lean();
+      subEvent = await SubEvent.findById(subEventId).lean();
       if (!subEvent)
         return res.status(404).json({ error: "SubEvent not found" });
       amount = subEvent.price;
@@ -162,6 +165,7 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
 
     // Save participation
     const newParticipant = new Participation({
+      userId: userId,
       participantName: user.username,
       participantEmail: user.email,
       participantPhone: phone,
@@ -174,9 +178,16 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
       orderId: razorpay_order_id,
       amount,
       paidAt: new Date(),
+      roll_no: roll_no,
+      year: user.year
     });
 
     const savedParticipant = await newParticipant.save();
+
+    // Update references
+    await User.findByIdAndUpdate(userId, {
+      $push: { participations: savedParticipant._id },
+    });
 
     // Link to Event
     await Event.findByIdAndUpdate(eventId, {
@@ -187,6 +198,10 @@ router.post("/verify-payment", verifyToken, async (req, res) => {
         $push: { participants: savedParticipant._id },
       });
     }
+
+    //  Generate ticket
+    const event = await Event.findById(eventId);
+    generateTicket(user, event, subEvent, savedParticipant._id, user.email);
 
     return res.json({
       success: true,

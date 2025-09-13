@@ -15,9 +15,10 @@ import StarRating from "../../../Components/StarRating"
 import { IoLocationSharp } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const Sub_Event_pg = () => {
-  const { api, setVoleenter, setEventNo, setsubEventNo, setParticipate, details, subEventNo,eventhead,seteventhead } = useContext(EventAppContext)
+  const { api, setVoleenter, setEventNo, setsubEventNo, setParticipate, details, subEventNo, eventhead, seteventhead, settoastCondition, toastCondition } = useContext(EventAppContext)
   const { eventId } = useParams();
   const [EventInfo, setEventInfo] = useState(null)
   const [subEventInfo, setsubEventInfo] = useState(null)
@@ -29,13 +30,12 @@ const Sub_Event_pg = () => {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, seterrorMsg] = useState(false)
-  const Navigate=useNavigate()
+  const Navigate = useNavigate()
   const FetchsingleEvent = async () => {
     try {
       const response = await api.get(`/Festofy/user/event/${eventId}`, { withCredentials: true, })
       setEventInfo(response.data.event)
       setsubEventInfo(response.data.event.subEvents)
-
       setEventNo(eventId)
     } catch (err) {
       console.log(err)
@@ -51,7 +51,6 @@ const Sub_Event_pg = () => {
     setIsSubmitting(true)
     try {
       const response = await api.post("/Festofy/user/role_admin", payload, { withCredentials: true, })
-      console.log(response.data)
       if (response.data.success) {
         Navigate("/EventHead/Registeries")
         seteventHeadPopup(false)
@@ -69,6 +68,9 @@ const Sub_Event_pg = () => {
       }
     }
   }
+
+
+
 
   const isVolunteerRegistered = (volunteers) => {
     if (!volunteers || !details?.volunteers) return false;
@@ -91,7 +93,6 @@ const Sub_Event_pg = () => {
   const registeredEvents = subEventInfo?.filter(subEvent =>
     isVolunteerRegistered(subEvent.volunteers) || isParticipantsRegistered(subEvent.participants)
   );
-
 
   const availableEvents = subEventInfo?.filter(subEvent =>
     !isVolunteerRegistered(subEvent.volunteers) && !isParticipantsRegistered(subEvent.participants)
@@ -161,6 +162,7 @@ const Sub_Event_pg = () => {
       Arts: "text-purple-400 bg-purple-500/20",
       Gaming: "text-orange-400 bg-orange-500/20",
       Academic: "text-indigo-400 bg-indigo-500/20",
+      Entertainment: "text-amber-400 bg-amber-500/20"
     };
     return colors[category] || "text-cyan-400 bg-cyan-500/20";
   };
@@ -173,18 +175,35 @@ const Sub_Event_pg = () => {
       Arts: "text-purple-400",
       Gaming: "text-orange-400",
       Academic: "text-indigo-400",
+      Entertainment: "text-amber-400"
     };
-    return colors[category] || "text-cyan-400 bg-cyan-500/20";
+    return colors[category] || "text-cyan-400";
   };
 
   useEffect(() => {
-    FetchsingleEvent()
+    FetchsingleEvent();
+  }, []);
 
-  }, [])
+  // React to changes in 'toast'
+  useEffect(() => {
+    if (toastCondition) {
+      const fetchData = async () => {
+        try {
+          console.log("w")
+          await FetchsingleEvent();
+          toast.success("Registered Successfully !");
+        } catch (error) {
+          console.error("Error fetching event:", error);
+        } finally {
+          settoastCondition(false);
+        }
+      };
+      fetchData();
+    }
+  }, [toastCondition, FetchsingleEvent, settoastCondition]);
 
   return (
     <div className='min-h-screen bg-black'>
-      {/* <loading_comp loading={loading} /> */}
 
       {loading ? <Loading_comp2 loading={loading} /> : <div>
         <E_Nav_Back />

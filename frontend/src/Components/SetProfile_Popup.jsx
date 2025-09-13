@@ -3,6 +3,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useForm } from 'react-hook-form';
 import { EventAppContext } from '../Context/EventContext';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 const SetProfile_Popup = () => {
     const { api, setRegister, setshare,setprogress,fetchUserDetails} = useContext(EventAppContext)
     const { register, handleSubmit } = useForm()
@@ -24,6 +25,7 @@ const SetProfile_Popup = () => {
                 setshare(false)
                 setprogress(100)
                 await fetchUserDetails()
+                toast.success("User Registered Successfully")
             }
         } catch (err) {
             if (err.response && (err.response.status === 400 || err.response.status === 404 || err.response.status === 500)) {

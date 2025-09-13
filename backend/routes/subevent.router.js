@@ -8,7 +8,7 @@ const verifyToken = require("../middlewares/token_varification");
 // 🔹 Create SubEvent
 router.post("/create", verifyToken, isAdmin, async (req, res) => {
   try {
-    const { title, description, date, time, location, eventId, price = 0, duration, SubEventType, requirements, prizes, maxParticipants, subEventCategory, participation_type = "solo" } = req.body;
+    const { title, description, date, time, location, eventId, price = 0, duration, SubEventType, requirements, prizes, maxParticipants,maxVoleenters, subEventCategory,QrScanner, participation_type = "solo" } = req.body;
 
     if (!eventId || !title || !date) {
       return res
@@ -46,7 +46,9 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       prizes,
       maxParticipants,
       subEventCategory,
-      participation_type
+      participation_type,
+      maxVoleenters,
+      QrScanner
     });
 
     const savedSubEvent = await newSubEvent.save();

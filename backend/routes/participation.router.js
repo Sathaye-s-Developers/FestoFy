@@ -5,6 +5,9 @@ const Event = require("../Model/event.module");
 const SubEvent = require("../Model/subevent.model");
 const verifyToken = require("../middlewares/token_varification");
 const Volunteer = require("../Model/volunteer.model");
+const is_admin = require("../middlewares/is_admin");
+const sub_head = require("../middlewares/Subevent_head");
+const { generateTicket } = require("../email_services/EmailService");
 
 // Register participant for event or sub-event
 router.post("/register", verifyToken, async (req, res) => {
@@ -18,6 +21,7 @@ router.post("/register", verifyToken, async (req, res) => {
       members = null,
       collegeName = null,
       contact = null,
+      TransactionId = null
     } = req.body;
 
     if (!eventId) {
@@ -94,12 +98,13 @@ router.post("/register", verifyToken, async (req, res) => {
         year: user.year,
         department: user.department,
         team: { teamName, members, collegeName, contact },
+        TransactionId
       });
     } else {
       newParticipant = new Participation({
         userId,
         eventId,
-         roll_no,
+        roll_no,
         subEventId,
         participantName: user.username,
         participantEmail: user.email,
@@ -107,7 +112,8 @@ router.post("/register", verifyToken, async (req, res) => {
         college: user.collegeName,
         year: user.year,
         department: user.department,
-        team: { teamName, members, collegeName, contact }
+        team: { teamName, members, collegeName, contact },
+        TransactionId
       });
     }
 
@@ -125,7 +131,12 @@ router.post("/register", verifyToken, async (req, res) => {
         $push: { participants: savedParticipant._id },
       });
     }
+    //  Fetch details
+    const event = await Event.findById(eventId);
 
+    // Generate Ticket
+    generateTicket(user, event, subEvent, savedParticipant._id, user.email);
+    
     res.status(201).json({
       success: true,
       message: "Participant registered successfully",
@@ -138,7 +149,7 @@ router.post("/register", verifyToken, async (req, res) => {
 });
 
 //  Get all participants for a specific sub-event
-router.get("/subevent/:subEventId/participants", async (req, res) => {
+router.get("/subevent/:subEventId/participants", verifyToken, sub_head, async (req, res) => {
   try {
     const { subEventId } = req.params;
 
@@ -163,7 +174,7 @@ router.get("/subevent/:subEventId/participants", async (req, res) => {
 });
 
 // GET all participants (main event + sub-events)
-router.get("/event/:eventId/all-participants", async (req, res) => {
+router.get("/event/:eventId/all-participants", verifyToken, is_admin, async (req, res) => {
   try {
     const { eventId } = req.params;
 

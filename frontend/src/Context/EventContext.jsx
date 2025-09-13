@@ -31,10 +31,11 @@ const EventContext = (props) => {
     const [Voleenter, setVoleenter] = useState(false)
     const [profile, setprofile] = useState(false)
     const [EventNo, setEventNo] = useState("")
-    const [subEventNo,setsubEventNo]=useState("")
-    const [Participate,setParticipate]=useState(false)
-    const [eventhead,seteventhead]=useState(false)
-
+    const [subEventNo, setsubEventNo] = useState("")
+    const [Participate, setParticipate] = useState(false)
+    const [eventhead, seteventhead] = useState(false)
+    const [ispaid,setispaid]=useState(false)
+    const [toastCondition,settoastCondition]=useState(false)
     const param = {
         luminosity: lum,
         hue: hue,
@@ -50,10 +51,10 @@ const EventContext = (props) => {
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
             }
-            const volunteers=response.data.user.volunteers
-            const participations=response.data.user.participations
-            
-            setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code, role: response.data.user.role, phone: response.data.user.phone, department: response.data.user.department, year: response.data.user.year,volunteers:volunteers,participations:participations})
+            const volunteers = response.data.user.volunteers
+            const participations = response.data.user.participations
+            console.log(response.data.user)
+            setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code, role: response.data.user.role, phone: response.data.user.phone, department: response.data.user.department, year: response.data.user.year, volunteers: volunteers, participations: participations })
             if (response.data.user.role === "admin") {
                 setadmin(true);
             }
@@ -68,7 +69,8 @@ const EventContext = (props) => {
     const EventFetcher = async () => {
         try {
             const response = await api.get("/Festofy/user/event/my-college-events", {}, { withCredentials: true, })
-            const events = [...response.data.events]
+            const response1 = await api.get("/Festofy/user/event/my-college-explore-events", {}, { withCredentials: true, })
+            const events = [...response.data.events, ...response1.data.events];
             const FetchedArray = events.map((event) => ({
                 Id: event._id,
                 Title: event.title,
@@ -94,6 +96,8 @@ const EventContext = (props) => {
         }
     }
 
+
+
     const closePopup = useCallback(() => {
         setRegister(false);
     }, []);
@@ -109,9 +113,9 @@ const EventContext = (props) => {
     }, [fetchUserDetails]);
 
     const contextvalue = useMemo(() => ({
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile,EventNo, setEventNo,subEventNo,setsubEventNo,Participate,setParticipate,eventhead,seteventhead
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition
     }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading,
-        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile,EventNo, setEventNo,subEventNo,setsubEventNo,Participate,setParticipate,eventhead,seteventhead
+        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition
     ]);
 
 

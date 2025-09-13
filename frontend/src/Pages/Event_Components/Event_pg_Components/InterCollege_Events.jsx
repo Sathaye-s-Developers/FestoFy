@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import E_Nav_Back from '../Components/E_Nav_Back'
 import { EventAppContext } from '../../../Context/EventContext';
 import { Link } from "react-router-dom"
+import { University } from 'lucide-react';
 
 const categories = [
     { name: 'All', icon: Calendar, color: 'cyan' },
@@ -66,6 +67,7 @@ const InterCollege_Events = () => {
             console.log(err)
         }
     }
+    console.log(EventArray)
 
     const filters = ['All', 'Today', 'This Week', 'This Month', 'Free', 'Paid', 'Featured'];
 
@@ -274,6 +276,10 @@ const InterCollege_Events = () => {
 
                                         {/* Event Details */}
                                         <div className="space-y-2 mb-4">
+                                            <div className="flex items-center space-x-2 text-gray-300 text-sm">
+                                                <University className="w-4 h-4 text-cyan-400" />
+                                                <span>College : {event.College}</span>
+                                            </div>
                                             <div className="flex items-center space-x-2 text-gray-300 text-sm">
                                                 <Calendar className="w-4 h-4 text-cyan-400" />
                                                 <span>{new Date(event.Date).toISOString().split("T")[0]}</span>

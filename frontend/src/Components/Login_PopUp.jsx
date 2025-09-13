@@ -9,6 +9,7 @@ import LoginForm from './LoginForm';
 import NewPassword_popup from './Forgotpass_component/NewPassword_popup';
 import { useNavigate } from 'react-router';
 import SetProfile_Popup from './SetProfile_Popup';
+import { toast } from 'react-toastify';
 
 const Login_PopUp = () => {
     const { api, setprogress, otp, setotp, password, setpassword, setRegister, setisAuthenticated, fetchUserDetails,setadmin,profile} = useContext(EventAppContext)
@@ -90,6 +91,7 @@ const Login_PopUp = () => {
                     setisAuthenticated(true)
                     localStorage.setItem("ULRKGDAPS", "ABCEFG123")
                     await fetchUserDetails()
+                    toast.success("User logged in successfully !");
                     setprogress(100)
                 }
             } else {

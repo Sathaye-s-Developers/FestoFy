@@ -58,21 +58,27 @@ const Editableevent = () => {
 
     const onsubmithandler = useCallback(async (data) => {
         setIsSubmitting(true)
-        const file = data.banner[0];
+        const file = data.banner && data.banner[0];
+        let imageUrl = preview;
+
+        if (file) {
+            // Only upload if a new file is selected
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "Festofy");
+
+            const cloudinaryRes = await axios.post(
+                "https://api.cloudinary.com/v1_1/dr2twfsn1/image/upload",
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+
+            imageUrl = cloudinaryRes.data.secure_url; // update with new image URL
+        }
+
         const formData = new FormData();
         const startDate = new Date(data.StartDate);
         const endDate = new Date(data.EndDate);
-
-        formData.append("file", file)
-        formData.append("upload_preset", "Festofy")
-
-        const cloudinaryRes = await axios.post(
-            "https://api.cloudinary.com/v1_1/dr2twfsn1/image/upload",
-            formData,
-            { headers: { "Content-Type": "multipart/form-data" } }
-        );
-
-        const imageUrl = cloudinaryRes.data.secure_url;
 
         const payload = {
             email: data.Email,
@@ -94,7 +100,6 @@ const Editableevent = () => {
             phone: data.ContactNo
         }
         seteventForm(payload)
-        console.log(payload)
         try {
             const response = await api.put(`/Festofy/user/event/update/${eventId}`, payload, { withCredentials: true, })
             if (response.data.success) {
@@ -296,21 +301,32 @@ const Editableevent = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-4">Upload Event Banner *</label>
-                                <input className='hidden' accept="image/*" id="banner-upload" type='file' {...register("banner", {
-                                    required: "Enter the image file !",
-                                    validate: fileList =>
-                                        fileList && fileList.length > 0 && fileList[0].type.startsWith("image/")
-                                            ? true
-                                            : "Only image files are allowed",
-                                    onChange: (e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            setPreview(URL.createObjectURL(file)); // create preview
-                                        } else {
-                                            setPreview(null);
+                                <input
+                                    className='hidden'
+                                    accept="image/*"
+                                    id="banner-upload"
+                                    type='file'
+                                    {...register("banner", {
+                                        validate: fileList => {
+                                            if (preview) {
+                                                // Existing banner is available, image upload optional
+                                                return true;
+                                            } else {
+                                                // No existing banner, image upload required
+                                                return fileList && fileList.length > 0 && fileList[0].type.startsWith("image/")
+                                                    ? true
+                                                    : "Only image files are allowed";
+                                            }
+                                        },
+                                        onChange: (e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                setPreview(URL.createObjectURL(file)); // create preview
+                                            }
                                         }
-                                    }
-                                })} />
+                                    })}
+                                />
+
                                 <label
                                     htmlFor="banner-upload"
                                     className="flex flex-col "

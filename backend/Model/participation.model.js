@@ -6,7 +6,7 @@ const participationSchema = new mongoose.Schema(
     participantEmail: { type: String, required: true, lowercase: true },
     participantPhone: { type: String, required: true },
     college: { type: String, required: true },
-
+    TransactionId: { type: String, trim:true,default:null},
     eventId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Event",

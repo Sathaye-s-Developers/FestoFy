@@ -23,11 +23,17 @@ const subEventSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  QrScanner: {
+    type: String,
+    trim: true,
+    default:null
+  },
   prizes: {
     type: [String],
     trim: true,
   },
   maxParticipants: { type: Number, default: 1000 },
+  maxVoleenters: { type: Number, default: 1000 },
   duration: {
     type: String,
     required: false,

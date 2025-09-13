@@ -5,7 +5,7 @@ import { EventAppContext } from '../../../Context/EventContext'
 import { Plus } from 'lucide-react';
 import { Save } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
-
+import { toast } from 'react-toastify';
 const Participate_popup = () => {
     const { register, handleSubmit, control, formState: { errors } } = useForm({
         defaultValues: {
@@ -13,11 +13,14 @@ const Participate_popup = () => {
         }
     }
     )
-    const navigate=useNavigate()
-    const { api, setParticipate, subEventNo, EventNo } = useContext(EventAppContext)
+    const navigate = useNavigate()
+    const { api, setParticipate, subEventNo, EventNo, setispaid, ispaid, toastCondition, settoastCondition } = useContext(EventAppContext)
     const [errormsg, seterrormsg] = useState("")
     const [isSubmitting, setisSubmitting] = useState(false)
     const [teamtype, setteamtype] = useState(null)
+    const [ismanual, setismanual] = useState(false)
+    const [qrlink, setqrlink] = useState("")
+    const [SingleSubEventInfo, setSingleSubEventInfo] = useState("")
     const { fields, append, remove } = useFieldArray({
         control,
         name: "members"
@@ -30,7 +33,24 @@ const Participate_popup = () => {
     const fetchsubevent = async () => {
         try {
             const response = await api.get(`/Festofy/user/event/subevent/${subEventNo}`, { withCredentials: true, })
+            setSingleSubEventInfo(response.data.subEvent)
+            setqrlink(response.data.subEvent.QrScanner)
+            const qrScanner = response.data.subEvent.QrScanner;
+            const hasQrScanner = !!qrScanner;
+
+
+            if (hasQrScanner) {
+                setismanual(hasQrScanner)
+
+            } else if (hasQrScanner === false && response.data.subEvent.price > 0) {
+                setispaid(true)
+            }
+
+            // const Conditionalprice = !!response.data.subEvent.price > 0 && hasQrScanner === false
+            // console.log(Conditionalprice)
+
             setteamtype(response?.data?.subEvent?.participation_type)
+
         } catch (err) {
             console.log(err)
         }
@@ -42,27 +62,97 @@ const Participate_popup = () => {
             subEventId: subEventNo,
             roll_no: data.roll_no,
             teamName: data.teamName,
-            members: data.members
+            members: data.members,
+            TransactionId: data.TransactionId,
+            phone: data.PhoneNo
         }
+
         setisSubmitting(true)
-        try {
-            const response = await api.post("/Festofy/user/event/participation/register", payload, {
-                withCredentials: true,
-            })
-            if (response.data.success) {
-                setParticipate(false)
-                setisSubmitting(false)
-                window.location.reload(); 
-                navigate(`/SubEvent/${EventNo}`)
+        if (ispaid) {
+            try {
+                const response = await api.post("/Festofy/user/payment/create-order", payload, {
+                    withCredentials: true,
+                })
+                if (!response.data.success) {
+                    seterrormsg(response.data.error || "Order creation failed");
+                    setisSubmitting(false);
+                    return;
+                }
+                const dataOrder = response.data;
+                const options = {
+                    key: dataOrder.key,
+                    currency: dataOrder.order.currency,
+                    name: "College Fest Payment",
+                    description: "Event Participation",
+                    order_id: dataOrder.order.id,
+                    prefill: {
+                        name: dataOrder.participant.name,
+                        email: dataOrder.participant.email,
+                        contact: data.PhoneNo,
+                    },
+                    handler: async (paymentResponse) => {
+                        try {
+                            const verifyRes = await api.post(
+                                "/Festofy/user/payment/verify-payment",
+                                {
+                                    ...payload,
+                                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                                    razorpay_signature: paymentResponse.razorpay_signature,
+                                },
+                                {
+                                    withCredentials: true,
+                                }
+                            );
+
+                            if (verifyRes.data.success) {
+                                setisSubmitting(true);
+                                setParticipate(false)
+                                settoastCondition(true)
+
+                            } else {
+                                toast.error("Payment Failed")
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            toast.error("⚠ Something went wrong during verification.")
+                        }
+                    },
+                    theme: { color: "#3399cc" },
+                }
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+
+            } catch (err) {
+                if (err.response && (err.response.status === 409 || err.response.status === 404 || err.response.status === 400)) {
+                    seterrormsg(err.response.data.error);
+                    setisSubmitting(false)
+                }
+            } finally {
+                setisSubmitting(false);
             }
-        } catch (err) {
-            if (err.response && (err.response.status === 409 || err.response.status === 404 || err.response.status === 400)) {
-                seterrormsg(err.response.data.error);
+        } else {
+            try {
+                const response = await api.post("/Festofy/user/event/participation/register", payload, {
+                    withCredentials: true,
+                })
+                if (response.data.success) {
+                    setParticipate(false)
+                    setisSubmitting(false)
+                    settoastCondition(true)
+                }
+
+
+            } catch (err) {
+                if (err.response && (err.response.status === 409 || err.response.status === 404 || err.response.status === 400)) {
+                    seterrormsg(err.response.data.error);
+                    setisSubmitting(false)
+                }
                 setisSubmitting(false)
             }
-            setisSubmitting(false)
         }
     }
+
     useEffect(() => {
         fetchsubevent()
     }, [])
@@ -78,11 +168,28 @@ const Participate_popup = () => {
                         <div className='font-[Nunito]'>
                             <form onSubmit={handleSubmit(onsubmit)}>
                                 <div className='flex flex-col items-center'>
-                                    <input type="text" placeholder='Your Roll No' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-4' autoComplete='RollNo' {...register("roll_no", { required: "Please fill all fields" })} />
+                                    <input type="text" placeholder='Your Roll No' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' autoComplete='RollNo' {...register("roll_no", { required: "Please fill all fields" })} />
 
                                     {errors.roll_no && (
                                         <p className="text-red-500 text-sm mt-1">{errors.roll_no.message}</p>
                                     )}
+                                    {ismanual &&
+                                        <div className='flex flex-col items-center'>
+                                            <img src={qrlink} className='border-2' />
+                                            <input type="text" placeholder='Enter Transaction Id' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1 mb-3' autoComplete='transactionid' {...register("TransactionId", { required: "Please fill all fields" })} />
+                                            {errors.TransactionId && (
+                                                <p className="text-red-500 text-sm mt-1">{errors.TransactionId.message}</p>
+                                            )}
+                                        </div>
+                                    }
+                                    {ispaid &&
+                                        <div className='flex flex-col items-center w-full'>
+                                            <input type="text" placeholder='Enter PhoneNo' className='text-black outline-none border-2 border-gray-300 w-[80%] rounded-[5px] p-1  mb-2' autoComplete='phoneno' {...register("PhoneNo", { required: "Please fill all fields" })} />
+                                            {errors.PhoneNo && (
+                                                <p className="text-red-500 text-sm mt-1">{errors.PhoneNo.message}</p>
+                                            )}
+                                        </div>
+                                    }
 
                                     {teamtype === "team" && (<>
 
@@ -155,7 +262,7 @@ const Participate_popup = () => {
                                     <button type='submit' disabled={errormsg} className={`${isSubmitting
                                         ? "opacity-50 cursor-not-allowed"
                                         : "cursor-pointer hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/25 hover:scale-105 hover:-translate-y-0.3"
-                                        } bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none`}>{isSubmitting ? "Submitting..." : "Submit"}</button>
+                                        } bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none`}>{isSubmitting ? `${ispaid ? "Paying..." : "Submitting..."}` : `${ispaid ? "Pay Now" : "Submit"}`}</button>
                                 </div>
                             </form>
                         </div>

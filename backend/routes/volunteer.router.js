@@ -429,7 +429,7 @@ router.post("/register", verifyToken, async (req, res) => {
           { new: true }
         );
 
-        return res.status(200).json({ message: "SubEvent added", volunteer });
+        return res.status(200).json({success:true, message: "SubEvent added", volunteer });
       } else {
         return res
           .status(409)

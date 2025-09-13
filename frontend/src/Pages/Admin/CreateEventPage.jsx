@@ -61,7 +61,6 @@ const CreateEventPage = () => {
       phone: data.ContactNo
     }
     seteventForm(payload)
-    console.log(payload)
     try {
       const response = await api.post("/Festofy/user/event/create", payload, { withCredentials: true, })
       if (response.data.success) {
@@ -294,7 +293,7 @@ const CreateEventPage = () => {
                   </div>
                 )}
               </div>
-              <p>1918x867px</p>
+              {/* <p>1918x867px</p> */}
 
             </div>
 

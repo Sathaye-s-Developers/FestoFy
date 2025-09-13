@@ -106,9 +106,11 @@ const Admin_SubEvent = () => {
       Arts: "text-purple-400 bg-purple-500/20",
       Gaming: "text-orange-400 bg-orange-500/20",
       Academic: "text-indigo-400 bg-indigo-500/20",
+     Entertainment: "text-amber-400 bg-amber-500/20"
     };
     return colors[category] || "text-cyan-400 bg-cyan-500/20";
   };
+
   const getCategoryTextColor = (category) => {
     const colors = {
       Technical: "text-blue-400",
@@ -117,9 +119,11 @@ const Admin_SubEvent = () => {
       Arts: "text-purple-400",
       Gaming: "text-orange-400",
       Academic: "text-indigo-400",
+      Entertainment: "text-amber-400"
     };
-    return colors[category] || "text-cyan-400 bg-cyan-500/20";
+    return colors[category] || "text-cyan-400";
   };
+
 
   const FetchsingleEvent = async () => {
     try {

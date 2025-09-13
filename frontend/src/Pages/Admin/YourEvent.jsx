@@ -28,7 +28,7 @@ const YourEvent = () => {
         { name: 'Arts', icon: Palette, color: 'purple' },
         { name: 'Gaming', icon: Gamepad2, color: 'orange' },
         { name: 'Academic', icon: BookOpen, color: 'indigo' },
-        { name: 'Entertainment', icon: Mic, color: 'red' }
+        { name: 'Entertainment', icon: Mic, color: 'amber' }
     ];
    
     const EventFetcher = async () => {

@@ -102,15 +102,14 @@ const RegisteredList = () => {
 
     return matchesSearch && matchesRole;
   });
-
   const exportParticipants = () => {
     const csvContent = [
       ['Name', 'Email', 'Phone', 'College', 'Year', 'Department', 'Role', 'Status', 'Registration Date'].join(','),
       ...filteredParticipants.map(p => {
         return [
-          `${p.name}`,
-          p.email,
-          p.phone,
+          p.participantName,
+          p.participantEmail,
+          p.participantPhone,
           p.college,
           p.year,
           p.department,
@@ -154,7 +153,6 @@ const RegisteredList = () => {
     }
     setstudentData([...volunteers, ...participants]);
   };
-  console.log(studentData)
   useEffect(() => {
     fetchVolunteersAndParticipants();
   }, []);

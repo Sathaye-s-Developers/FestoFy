@@ -5,9 +5,13 @@ import { useForm, Controller } from "react-hook-form";
 import { EventAppContext } from '../../Context/EventContext';
 import group from "../../assets/group.png"
 import person from "../../assets/person.png"
+import { CiCircleQuestion } from "react-icons/ci";
+import { MdUploadFile } from "react-icons/md";
+import axios from 'axios';
 
 const CreateSub_EventPg = () => {
     const { api } = useContext(EventAppContext)
+    const [preview, setPreview] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [newPrize, setnewPrize] = useState('');
@@ -19,27 +23,47 @@ const CreateSub_EventPg = () => {
             mode: "onSubmit",
             reValidateMode: "onSubmit",
             category: "",
-            ParticipationCategory:"",
-            Prices: []
+            ParticipationCategory: "",
+            Prices: [],
+            isPaid: false,
+            PaymentMode: false
         }
     })
 
     const onsubmit = async (data) => {
         const dateObj = new Date(data.Date);
+        let imageUrl
+        if (data.PaymentMode) {
+            const file = data.Qrimg[0];
+            const formData = new FormData();
+            formData.append("file", file)
+            formData.append("upload_preset", "Festofy")
+
+            const cloudinaryRes = await axios.post(
+                "https://api.cloudinary.com/v1_1/dr2twfsn1/image/upload",
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+
+            imageUrl = cloudinaryRes.data.secure_url;
+        }
+
         const payload = {
             title: data.Title,
             description: data.Description,
             date: new Date(dateObj.setUTCHours(0, 0, 0, 0)).toISOString(),
             time: data.Time,
             eventId: eventId,
-            price: data.EntryFee,
+            price: data.EntryFee ? Number(data.EntryFee) : 0,
             duration: data.Duration,
             requirements: data.Requirements,
             prizes: data.Prices,
             maxParticipants: data.MaxParticipants,
             location: data.Location,
             subEventCategory: data.category,
-            participation_type:data.ParticipationCategory
+            participation_type: data.ParticipationCategory,
+            maxVoleenters: data.MaxVoleenters,
+            QrScanner:imageUrl
         }
         console.log(payload)
         try {
@@ -71,7 +95,7 @@ const CreateSub_EventPg = () => {
 
     const PaticipationTypes = [
         { value: 'solo', label: 'Solo', icon: person, color: 'blue' },
-        { value: 'team', label: 'Team', icon: group , color: 'red' },
+        { value: 'team', label: 'Team', icon: group, color: 'red' },
     ];
 
     const addPrize = () => {
@@ -100,7 +124,7 @@ const CreateSub_EventPg = () => {
 
     const Prices = watch("Prices", []);
     const selectedCategory = watch("category", "");
-    const ParticipationCategory=watch("ParticipationCategory","")
+    const ParticipationCategory = watch("ParticipationCategory", "")
 
     if (isSubmitted) {
         return (
@@ -236,14 +260,14 @@ const CreateSub_EventPg = () => {
                                                     type="button"
                                                     onClick={() => {
                                                         setValue("ParticipationCategory", type.value, { shouldValidate: true });
-                                                       
+
                                                     }}
                                                     className={`p-4 rounded-xl border transition-all duration-300 transform hover:scale-105 active:scale-95 text-center ${isSelected
                                                         ? `bg-gradient-to-r ${colorClasses} scale-105`
                                                         : 'bg-slate-700/30 border-gray-600 text-gray-300 hover:border-cyan-400/40'
                                                         }`}
                                                 >
-                                                    <img src={IconComponent}  className="invert w-6 h-6 mx-auto mb-2" />
+                                                    <img src={IconComponent} className="invert w-6 h-6 mx-auto mb-2" />
                                                     <span className="text-xs font-medium">{type.label}</span>
                                                 </button>
                                             );
@@ -285,34 +309,7 @@ const CreateSub_EventPg = () => {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Duration</label>
-                                        <input
-                                            type="text"
-                                            {...register("Duration", { required: "Fields Should Not be empty !" })}
-                                            className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                                            placeholder="e.g., 3 hours"
-                                        />
-                                        {errors.Duration && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.Duration.message}</p>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Entry Fee</label>
-                                        <input
-                                            type="number"
-                                            {...register("EntryFee", { required: "Fields Should Not be empty !" })}
-                                            className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                                            placeholder="0 for free event"
-                                        />
-                                        {errors.EntryFee && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.EntryFee.message}</p>
-                                        )}
-                                    </div>
-                                </div>
 
-                                {/* Participants and Requirements */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">Max Participants</label>
                                         <input
@@ -323,6 +320,35 @@ const CreateSub_EventPg = () => {
                                         />
                                         {errors.MaxParticipants && (
                                             <p className="text-red-500 text-sm mt-1">{errors.MaxParticipants.message}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Max Voleenters</label>
+                                        <input
+                                            type="number"
+                                            {...register("MaxVoleenters", { required: "Fields Should Not be empty !" })}
+                                            className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                                            placeholder="Leave empty for unlimited"
+                                        />
+                                        {errors.MaxVoleenters && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.MaxVoleenters.message}</p>
+                                        )}
+                                    </div>
+
+                                </div>
+
+                                {/* Participants and Requirements */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Duration</label>
+                                        <input
+                                            type="text"
+                                            {...register("Duration", { required: "Fields Should Not be empty !" })}
+                                            className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                                            placeholder="e.g., 3 hours"
+                                        />
+                                        {errors.Duration && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.Duration.message}</p>
                                         )}
                                     </div>
 
@@ -339,6 +365,109 @@ const CreateSub_EventPg = () => {
                                         )}
                                     </div>
                                 </div>
+
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-6'>
+
+                                    <div className="mt-6">
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Payment Mode</label>
+                                        <div className="flex items-center space-x-3">
+                                            <div
+                                                onClick={() => setValue("isPaid", !watch("isPaid"))}
+                                                className={`relative w-14 h-8 rounded-full transition-colors duration-300 cursor-pointer ${watch("isPaid") ? 'bg-green-500/60' : 'bg-blue-500/60'}`}
+                                            >
+                                                <div
+                                                    className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${watch("isPaid") ? 'translate-x-6' : 'translate-x-0'}`}
+                                                />
+                                            </div>
+                                            <span className={`text-sm font-medium ${watch("isPaid") ? 'text-green-400' : 'text-blue-400'}`}>
+                                                {watch("isPaid") ? "Paid" : "Free"}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {watch("isPaid") && <div className="mt-6">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <label className="block text-sm font-medium text-gray-300 ">Payment Method</label>
+                                            <div className="relative group">
+                                                <CiCircleQuestion
+                                                    className='hover:cursor-pointer text-gray-400'
+                                                />
+                                                <div className="absolute left-0 top-full mt-2 w-64 bg-gray-800 text-gray-300 text-[14px] p-3 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                                    For manual payments, please upload a QR code image. For automatic payments, this step is not required.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex gap-2'>
+                                            <div className="flex items-center space-x-3">
+                                                <div
+                                                    onClick={() => setValue("PaymentMode", !watch("PaymentMode"))}
+                                                    className={`relative w-14 h-8 rounded-full transition-colors duration-300 cursor-pointer ${watch("PaymentMode") ? 'bg-green-500/60' : 'bg-blue-500/60'}`}
+                                                >
+                                                    <div
+                                                        className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${watch("PaymentMode") ? 'translate-x-6' : 'translate-x-0'}`}
+                                                    />
+                                                </div>
+                                                <span className={`text-sm font-medium ${watch("PaymentMode") ? 'text-green-400' : 'text-blue-400'}`}>
+                                                    {watch("PaymentMode") ? "RozarPay" : "Manual"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+
+                                {watch("PaymentMode") && <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-4">Upload Qr Scanner</label>
+                                    <input className='hidden' accept="image/*" id="banner-upload" type='file' {...register("Qrimg", {
+                                        required: "Enter the image file !",
+                                        validate: fileList =>
+                                            fileList && fileList.length > 0 && fileList[0].type.startsWith("image/")
+                                                ? true
+                                                : "Only image files are allowed",
+                                        onChange: (e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                setPreview(URL.createObjectURL(file)); // create preview
+                                            } else {
+                                                setPreview(null);
+                                            }
+                                        }
+                                    })} />
+                                    <label
+                                        htmlFor="banner-upload"
+                                        className="flex flex-col "
+                                    >
+                                        <MdUploadFile size={40} />
+                                    </label>
+                                    {errors.Qrimg && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.Qrimg.message}</p>
+                                    )}
+
+                                    {/* Image preview */}
+                                    {preview && (
+                                        <div className="mt-4">
+                                            <img
+                                                src={preview}
+                                                alt="Selected Banner"
+                                                className="w-full max-w-md rounded-xl border border-cyan-400/30"
+                                            />
+                                        </div>
+                                    )}
+                                </div>}
+
+                                {watch("isPaid") && <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">Entry Fee</label>
+                                    <input
+                                        type="number"
+                                        {...register("EntryFee", { required: "Fields Should Not be empty !" })}
+                                        className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                                        placeholder="0 for free event"
+                                    />
+                                    {errors.EntryFee && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.EntryFee.message}</p>
+                                    )}
+                                </div>}
 
                                 {/* Prizes */}
                                 {selectedCategory === 'competition' && (

@@ -2,11 +2,12 @@ import React, { useContext, useState } from 'react'
 import { RxCross2 } from "react-icons/rx";
 import { EventAppContext } from '../../../Context/EventContext';
 import { useForm } from "react-hook-form"
+import { toast } from 'react-toastify';
 const Voleenter_Popup = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
     const [errormsg, seterrorMsg] = useState("")
     const [isSubmitting, setisSubmitting] = useState(false)
-    const { setVoleenter, EventNo, setEventNo, subEventNo, setsubEventNo, api } = useContext(EventAppContext)
+    const { setVoleenter, EventNo, setEventNo, subEventNo, setsubEventNo, api,settoastCondition } = useContext(EventAppContext)
     const onsubmit = async (data) => {
         const payload = {
             roll_no: data.RollNo,
@@ -21,7 +22,7 @@ const Voleenter_Popup = () => {
             if (response.data.success) {
                 setVoleenter(false)
                 setisSubmitting(false)
-                window.location.reload()
+                settoastCondition(true)
             }
             setisSubmitting(false)
         } catch (err) {
