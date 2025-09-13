@@ -337,7 +337,7 @@ const Sub_Event_pg = () => {
                               <span>Participants</span>
                             </div>
                             <span className="text-white font-medium">
-                              10/{subEvent.maxParticipants}
+                              110/{subEvent.maxParticipants}
                             </span>
                           </div>
                           <div className="w-full bg-slate-600 rounded-full h-2">
