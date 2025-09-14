@@ -55,7 +55,6 @@ const EventContext = (props) => {
             }
             const volunteers = response.data.user.volunteers
             const participations = response.data.user.participations
-            console.log(response.data.user)
             setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code, role: response.data.user.role, phone: response.data.user.phone, department: response.data.user.department, year: response.data.user.year, volunteers: volunteers, participations: participations })
             if (response.data.user.role === "admin") {
                 setadmin(true);

@@ -89,7 +89,7 @@ const Profilepg = () => {
                         }
                       </div>
                     }
-                    {error?.status === 409 && (<div className='w-[80%] mt-2 '><p className='text-red-600'>{error.message}</p></div>)}
+                    
                   </div>
                   <div className='mt-3 w-full hover:cursor-no-drop'>
                     <label className='text-white'>Email</label>
@@ -116,7 +116,7 @@ const Profilepg = () => {
                         }
                       </div>
                     }
-                    {(error?.status === 408 || error) && (<div className='w-[80%] mt-2'><p className='text-red-600'>{error.message}</p></div>)}
+                    {/* {(error?.status === 408 || error) && (<div className='w-[80%] mt-2'><p className='text-red-600'>{error.message}</p></div>)} */}
                   </div>
 
                   <div className='mt-3 w-full hover:cursor-no-drop'>
@@ -125,6 +125,7 @@ const Profilepg = () => {
                       <p className='w-full border-2 border-cyan-300 rounded-[6px] p-2 mt-2 text-white shadow-amber-50'>{details.department}</p>
                       <Save size={38} className='text-gray-700 group-hover:text-cyan-300 transition-colors' />
                     </div>
+                    {error?.status === 409 && (<div className='w-[80%] mt-2 '><p className='text-red-600 text-center'>{error.message}</p></div>)}
                   </div>
                 </div>
               </form>

@@ -154,11 +154,11 @@ const YourEvent = () => {
                                                 )}
 
                                                 {/* Price Badge */}
-                                                <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-sm rounded-full">
+                                                {/* <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-sm rounded-full">
                                                     <span className="text-white text-sm font-semibold">
                                                         {event.Price === 0 ? 'Free' : `₹${event.Price}`}
                                                     </span>
-                                                </div>
+                                                </div> */}
                                             </div>
 
                                             {/* Event Content */}

@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form"
 import { RxCross2 } from "react-icons/rx";
 import E_Nav_Back from '../Event_Components/Components/E_Nav_Back';
 import { FaRegIdCard } from "react-icons/fa";
+import { IoPeopleSharp } from "react-icons/io5";
 
 const RegisteredList = () => {
   const [selectedRole, setSelectedRole] = useState('all');
@@ -110,10 +111,9 @@ const RegisteredList = () => {
       phone: participant.phone || participant.participantPhone || ""
     }));
 
-  console.log(filteredParticipants)
   const exportParticipants = () => {
     const csvContent = [
-      ['Name', 'Email', 'Phone', 'College', 'Year', 'Department', 'Role', 'Status', 'Registration Date','Transaction Id'].join(','),
+      ['Name', 'Email', 'Phone', 'College', 'Year', 'Department', 'Role', 'Status', 'Registration Date', 'Transaction Id'].join(','),
       ...filteredParticipants.map(p => {
         return [
           p.name,
@@ -163,11 +163,10 @@ const RegisteredList = () => {
     }
     setstudentData([...volunteers, ...participants]);
   };
-  console.log(studentData)
   useEffect(() => {
     fetchVolunteersAndParticipants();
   }, []);
-
+  console.log(filteredParticipants)
   return (
     <div className='bg-black'>
       {eventhead && <E_Nav_Back />}
@@ -186,7 +185,7 @@ const RegisteredList = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
             <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 p-6">
               <div className="flex items-center space-x-3">
                 <Users className="w-8 h-8 text-cyan-400" />
@@ -203,6 +202,16 @@ const RegisteredList = () => {
                 <div>
                   <div className="text-2xl font-bold text-white">{studentData.filter(p => p.position === 'volunteer').length}</div>
                   <div className="text-gray-400 text-sm">Volunteers</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-6">
+              <div className="flex items-center space-x-3">
+                <IoPeopleSharp className="w-8 h-8 text-yellow-400" />
+                <div>
+                  <div className="text-2xl font-bold text-white">{studentData.filter(p => p.position === 'participant').length}</div>
+                  <div className="text-gray-400 text-sm">Participants</div>
                 </div>
               </div>
             </div>
@@ -226,6 +235,7 @@ const RegisteredList = () => {
                 </div>
               </div>
             </div>
+
           </div>
 
           {/* Filters and Search */}
@@ -311,12 +321,12 @@ const RegisteredList = () => {
                                 {/* <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusColor(participant.status)}`}>
                                   {participant.status.charAt(0).toUpperCase() + participant.status.slice(1)}
                                 </span> */}
-                                {participant.paymentStatus !== 'free' && (
-                                  <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${participant.paymentStatus === 'paid'
+                                {participant.status !== 'free' && (
+                                  <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${participant.status === 'confirmed'
                                     ? 'text-green-400 bg-green-500/20 border-green-400/30'
                                     : 'text-yellow-400 bg-yellow-500/20 border-yellow-400/30'
                                     }`}>
-                                    {participant.paymentStatus === 'paid' ? 'Paid' : 'Payment Pending'}
+                                    {participant.status === 'confirmed' ? 'Paid' : 'Payment Pending'}
                                   </span>
                                 )}
                               </div>
@@ -363,7 +373,7 @@ const RegisteredList = () => {
                                   year: "numeric"
                                 })}</span>
                               </div>
-                              { participant.TransactionId === null ? <div></div> :
+                              {participant.position === 'volunteer' || participant.TransactionId === null ? <div></div> :
                                 <div className="flex items-center space-x-2 text-gray-300">
                                   <FaRegIdCard className="w-4 h-4 text-cyan-400" />
                                   <span>Transaction id: {participant.TransactionId}</span>
