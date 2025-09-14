@@ -149,7 +149,8 @@ router.patch("/update", verifyToken, isAdmin, async (req, res) => {
       duration,
       subEventCategory,
       requirements,
-      prizes
+      prizes,
+      QrScanner
     } = req.body;
 
     if (!subEventId) {
@@ -172,6 +173,7 @@ router.patch("/update", verifyToken, isAdmin, async (req, res) => {
     if (subEventCategory) updateFields.subEventCategory = subEventCategory;
     if (requirements) updateFields.requirements = requirements;
     if (prizes) updateFields.prizes = prizes;
+    if (QrScanner) updateFields.QrScanner=QrScanner;
 
     const updated = await SubEvent.findByIdAndUpdate(subEventId, updateFields, {
       new: true,

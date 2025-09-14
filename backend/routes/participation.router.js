@@ -8,6 +8,7 @@ const Volunteer = require("../Model/volunteer.model");
 const is_admin = require("../middlewares/is_admin");
 const sub_head = require("../middlewares/Subevent_head");
 const { generateTicket } = require("../email_services/EmailService");
+const isAdmin = require("../middlewares/is_admin");
 
 // Register participant for event or sub-event
 router.post("/register", verifyToken, async (req, res) => {
@@ -149,7 +150,7 @@ router.post("/register", verifyToken, async (req, res) => {
 });
 
 //  Get all participants for a specific sub-event
-router.get("/subevent/:subEventId/participants", verifyToken, sub_head, async (req, res) => {
+router.get("/subevent/:subEventId/participants", verifyToken, isAdmin || sub_head,async (req, res) => {
   try {
     const { subEventId } = req.params;
 
@@ -166,6 +167,7 @@ router.get("/subevent/:subEventId/participants", verifyToken, sub_head, async (r
       success: true,
       message: "Participants fetched successfully",
       participants,
+      status:participants.status
     });
   } catch (err) {
     console.error("Error fetching participants:", err);
