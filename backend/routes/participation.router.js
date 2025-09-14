@@ -32,6 +32,8 @@ router.post("/register", verifyToken, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ success: false, error: "User not found" });
 
+    const department=user.department
+
     // user are already register as Volunteer
     const alreadyVolunteer = await Volunteer.findOne({
       email: user.email,
@@ -58,6 +60,7 @@ router.post("/register", verifyToken, async (req, res) => {
         .status(409)
         .json({ success: false, error: "You are already registered for this event/sub-event" });
     }
+
 
     // Proceed with subEvent checks
     let subEvent = null;
@@ -97,7 +100,7 @@ router.post("/register", verifyToken, async (req, res) => {
         participantPhone: user.phone,
         college: user.collegeName,
         year: user.year,
-        department: user.department,
+        department: department,
         team: { teamName, members, collegeName, contact },
         TransactionId
       });
@@ -112,7 +115,7 @@ router.post("/register", verifyToken, async (req, res) => {
         participantPhone: user.phone,
         college: user.collegeName,
         year: user.year,
-        department: user.department,
+        department: department,
         team: { teamName, members, collegeName, contact },
         TransactionId
       });
@@ -167,7 +170,6 @@ router.get("/subevent/:subEventId/participants", verifyToken, isAdmin || sub_hea
       success: true,
       message: "Participants fetched successfully",
       participants,
-      status:participants.status
     });
   } catch (err) {
     console.error("Error fetching participants:", err);
