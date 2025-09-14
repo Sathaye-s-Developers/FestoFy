@@ -7,7 +7,7 @@ const Voleenter_Popup = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
     const [errormsg, seterrorMsg] = useState("")
     const [isSubmitting, setisSubmitting] = useState(false)
-    const { setVoleenter, EventNo, setEventNo, subEventNo, setsubEventNo, api,settoastCondition } = useContext(EventAppContext)
+    const { setVoleenter, EventNo, setEventNo, subEventNo, setsubEventNo, api, settoastCondition } = useContext(EventAppContext)
     const onsubmit = async (data) => {
         const payload = {
             roll_no: data.RollNo,
@@ -22,7 +22,7 @@ const Voleenter_Popup = () => {
             if (response.data.success) {
                 setVoleenter(false)
                 setisSubmitting(false)
-                settoastCondition(true)
+                window.location.reload()
             }
             setisSubmitting(false)
         } catch (err) {

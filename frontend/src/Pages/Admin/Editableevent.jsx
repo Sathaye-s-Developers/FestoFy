@@ -76,7 +76,7 @@ const Editableevent = () => {
             imageUrl = cloudinaryRes.data.secure_url; // update with new image URL
         }
 
-        const formData = new FormData();
+        // const formData = new FormData();
         const startDate = new Date(data.StartDate);
         const endDate = new Date(data.EndDate);
 
@@ -348,7 +348,7 @@ const Editableevent = () => {
                                     </div>
                                 )}
                             </div>
-                            <p>1918x867px</p>
+                            {/* <p>1918x867px</p> */}
 
                         </div>
 

@@ -8,6 +8,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import { useForm } from "react-hook-form"
 import { RxCross2 } from "react-icons/rx";
 import E_Nav_Back from '../Event_Components/Components/E_Nav_Back';
+import { FaRegIdCard } from "react-icons/fa";
 
 const RegisteredList = () => {
   const [selectedRole, setSelectedRole] = useState('all');
@@ -94,28 +95,37 @@ const RegisteredList = () => {
     const email = participant.email || participant.participantEmail || "";
     const college = participant.college || "";
     const matchesSearch =
-      name.toLowerCase().includes(searchTerm.toLowerCase()) || participant.participantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      email.toLowerCase().includes(searchTerm.toLowerCase()) || participant.participantEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       college.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesRole = selectedRole === 'all' || participant.position === selectedRole;
 
     return matchesSearch && matchesRole;
-  });
+  })
+    .map(participant => ({
+      ...participant,
+      name: participant.name || participant.participantName || "",
+      email: participant.email || participant.participantEmail || "",
+      phone: participant.phone || participant.participantPhone || ""
+    }));
+
+  console.log(filteredParticipants)
   const exportParticipants = () => {
     const csvContent = [
-      ['Name', 'Email', 'Phone', 'College', 'Year', 'Department', 'Role', 'Status', 'Registration Date'].join(','),
+      ['Name', 'Email', 'Phone', 'College', 'Year', 'Department', 'Role', 'Status', 'Registration Date','Transaction Id'].join(','),
       ...filteredParticipants.map(p => {
         return [
-          p.participantName,
-          p.participantEmail,
-          p.participantPhone,
+          p.name,
+          p.email,
+          p.phone,
           p.college,
           p.year,
           p.department,
           p.position,
-          // p.status,
-          p.registeredAt
+          p.status || "No Payment",
+          p.registeredAt,
+          p.TransactionId || "No Transaction Id"
         ].join(',');
       })
     ].join('\n');
@@ -153,6 +163,7 @@ const RegisteredList = () => {
     }
     setstudentData([...volunteers, ...participants]);
   };
+  console.log(studentData)
   useEffect(() => {
     fetchVolunteersAndParticipants();
   }, []);
@@ -352,10 +363,12 @@ const RegisteredList = () => {
                                   year: "numeric"
                                 })}</span>
                               </div>
-                              {/* <div className="flex items-center space-x-2 text-gray-300">
-                                <Shield className="w-4 h-4 text-cyan-400" />
-                                <span>Emergency: {participant.emergencyContact}</span>
-                              </div> */}
+                              { participant.TransactionId === null ? <div></div> :
+                                <div className="flex items-center space-x-2 text-gray-300">
+                                  <FaRegIdCard className="w-4 h-4 text-cyan-400" />
+                                  <span>Transaction id: {participant.TransactionId}</span>
+                                </div>
+                              }
                             </div>
                           </div>
                         </div>

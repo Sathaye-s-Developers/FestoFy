@@ -10,7 +10,7 @@ import { MdUploadFile } from "react-icons/md";
 import axios from 'axios';
 
 const CreateSub_EventPg = () => {
-    const { api } = useContext(EventAppContext)
+    const { api,paymentData,setpaymentData } = useContext(EventAppContext)
     const [preview, setPreview] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -65,7 +65,6 @@ const CreateSub_EventPg = () => {
             maxVoleenters: data.MaxVoleenters,
             QrScanner:imageUrl
         }
-        console.log(payload)
         try {
             const response = await api.post("/Festofy/user/event/subevent/create", payload, { withCredentials: true, })
             if (response.data.success) {
@@ -409,7 +408,7 @@ const CreateSub_EventPg = () => {
                                                     />
                                                 </div>
                                                 <span className={`text-sm font-medium ${watch("PaymentMode") ? 'text-green-400' : 'text-blue-400'}`}>
-                                                    {watch("PaymentMode") ? "RozarPay" : "Manual"}
+                                                    {!watch("PaymentMode") ? "RozarPay" : "Manual"}
                                                 </span>
                                             </div>
                                         </div>
@@ -429,8 +428,6 @@ const CreateSub_EventPg = () => {
                                             const file = e.target.files[0];
                                             if (file) {
                                                 setPreview(URL.createObjectURL(file)); // create preview
-                                            } else {
-                                                setPreview(null);
                                             }
                                         }
                                     })} />

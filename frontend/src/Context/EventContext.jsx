@@ -36,6 +36,8 @@ const EventContext = (props) => {
     const [eventhead, seteventhead] = useState(false)
     const [ispaid,setispaid]=useState(false)
     const [toastCondition,settoastCondition]=useState(false)
+    const [paymentData,setpaymentData]=useState({isPaid:false,PaymentMode:false})
+
     const param = {
         luminosity: lum,
         hue: hue,
@@ -113,9 +115,9 @@ const EventContext = (props) => {
     }, [fetchUserDetails]);
 
     const contextvalue = useMemo(() => ({
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition,paymentData,setpaymentData
     }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading,
-        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition
+        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition,paymentData,setpaymentData
     ]);
 
 
