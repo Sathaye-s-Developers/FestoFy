@@ -63,6 +63,7 @@ const forgotPasswordRoutes = require("./routes/forgot_password");
 const volunteerRoutes = require("./routes/volunteer.router");
 const setProfile = require("./routes/profile.router");
 const payment = require("./routes/payment");
+const attendance=require("./routes/attendence.router")
 
 //  Mount Routes
 app.use("/", homeRoutes);
@@ -76,6 +77,7 @@ app.use("/Festofy/user/event/participation", participationRoutes);
 app.use("/Festofy/user/password", forgotPasswordRoutes);
 app.use("/Festofy/user/event/volunteer", volunteerRoutes);
 app.use("/Festofy/user/payment", payment);
+app.use("/Festofy/user/attendance", attendance);
 
 //  Start Express server
 const PORT = process.env.PORT || 3000;

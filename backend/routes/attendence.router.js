@@ -4,8 +4,112 @@ const Attendance = require("../Model/attendence.module");
 const Volunteer = require("../Model/volunteer.model");
 const SubEvent = require("../Model/subevent.model");
 const mongoose = require("mongoose");
+const QRCode = require('qrcode');
+const crypto = require("crypto");
 
-//  1. Mark / Update Attendance (Single Volunteer)
+// const SECRET_KEY = crypto.randomBytes(32); // must be 32 chars for AES-256
+const SECRET_KEY = process.env.QR_SECRET_KEY; // must be 32 chars
+const IV = crypto.randomBytes(16); // Initialization vector
+
+function encryptData(data) {
+  const cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(SECRET_KEY), IV);
+  let encrypted = cipher.update(JSON.stringify(data), "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return { encrypted, iv: IV.toString("hex") };
+}
+
+function decryptData(encrypted, iv) {
+  const decipher = crypto.createDecipheriv(
+    "aes-256-cbc",
+    Buffer.from(SECRET_KEY),
+    Buffer.from(iv, "hex")
+  );
+  let decrypted = decipher.update(encrypted, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  return JSON.parse(decrypted);
+}
+
+router.post("/decrypt", verifyToken, async (req, res) => {
+  try {
+    const { encrypted, iv } = req.body;
+
+    if (!encrypted || !iv) {
+      return res.status(400).json({ error: "Encrypted data and IV are required" });
+    }
+
+    const qrData = decryptData(encrypted, iv);
+    res.json({ success: true, qrData });
+  } catch (err) {
+    console.error("QR Decrypt error:", err);
+    res.status(400).json({ error: "Invalid QR Code" });
+  }
+});
+
+router.post("/mark-via-qr", verifyToken, async (req, res, next) => {
+  try {
+    const { volunteerId, encrypted, iv, date, status } = req.body;
+
+    if (!volunteerId || !encrypted || !iv || !date || !status) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Step 1: Decrypt QR payload
+    let qrData;
+    try {
+      qrData = decryptData(encrypted, iv); // { eventId, subEventId, timestamp }
+    } catch (e) {
+      return res.status(400).json({ error: "Invalid QR Code" });
+    }
+
+    // Step 2: Inject eventId & subEventId into req.body for existing /mark route
+    req.body.subEventId = qrData.subEventId;
+    req.body.eventId = qrData.eventId;
+
+    // Step 3: Forward to existing /mark route
+    router.handle({ ...req, url: "/mark", method: "POST" }, res, next);
+  } catch (err) {
+    console.error("Mark via QR error:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
+router.post('/qrcode', verifyToken, async (req, res) => {
+  try {
+    const { subEventId, eventId } = req.body;
+
+    if (!subEventId || !eventId) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    if (
+      !mongoose.Types.ObjectId.isValid(subEventId) ||
+      !mongoose.Types.ObjectId.isValid(eventId)
+    ) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+
+    const qrDataObject = {
+      eventId,
+      subEventId,
+      timestamp: new Date().toISOString()
+    };
+
+    const { encrypted, iv } = encryptData(qrDataObject);
+
+    const qrPayload = JSON.stringify({ encrypted, iv });
+
+    QRCode.toDataURL(qrPayload, (err, url) => {
+      if (err) return res.status(500).json({ error: "Failed to generate QR code" });
+      res.json({ qrCode: url });
+    });
+
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 router.post("/mark", verifyToken, async (req, res) => {
   try {
     const { volunteerId, subEventId, eventId, date, status } = req.body;
@@ -95,6 +199,96 @@ router.post("/mark", verifyToken, async (req, res) => {
     });
   }
 });
+
+router.post("/checkin", verifyToken, async (req, res) => {
+  try {
+    const { volunteerId, subEventId, eventId, date, status } = req.body;
+
+    // Validate required fields
+    if (!volunteerId || !subEventId || !eventId || !date || !status) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Validate ObjectId formats
+    if (
+      !mongoose.Types.ObjectId.isValid(volunteerId) ||
+      !mongoose.Types.ObjectId.isValid(subEventId) ||
+      !mongoose.Types.ObjectId.isValid(eventId)
+    ) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+
+    // Check if subEvent exists and contains this volunteer
+    const subEvent = await SubEvent.findById(subEventId).populate("volunteers");
+    if (!subEvent) {
+      return res.status(404).json({ error: "SubEvent not found" });
+    }
+
+    const isVolunteer = subEvent.volunteers.some(
+      (v) => v._id.toString() === volunteerId
+    );
+    if (!isVolunteer) {
+      return res
+        .status(400)
+        .json({ error: "Volunteer does not belong to this subEvent" });
+    }
+
+    // Normalize date to midnight to prevent duplicates
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0);
+
+    // Check if attendance already exists
+    const existingAttendance = await Attendance.findOne({
+      volunteerId,
+      subEventId,
+      date: normalizedDate,
+    });
+
+    if (existingAttendance) {
+      // Update attendance if already marked
+      existingAttendance.status = status;
+      existingAttendance.markedBy = req.user._id;
+      const updated = await existingAttendance.save();
+      return res.json({
+        message: "Attendance updated successfully",
+        attendance: updated,
+      });
+    }
+
+    // Create new attendance record
+    const newAttendance = new Attendance({
+      volunteerId,
+      subEventId,
+      eventId,
+      date: normalizedDate,
+      status,
+      markedBy: req.user._id,
+    });
+
+    const savedAttendance = await newAttendance.save();
+
+    res.json({
+      message: "Attendance marked successfully",
+      attendance: savedAttendance,
+    });
+  } catch (err) {
+    console.error("Check-in error:", err);
+
+    if (err.code === 11000) {
+      return res.status(400).json({
+        error: "Duplicate attendance record",
+        details:
+          "Attendance for this volunteer, sub-event, and date already exists",
+      });
+    }
+
+    res.status(500).json({
+      error: "Server error",
+      details: err.message,
+    });
+  }
+});
+
 
 // GET /attendance/subevent/:subEventId/volunteers
 router.get(
