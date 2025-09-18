@@ -45,34 +45,6 @@ router.post("/decrypt", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/mark-via-qr", verifyToken, async (req, res, next) => {
-  try {
-    const { volunteerId, encrypted, iv, date, status } = req.body;
-
-    if (!volunteerId || !encrypted || !iv || !date || !status) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    // Step 1: Decrypt QR payload
-    let qrData;
-    try {
-      qrData = decryptData(encrypted, iv); // { eventId, subEventId, timestamp }
-    } catch (e) {
-      return res.status(400).json({ error: "Invalid QR Code" });
-    }
-
-    // Step 2: Inject eventId & subEventId into req.body for existing /mark route
-    req.body.subEventId = qrData.subEventId;
-    req.body.eventId = qrData.eventId;
-
-    // Step 3: Forward to existing /mark route
-    router.handle({ ...req, url: "/mark", method: "POST" }, res, next);
-  } catch (err) {
-    console.error("Mark via QR error:", err);
-    res.status(500).json({ error: "Server error", details: err.message });
-  }
-});
-
 router.post('/qrcode', verifyToken, async (req, res) => {
   try {
     const { subEventId, eventId } = req.body;
@@ -116,7 +88,7 @@ router.post("/mark", verifyToken, async (req, res) => {
 
     // Validate required fields
     if (!volunteerId || !subEventId || !eventId || !date || !status) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({ success: false, error: "All fields are required" });
     }
 
     // Validate ObjectId formats
@@ -125,13 +97,12 @@ router.post("/mark", verifyToken, async (req, res) => {
       !mongoose.Types.ObjectId.isValid(subEventId) ||
       !mongoose.Types.ObjectId.isValid(eventId)
     ) {
-      return res.status(400).json({ error: "Invalid ID format" });
+      return res.status(400).json({ success: false, error: "Invalid ID format" });
     }
-
     // Ensure volunteer belongs to subEvent
     const subEvent = await SubEvent.findById(subEventId).populate("volunteers");
     if (!subEvent) {
-      return res.status(404).json({ error: "SubEvent not found" });
+      return res.status(404).json({ success: false, error: "SubEvent not found" });
     }
 
     const isVolunteer = subEvent.volunteers.some(
@@ -140,7 +111,7 @@ router.post("/mark", verifyToken, async (req, res) => {
     if (!isVolunteer) {
       return res
         .status(400)
-        .json({ error: "Volunteer does not belong to this subEvent" });
+        .json({ success: false, error: "Volunteer does not belong to this subEvent" });
     }
 
     // Normalize date to midnight (avoid duplicates for same day)
@@ -160,6 +131,7 @@ router.post("/mark", verifyToken, async (req, res) => {
       existingAttendance.markedBy = req.user._id;
       const updatedAttendance = await existingAttendance.save();
       return res.json({
+        success: true,
         message: "Attendance updated successfully",
         attendance: updatedAttendance,
       });
@@ -178,6 +150,7 @@ router.post("/mark", verifyToken, async (req, res) => {
     const savedAttendance = await newAttendance.save();
 
     res.json({
+      success: true,
       message: "Attendance marked successfully",
       attendance: savedAttendance,
     });
@@ -187,6 +160,7 @@ router.post("/mark", verifyToken, async (req, res) => {
     // Handle duplicate key error specifically
     if (err.code === 11000) {
       return res.status(400).json({
+        success: false,
         error: "Duplicate attendance record",
         details:
           "Attendance for this volunteer, sub-event, and date already exists",
