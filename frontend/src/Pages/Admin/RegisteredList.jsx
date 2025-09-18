@@ -25,7 +25,7 @@ const RegisteredList = () => {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState(null);
-
+  const [volId, setvolId] = useState("")
   const QRScanner = ({ onSuccess, onError }) => {
     useEffect(() => {
       const scanner = new Html5QrcodeScanner("qr-reader", {
@@ -50,7 +50,6 @@ const RegisteredList = () => {
 
     return <div id="qr-reader" style={{ width: "100%" }} />;
   };
-
   async function requestCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -109,56 +108,6 @@ const RegisteredList = () => {
       console.log(err)
     }
   }
-
-  const startQRScanning = async () => {
-    setIsScanning(true);
-    setScanError(null);
-
-    try {
-      // Check if the browser supports camera access
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('Camera access is not supported in this browser');
-      }
-
-      // Request camera permission
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: 'environment' // Use back camera if available
-        }
-      });
-
-      // For demo purposes, simulate QR code scanning after 2 seconds
-      setTimeout(() => {
-        // Stop the camera stream
-        stream.getTracks().forEach(track => track.stop());
-
-        // Simulate successful QR scan
-        if (selectedVolunteer) {
-          handleCheckIn(selectedVolunteer);
-          setIsScanning(false);
-        }
-      }, 2000);
-
-    } catch (error) {
-      setIsScanning(false);
-      if (error instanceof Error) {
-        if (error.name === 'NotAllowedError') {
-          setScanError('Camera permission denied. Please allow camera access and try again.');
-        } else if (error.name === 'NotFoundError') {
-          setScanError('No camera found on this device.');
-        } else {
-          setScanError(error.message);
-        }
-      } else {
-        setScanError('Failed to access camera. Please try manual check-in.');
-      }
-    }
-  };
-
-  const stopQRScanning = () => {
-    setIsScanning(false);
-    setScanError(null);
-  };
 
   const getRoleIcon = (role) => {
     switch (role) {
@@ -495,28 +444,55 @@ const RegisteredList = () => {
                                   {isScanning && (
                                     <div className="mb-6 bg-slate-800 rounded-xl p-4 border-2 border-cyan-400/30">
                                       <QRScanner
-                                        onSuccess={(qrData) => {
-                                          if (qrData) {
-                                            console.log("QR Scanned:", qrData);
-                                            const payload = {
-                                              encrypted: qrData.encrypted,
-                                              iv: qrData.iv
-                                            }
+                                        onSuccess={async (qrData) => {
+                                          // console.log("QR Scanned:", qrData);
+
+                                          let parsed;
+                                          try {
+                                            parsed = JSON.parse(qrData); // convert string → object
+                                          } catch (e) {
+                                            console.error("Invalid QR Code format:", e);
+                                            return;
                                           }
 
-                                          api.post("/Festofy/user/attendance/decrypt", payload, { withCredentials: true })
-                                            .then((res) => {
-                                              console.log(res.data)
-                                              if (res.data.success) {
+                                          const payload = {
+                                            encrypted: parsed.encrypted,
+                                            iv: parsed.iv
+                                          }
+
+                                          const response = await api.post("/Festofy/user/attendance/decrypt", payload, { withCredentials: true })
+                                     
+                                          if (!response.data.success) {
+                                            alert("❌ Invalid QR Code");
+                                            return;
+                                          }
+
+                                          const freshData = {
+                                            eventId: response.data.qrData.eventId,
+                                            subEventId: response.data.qrData.subEventId,
+                                            date: new Date(response.data.qrData.timestamp),
+                                          };
+                                          const payload1 = {
+                                            volunteerId: volId,
+                                            subEventId: freshData.subEventId,
+                                            eventId: freshData.eventId,
+                                            date: freshData.date,
+                                            status: "present",
+                                          };
+
+                                          const markres=await api.post("/Festofy/user/attendance/mark", payload1, { withCredentials: true })
+                                        
+                                              if (markres.data.success) {
+
                                                 alert("✅ Attendance marked successfully!");
                                               } else {
                                                 alert("❌ Invalid QR Code");
                                               }
-                                            })
-                                            .catch((err) => console.error("Scan verify error:", err));
+                                          
 
                                           setIsScanning(false);
                                           setshowQrscan(false);
+
                                         }}
                                         onError={(err) => console.warn("QR Scan error:", err)}
                                       />
@@ -594,7 +570,10 @@ const RegisteredList = () => {
                             {participant.position === "volunteer" &&
                               <div className='flex flex-col lg:flex items-center gap-2'>
                                 <button
-                                  onClick={() => handleCheckIn(volunteer)}
+                                  onClick={() => {
+                                    setvolId(participant._id)
+                                    handleCheckIn(volunteer)
+                                  }}
                                   className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
                                 >
                                   <UserCheck className="w-4 h-4" />
@@ -602,7 +581,7 @@ const RegisteredList = () => {
                                 </button>
                                 <button
                                   onClick={() => {
-                                    // setSelectedVolunteer(volunteer);
+                                    setvolId(participant._id)
                                     setshowQrscan(true);
                                   }}
                                   className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-slate-700/50 border border-cyan-400/30 text-cyan-400 rounded-xl hover:bg-cyan-500/20 transition-all duration-300"
