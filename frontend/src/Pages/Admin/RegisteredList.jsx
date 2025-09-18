@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Users, Search, Filter, Calendar, MapPin, Clock, User, Mail, Phone, School, Award, Trophy, Star, Code, Mic, Music, ChevronDown, ChevronRight, Eye, Download, UserCheck, UserPlus, Crown, Shield, Heart } from 'lucide-react';
+import { Users, Search, Filter, Calendar, MapPin, Clock, User, Mail, Phone, School, Award, Trophy, Star, Code, Mic, Music, ChevronDown, ChevronRight, Eye, Download, UserCheck, UserPlus, Crown, Shield, Heart, QrCode, Camera, Smartphone, X, AlertCircle } from 'lucide-react';
 import { EventAppContext } from '../../Context/EventContext';
 import { useParams } from 'react-router';
 import { FaEdit } from "react-icons/fa";
@@ -10,6 +10,7 @@ import { RxCross2 } from "react-icons/rx";
 import E_Nav_Back from '../Event_Components/Components/E_Nav_Back';
 import { FaRegIdCard } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 const RegisteredList = () => {
   const [selectedRole, setSelectedRole] = useState('all');
@@ -20,8 +21,53 @@ const RegisteredList = () => {
   const [studentData, setstudentData] = useState([])
   const [eventheadpopup, seteventheadpopup] = useState(false)
   const [isSubmitting, setisSubmitting] = useState(false)
-
+  const [showQrscan, setshowQrscan] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanError, setScanError] = useState(null);
+
+  const QRScanner = ({ onSuccess, onError }) => {
+    useEffect(() => {
+      const scanner = new Html5QrcodeScanner("qr-reader", {
+        fps: 10, // scan frames per second
+        qrbox: { width: 250, height: 250 },
+      });
+
+      scanner.render(
+        (decodedText) => {
+          onSuccess(decodedText);
+          scanner.clear(); // stop after success
+        },
+        (err) => {
+          if (onError) onError(err);
+        }
+      );
+
+      return () => {
+        scanner.clear().catch(() => { });
+      };
+    }, [onSuccess, onError]);
+
+    return <div id="qr-reader" style={{ width: "100%" }} />;
+  };
+
+  async function requestCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // success → stop tracks immediately since we just needed permission
+      stream.getTracks().forEach(track => track.stop());
+      return true;
+    } catch (err) {
+      if (err.name === "NotAllowedError") {
+        // Permission denied
+        return "denied";
+      } else if (err.name === "NotFoundError") {
+        return "no-camera";
+      }
+      return "error";
+    }
+  }
+
 
   const onsubmit = async (data) => {
     const subeventid = eventhead ? subEventNo : subeventId;
@@ -63,6 +109,56 @@ const RegisteredList = () => {
       console.log(err)
     }
   }
+
+  const startQRScanning = async () => {
+    setIsScanning(true);
+    setScanError(null);
+
+    try {
+      // Check if the browser supports camera access
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera access is not supported in this browser');
+      }
+
+      // Request camera permission
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: 'environment' // Use back camera if available
+        }
+      });
+
+      // For demo purposes, simulate QR code scanning after 2 seconds
+      setTimeout(() => {
+        // Stop the camera stream
+        stream.getTracks().forEach(track => track.stop());
+
+        // Simulate successful QR scan
+        if (selectedVolunteer) {
+          handleCheckIn(selectedVolunteer);
+          setIsScanning(false);
+        }
+      }, 2000);
+
+    } catch (error) {
+      setIsScanning(false);
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          setScanError('Camera permission denied. Please allow camera access and try again.');
+        } else if (error.name === 'NotFoundError') {
+          setScanError('No camera found on this device.');
+        } else {
+          setScanError(error.message);
+        }
+      } else {
+        setScanError('Failed to access camera. Please try manual check-in.');
+      }
+    }
+  };
+
+  const stopQRScanning = () => {
+    setIsScanning(false);
+    setScanError(null);
+  };
 
   const getRoleIcon = (role) => {
     switch (role) {
@@ -166,7 +262,6 @@ const RegisteredList = () => {
   useEffect(() => {
     fetchVolunteersAndParticipants();
   }, []);
-  console.log(filteredParticipants)
   return (
     <div className='bg-black'>
       {eventhead && <E_Nav_Back />}
@@ -185,11 +280,11 @@ const RegisteredList = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
+          <div className="min-w-0 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 mb-8 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
             <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 p-6">
               <div className="flex items-center space-x-3">
-                <Users className="w-8 h-8 text-cyan-400" />
-                <div>
+                <Users className="w-4 h-4 sm:w-6 sm:h-6 text-cyan-400 flex-shrink-0" />
+                <div className='w-full flex flex-col justify-between'>
                   <div className="text-2xl font-bold text-white">{studentData.length}</div>
                   <div className="text-gray-400 text-sm">Total Registered</div>
                 </div>
@@ -198,8 +293,8 @@ const RegisteredList = () => {
 
             <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-pink-400/20 p-6">
               <div className="flex items-center space-x-3">
-                <Heart className="w-8 h-8 text-pink-400" />
-                <div>
+                <Heart className="w-4 h-4 sm:w-6 sm:h-6 text-pink-400 flex-shrink-0" />
+                <div className='w-full flex flex-col justify-between'>
                   <div className="text-2xl font-bold text-white">{studentData.filter(p => p.position === 'volunteer').length}</div>
                   <div className="text-gray-400 text-sm">Volunteers</div>
                 </div>
@@ -208,8 +303,8 @@ const RegisteredList = () => {
 
             <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-6">
               <div className="flex items-center space-x-3">
-                <IoPeopleSharp className="w-8 h-8 text-yellow-400" />
-                <div>
+                <IoPeopleSharp className="w-4 h-4 sm:w-6 sm:h-6 text-yellow-400 flex-shrink-0" />
+                <div className='w-full flex flex-col justify-between'>
                   <div className="text-2xl font-bold text-white">{studentData.filter(p => p.position === 'participant').length}</div>
                   <div className="text-gray-400 text-sm">Participants</div>
                 </div>
@@ -218,8 +313,8 @@ const RegisteredList = () => {
 
             <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-green-400/20 p-6">
               <div className="flex items-center space-x-3">
-                <UserCheck className="w-8 h-8 text-green-400" />
-                <div>
+                <UserCheck className="w-4 h-4 sm:w-6 sm:h-6 text-green-400 flex-shrink-0" />
+                <div className='w-full flex flex-col justify-between'>
                   <div className="text-2xl font-bold text-white">{studentData.filter(p => p.status === 'confirmed').length}</div>
                   <div className="text-gray-400 text-sm">Confirmed</div>
                 </div>
@@ -228,8 +323,8 @@ const RegisteredList = () => {
 
             <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-6">
               <div className="flex items-center space-x-3">
-                <Clock className="w-8 h-8 text-yellow-400" />
-                <div>
+                <Clock className="w-4 h-4 sm:w-6 sm:h-6 text-red-400 flex-shrink-0" />
+                <div className='w-full flex flex-col justify-between'>
                   <div className="text-2xl font-bold text-white">{studentData.filter(p => p.status === 'pending').length}</div>
                   <div className="text-gray-400 text-sm">Pending</div>
                 </div>
@@ -276,10 +371,10 @@ const RegisteredList = () => {
               </button>
             </div>
           </div>
-          <div className='animate-fadeInUp'>
+          <div>
             <button
               onClick={() => { seteventheadpopup(true) }}
-              className="flex items-center space-x-2 px-6 py-3 bg-gray-500 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105 mb-5"
+              className="flex items-center space-x-2 px-6 py-3 bg-gray-500 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105 mb-5 animate-fadeInUp"
             >
               <CiCirclePlus className="w-6 h-6" />
               <span>Add Event Head</span>
@@ -305,7 +400,7 @@ const RegisteredList = () => {
                       className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-sm rounded-2xl border border-cyan-400/20 p-6 hover:border-cyan-400/40 transition-all duration-300 animate-fadeInUp"
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
-                      <div className="flex flex-col lg:flex-row gap-6">
+                      <div className="flex flex-col lg:flex-row gap-6 items-center">
                         {/* Participant Info */}
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-4">
@@ -321,18 +416,17 @@ const RegisteredList = () => {
                                 {/* <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusColor(participant.status)}`}>
                                   {participant.status.charAt(0).toUpperCase() + participant.status.slice(1)}
                                 </span> */}
-                                {participant.status !== 'free' && (
+                                {participant.position === "participant" && participant.status !== 'free' && (
                                   <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${participant.status === 'confirmed'
                                     ? 'text-green-400 bg-green-500/20 border-green-400/30'
                                     : 'text-yellow-400 bg-yellow-500/20 border-yellow-400/30'
                                     }`}>
-                                    {participant.status === 'confirmed' ? 'Paid' : 'Payment Pending'}
+                                    {participant.position === "participant" && participant.status === 'confirmed' ? 'Paid' : 'Payment Pending'}
                                   </span>
                                 )}
                               </div>
                             </div>
                             <div className='flex items-center gap-2 justify-center'>
-                              {/* <FaEdit size={25} className='text-cyan-600 cursor-pointer' /> */}
                               <MdDelete size={25} onClick={() => {
                                 if (participant.position === "volunteer") {
 
@@ -348,7 +442,7 @@ const RegisteredList = () => {
                             <div className="space-y-2">
                               <div className="flex items-center space-x-2 text-gray-300">
                                 <Mail className="w-4 h-4 text-cyan-400" />
-                                <span>{participant.email || participant.participantEmail}</span>
+                                <span className="truncate">{participant.email || participant.participantEmail}</span>
                               </div>
                               <div className="flex items-center space-x-2 text-gray-300">
                                 <Phone className="w-4 h-4 text-cyan-400" />
@@ -381,9 +475,149 @@ const RegisteredList = () => {
                               }
                             </div>
                           </div>
+
+                          {showQrscan && (
+                            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+                              <div className="bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl rounded-3xl border border-cyan-400/20 max-w-md w-full p-8 animate-scaleIn">
+                                <div className="text-center">
+                                  <div className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <QrCode className="w-10 h-10 text-white" />
+                                  </div>
+                                  <h2 className="text-2xl font-bold text-white mb-4">QR Code Check-in</h2>
+                                  <p className="text-gray-300 mb-6">
+                                    {isScanning
+                                      ? 'Scanning for QR code... Point camera at volunteer\'s QR code'
+                                      : 'Scan the volunteer\'s QR code or use manual check-in'
+                                    }
+                                  </p>
+
+                                  {/* Camera Preview Area */}
+                                  {isScanning && (
+                                    <div className="mb-6 bg-slate-800 rounded-xl p-4 border-2 border-cyan-400/30">
+                                      <QRScanner
+                                        onSuccess={(qrData) => {
+                                          if (qrData) {
+                                            console.log("QR Scanned:", qrData);
+                                            const payload = {
+                                              encrypted: qrData.encrypted,
+                                              iv: qrData.iv
+                                            }
+                                          }
+
+                                          api.post("/Festofy/user/attendance/decrypt", payload, { withCredentials: true })
+                                            .then((res) => {
+                                              console.log(res.data)
+                                              if (res.data.success) {
+                                                alert("✅ Attendance marked successfully!");
+                                              } else {
+                                                alert("❌ Invalid QR Code");
+                                              }
+                                            })
+                                            .catch((err) => console.error("Scan verify error:", err));
+
+                                          setIsScanning(false);
+                                          setshowQrscan(false);
+                                        }}
+                                        onError={(err) => console.warn("QR Scan error:", err)}
+                                      />
+                                    </div>
+                                  )}
+
+
+
+
+                                  {/* Error Message */}
+                                  {scanError === "denied" && (
+                                    <div className="text-red-400 mt-2">
+                                      Camera permission was denied.
+                                      Please enable it in your browser settings:
+                                      <ul className="list-disc ml-4">
+                                        <li>Chrome: Settings → Privacy & Security → Site Settings → Camera</li>
+                                        <li>Edge/Brave: Similar to Chrome</li>
+                                        <li>Firefox: Click lock icon in address bar → Permissions</li>
+                                        <li>Safari (iOS): Settings App → Safari → Camera → Allow</li>
+                                      </ul>
+                                    </div>
+                                  )}
+
+                                  {scanError && (
+                                    <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-xl">
+                                      <div className="flex items-center space-x-2">
+                                        <AlertCircle className="w-5 h-5 text-red-400" />
+                                        <p className="text-red-400 text-sm">{scanError}</p>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  <div className="space-y-4">
+                                    {!isScanning ? (
+                                      <button
+                                        onClick={() => {
+                                          setIsScanning(true);
+                                          setScanError(null);
+                                        }}
+                                        className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
+                                      >
+                                        <Camera className="w-4 h-4" />
+                                        <span>Start QR Scan</span>
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => setIsScanning(false)}
+                                        className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-400 hover:to-red-500 transition-all duration-300 transform hover:scale-105"
+                                      >
+                                        <X className="w-4 h-4" />
+                                        <span>Stop Scanning</span>
+                                      </button>
+                                    )}
+
+
+
+
+                                    <button
+                                      onClick={() => {
+                                        // stopQRScanning();
+                                        setshowQrscan(false);
+                                      }}
+                                      className="w-full px-6 py-3 bg-slate-700/50 border border-gray-600 text-gray-300 rounded-xl hover:border-cyan-400/40 hover:text-white transition-all duration-300"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+
+                          <div className='flex flex-col  items-center gap-3 justify-center mt-2'>
+                            {participant.position === "volunteer" &&
+                              <div className='flex flex-col lg:flex items-center gap-2'>
+                                <button
+                                  onClick={() => handleCheckIn(volunteer)}
+                                  className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
+                                >
+                                  <UserCheck className="w-4 h-4" />
+                                  <span>Manual Attendance</span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    // setSelectedVolunteer(volunteer);
+                                    setshowQrscan(true);
+                                  }}
+                                  className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-slate-700/50 border border-cyan-400/30 text-cyan-400 rounded-xl hover:bg-cyan-500/20 transition-all duration-300"
+                                >
+                                  <QrCode className="w-4 h-4" />
+                                  <span>QR Based Attendance</span>
+                                </button>
+                              </div>
+                            }
+                          </div>
                         </div>
 
+                        <div>
 
+                        </div>
                       </div>
                     </div>
                   );

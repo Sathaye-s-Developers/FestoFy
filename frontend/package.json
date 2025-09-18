@@ -19,6 +19,7 @@
     "axios": "^1.9.0",
     "dotenv": "^17.2.1",
     "gsap": "^3.13.0",
+    "html5-qrcode": "^2.3.8",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.525.0",
     "randomcolor": "^0.6.2",

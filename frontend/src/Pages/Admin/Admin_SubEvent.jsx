@@ -151,8 +151,7 @@ const Admin_SubEvent = () => {
       {loading ? <Loading_comp2 loading={loading} /> : <div>
         {EventInfo && (
           < div>
-            <div className="w-full overflow-hidden animate-scaleIn ">
-              <div className="p-8 ml-12 mr-12 mt-2 rounded-3xl">
+              <div className="p-8 lg:ml-12 mr-12 mt-2 rounded-3xl">
                 <div className='flex items-center gap-4 ml-4'>
                   <img
                     src={EventInfo.bannerUrl}
@@ -192,7 +191,7 @@ const Admin_SubEvent = () => {
                 </div>
               </div>
             </div>
-          </div>
+
         )
         }
 
@@ -204,6 +203,7 @@ const Admin_SubEvent = () => {
 
 
         {/* subevent comp */}
+        <div className="w-full mt-10">
         <div className='flex flex-col items-center mt-3'>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-10 w-full md:w-[80%]">
             {subEventInfo?.map((subEvent, index) => {
@@ -301,7 +301,7 @@ const Admin_SubEvent = () => {
                       className={`w-full flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500
                         }`}
                     >
-                      View Prizes & Rewards
+                      <span className='whitespace-nowrap text-sm sm:text-base'>Prizes & Rewards</span>
                     </button>
 
 
@@ -310,6 +310,7 @@ const Admin_SubEvent = () => {
               );
             })}
           </div>
+        </div>
         </div>
         {PrizesPopup && (
           <div className="fixed inset-0 opacity-90  bg-black bg-opacity-80 flex items-center justify-center p-4 z-50">

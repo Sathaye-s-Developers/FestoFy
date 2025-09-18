@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { EventAppContext } from '../../../Context/EventContext'
 import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap, X, CheckCircle } from 'lucide-react';
+import { GoCodeReview } from "react-icons/go";
 import { Link } from "react-router-dom"
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import axios from 'axios';
@@ -30,6 +31,10 @@ const Sub_Event_pg = () => {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, seterrorMsg] = useState(false)
+  const [qrpopup, setqrpopup] = useState(false)
+  const [qrimg,setqrimg]=useState(null)
+  const [showqr,setshowqr]=useState(false)
+
   const Navigate = useNavigate()
   const FetchsingleEvent = async () => {
     try {
@@ -69,7 +74,23 @@ const Sub_Event_pg = () => {
     }
   }
 
-
+  const getqrcode = async () => {
+    const payload = {
+      eventId: eventId,
+      subEventId: subEventNo
+    }
+    setshowqr(true)
+    setIsSubmitting(true)
+    try {
+      const response = await api.post(`Festofy/user/attendance/qrcode`, payload, { withCredentials: true, })
+      setqrimg(response.data.qrCode)
+      setIsSubmitting(false)
+    } catch (err) {
+      console.log(err)
+      setIsSubmitting(false)
+      setshowqr(false)
+    }
+  }
 
 
   const isVolunteerRegistered = (volunteers) => {
@@ -397,32 +418,59 @@ const Sub_Event_pg = () => {
                                 <span>Registered as Volunteer</span>
                                 <CheckCircle className="w-4 h-4" />
                               </button>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  e.stopPropagation()
-                                  seteventHeadPopup(true)
-                                  setsubEventNo(subEvent._id)
-                                }}
-                                className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold"
-                              >
-                                <span>Login For Event Head</span>
-                              </button>
+                              <div className='sm:flex gap-5'>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    setsubEventNo(subEvent._id)
+                                    setqrpopup(true)
+                                  }}
+                                  className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold"
+                                >
+                                  <span>Mark Attendance</span>
+                                  <CheckCircle className="w-4 h-4" />
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    seteventHeadPopup(true)
+                                    setsubEventNo(subEvent._id)
+                                  }}
+                                  className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transform hover:scale-105 active:scale-95 transition-all duration-300 font-semibold"
+                                >
+                                  <span>Login For Event Head</span>
+                                </button>
+                              </div>
+
                             </div>
                           )
                         }
 
                         if (status === "participant") {
                           return (
-                            <button
-                              type="button"
-                              disabled
-                              className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gray-600 text-gray-400 rounded-xl cursor-not-allowed font-semibold"
-                            >
-                              <span>Registered as Participant</span>
-                              <CheckCircle className="w-4 h-4" />
-                            </button>
+                            <div >
+                              <button
+                                type="button"
+                                disabled
+                                className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gray-600 text-gray-400 rounded-xl cursor-not-allowed font-semibold"
+                              >
+                                <span className='whitespace-nowrap text-sm sm:text-base'>Registered as Participant</span>
+                                <CheckCircle className="w-4 h-4" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled
+                                className="mt-5 w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gray-600 text-gray-400 rounded-xl cursor-not-allowed font-semibold"
+                              >
+                                <span>View Details</span>
+
+                              </button>
+                            </div>
                           )
                         }
 
@@ -649,6 +697,27 @@ const Sub_Event_pg = () => {
           </div>
         </div>
       )}
+
+      {
+        qrpopup &&
+        <div className='fixed inset-0 z-50 w-full h-full bg-[#00000090] grid'>
+          <div className='place-self-center left-[580px] opacity-80 top-[200px] bg-white rounded-[12px] w-[90%] sm:w-[55%] md:w-[50%] lg:w-[40%] xl:w-[30%] animate-[fadein_0.5s_ease-in-out_forwards] text-white'>
+            <div className='p-5 flex justify-between font-[Nunito]'>
+              <h1 className='font-bold ml-5 text-[18px] text-black text-center'>Qr Code</h1>
+              <RxCross2 color='black' onClick={() => setqrpopup(false)} />
+            </div>
+            <div className='flex flex-col items-center'>
+              {qrimg && <img src={qrimg} className='w-2xs'/>}
+              <button type='submit' disabled={showqr} onClick={() => {
+                getqrcode()
+              }} className={`${showqr
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer hover:from-cyan-400 hover:to-blue-500 hover:shadow-cyan-500/25 hover:scale-105 hover:-translate-y-03"
+                } bg-gradient-to-r from-cyan-500 to-blue-600 w-[80%] text-white mb-2 rounded-[15px] cursor-pointer p-1 hover:from-cyan-400 hover:to-blue-500 transition-all duration-100 font-medium shadow-lg hover:shadow-cyan-500/25 transform hover:scale-105 hover:-translate-y-0.3 outline-none border-none`}>Show Qr Code</button>
+            </div>
+          </div>
+        </div>
+      }
 
       {PrizesPopup && (
         <div className="fixed inset-0 opacity-90  bg-black bg-opacity-80 flex items-center justify-center p-4 z-50">
