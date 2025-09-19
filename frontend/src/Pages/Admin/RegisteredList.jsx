@@ -26,6 +26,8 @@ const RegisteredList = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState(null);
   const [volId, setvolId] = useState("")
+  const [scanningVolunteer, setScanningVolunteer] = useState(null);
+
   const QRScanner = ({ onSuccess, onError }) => {
     useEffect(() => {
       const scanner = new Html5QrcodeScanner("qr-reader", {
@@ -320,7 +322,7 @@ const RegisteredList = () => {
               </button>
             </div>
           </div>
-          <div>
+          <div className='animate-fadeInUp'>
             <button
               onClick={() => { seteventheadpopup(true) }}
               className="flex items-center space-x-2 px-6 py-3 bg-gray-500 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105 mb-5 animate-fadeInUp"
@@ -425,7 +427,7 @@ const RegisteredList = () => {
                             </div>
                           </div>
 
-                          {showQrscan && (
+                          {showQrscan === participant._id&& (
                             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
                               <div className="bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl rounded-3xl border border-cyan-400/20 max-w-md w-full p-8 animate-scaleIn">
                                 <div className="text-center">
@@ -440,157 +442,131 @@ const RegisteredList = () => {
                                     }
                                   </p>
 
-                                  {/* Camera Preview Area */}
-                                  {isScanning && (
-                                    <div className="mb-6 bg-slate-800 rounded-xl p-4 border-2 border-cyan-400/30">
-                                      <QRScanner
-                                        onSuccess={async (qrData) => {
-                                          // console.log("QR Scanned:", qrData);
+                                    {/* Camera Preview Area */}
+                                    {isScanning && (
+                                      <div className="mb-6 bg-slate-800 rounded-xl p-4 border-2 border-cyan-400/30">
+                                        <QRScanner
+                                          onSuccess={async (qrData) => {
+                                            // console.log("QR Scanned:", qrData);
 
-                                          let parsed;
-                                          try {
-                                            parsed = JSON.parse(qrData); // convert string → object
-                                          } catch (e) {
-                                            console.error("Invalid QR Code format:", e);
-                                            return;
-                                          }
+                                            let parsed;
+                                            try {
+                                              parsed = JSON.parse(qrData); // convert string → object
+                                            } catch (e) {
+                                              console.error("Invalid QR Code format:", e);
+                                              return;
+                                            }
 
-                                          const payload = {
-                                            encrypted: parsed.encrypted,
-                                            iv: parsed.iv
-                                          }
+                                            const payload = {
+                                              encrypted: parsed.encrypted,
+                                              iv: parsed.iv
+                                            }
 
-                                          const response = await api.post("/Festofy/user/attendance/decrypt", payload, { withCredentials: true })
-                                     
-                                          if (!response.data.success) {
-                                            alert("❌ Invalid QR Code");
-                                            return;
-                                          }
+                                            const response = await api.post("/Festofy/user/attendance/decrypt", payload, { withCredentials: true })
+                                      
+                                            if (!response.data.success) {
+                                              alert("❌ Invalid QR Code");
+                                              return;
+                                            }
 
-                                          const freshData = {
-                                            eventId: response.data.qrData.eventId,
-                                            subEventId: response.data.qrData.subEventId,
-                                            date: new Date(response.data.qrData.timestamp),
-                                          };
-                                          const payload1 = {
-                                            volunteerId: volId,
-                                            subEventId: freshData.subEventId,
-                                            eventId: freshData.eventId,
-                                            date: freshData.date,
-                                            status: "present",
-                                          };
+                                            const freshData = {
+                                              eventId: response.data.qrData.eventId,
+                                              subEventId: response.data.qrData.subEventId,
+                                              date: new Date(response.data.qrData.timestamp),
+                                            };
+                                            const payload1 = {
+                                              volunteerId: volId,
+                                              subEventId: freshData.subEventId,
+                                              eventId: freshData.eventId,
+                                              date: freshData.date,
+                                              status: "present",
+                                            };
 
-                                          const markres=await api.post("/Festofy/user/attendance/mark", payload1, { withCredentials: true })
-                                        
-                                              if (markres.data.success) {
-
-                                                alert("✅ Attendance marked successfully!");
-                                              } else {
-                                                alert("❌ Invalid QR Code");
-                                              }
+                                            const markres=await api.post("/Festofy/user/attendance/mark", payload1, { withCredentials: true })
                                           
+                                                if (markres.data.success) {
 
-                                          setIsScanning(false);
-                                          setshowQrscan(false);
+                                                  alert("✅ Attendance marked successfully!");
+                                                } else {
+                                                  alert("❌ Invalid QR Code");
+                                                }
+                                            
 
-                                        }}
-                                        onError={(err) => console.warn("QR Scan error:", err)}
-                                      />
-                                    </div>
-                                  )}
+                                            setIsScanning(false);
+                                            setshowQrscan(false);
 
-
-
-
-                                  {/* Error Message */}
-                                  {scanError === "denied" && (
-                                    <div className="text-red-400 mt-2">
-                                      Camera permission was denied.
-                                      Please enable it in your browser settings:
-                                      <ul className="list-disc ml-4">
-                                        <li>Chrome: Settings → Privacy & Security → Site Settings → Camera</li>
-                                        <li>Edge/Brave: Similar to Chrome</li>
-                                        <li>Firefox: Click lock icon in address bar → Permissions</li>
-                                        <li>Safari (iOS): Settings App → Safari → Camera → Allow</li>
-                                      </ul>
-                                    </div>
-                                  )}
-
-                                  {scanError && (
-                                    <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-xl">
-                                      <div className="flex items-center space-x-2">
-                                        <AlertCircle className="w-5 h-5 text-red-400" />
-                                        <p className="text-red-400 text-sm">{scanError}</p>
+                                          }}
+                                          onError={(err) => console.warn("QR Scan error:", err)}
+                                        />
                                       </div>
-                                    </div>
-                                  )}
-
-                                  <div className="space-y-4">
-                                    {!isScanning ? (
-                                      <button
-                                        onClick={() => {
-                                          setIsScanning(true);
-                                          setScanError(null);
-                                        }}
-                                        className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
-                                      >
-                                        <Camera className="w-4 h-4" />
-                                        <span>Start QR Scan</span>
-                                      </button>
-                                    ) : (
-                                      <button
-                                        onClick={() => setIsScanning(false)}
-                                        className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-400 hover:to-red-500 transition-all duration-300 transform hover:scale-105"
-                                      >
-                                        <X className="w-4 h-4" />
-                                        <span>Stop Scanning</span>
-                                      </button>
                                     )}
 
+                                    <div className="space-y-4">
+                                      {!isScanning ? (
+                                        <button
+                                          onClick={() => {
+                                            setIsScanning(true);
+                                            setScanError(null);
+                                          }}
+                                          className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
+                                        >
+                                          <Camera className="w-4 h-4" />
+                                          <span>Start QR Scan</span>
+                                        </button>
+                                      ) : (
+                                        <button
+                                          onClick={() => setIsScanning(false)}
+                                          className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-400 hover:to-red-500 transition-all duration-300 transform hover:scale-105"
+                                        >
+                                          <X className="w-4 h-4" />
+                                          <span>Stop Scanning</span>
+                                        </button>
+                                      )}
 
 
 
-                                    <button
-                                      onClick={() => {
-                                        // stopQRScanning();
-                                        setshowQrscan(false);
-                                      }}
-                                      className="w-full px-6 py-3 bg-slate-700/50 border border-gray-600 text-gray-300 rounded-xl hover:border-cyan-400/40 hover:text-white transition-all duration-300"
-                                    >
-                                      Cancel
-                                    </button>
+
+                                      <button
+                                        onClick={() => {
+                                          // stopQRScanning();
+                                          setshowQrscan(false);
+                                        }}
+                                        className="w-full px-6 py-3 bg-slate-700/50 border border-gray-600 text-gray-300 rounded-xl hover:border-cyan-400/40 hover:text-white transition-all duration-300"
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
+                            )}
 
 
-                          <div className='flex flex-col  items-center gap-3 justify-center mt-2'>
-                            {participant.position === "volunteer" &&
-                              <div className='flex flex-col lg:flex items-center gap-2'>
-                                <button
-                                  onClick={() => {
-                                    setvolId(participant._id)
-                                    handleCheckIn(volunteer)
-                                  }}
-                                  className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
-                                >
-                                  <UserCheck className="w-4 h-4" />
-                                  <span>Manual Attendance</span>
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setvolId(participant._id)
-                                    setshowQrscan(true);
-                                  }}
-                                  className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-slate-700/50 border border-cyan-400/30 text-cyan-400 rounded-xl hover:bg-cyan-500/20 transition-all duration-300"
-                                >
-                                  <QrCode className="w-4 h-4" />
-                                  <span>QR Based Attendance</span>
-                                </button>
-                              </div>
-                            }
+                            <div className='flex flex-col  items-center gap-3 justify-center mt-2'>
+                              {participant.position === "volunteer" &&
+                                <div className='flex flex-col lg:flex items-center gap-2'>
+                                  <button
+                                    onClick={() => {
+                                      setvolId(participant._id)
+                                      handleCheckIn(volunteer)
+                                    }}
+                                    className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
+                                  >
+                                    <UserCheck className="w-4 h-4" />
+                                    <span>Manual Attendance</span>
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setvolId(participant._id)
+                                      setshowQrscan(participant._id);
+                                    }}
+                                    className="flex w-56 items-center justify-center space-x-2 px-4 py-3 bg-slate-700/50 border border-cyan-400/30 text-cyan-400 rounded-xl hover:bg-cyan-500/20 transition-all duration-300"
+                                  >
+                                    <QrCode className="w-4 h-4" />
+                                    <span>QR Based Attendance</span>
+                                  </button>
+                                </div>
+                              }
                           </div>
                         </div>
 
