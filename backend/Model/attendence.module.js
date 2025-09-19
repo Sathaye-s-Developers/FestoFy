@@ -17,6 +17,11 @@ const attendanceSchema = new mongoose.Schema(
       ref: "SubEvent",
       required: true,
     },
+    hours:{
+      type:String,
+      trim:true,
+      default:null
+    },
     date: {
       type: Date,
       required: true,

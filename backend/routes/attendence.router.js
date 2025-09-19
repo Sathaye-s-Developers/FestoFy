@@ -84,10 +84,10 @@ router.post('/qrcode', verifyToken, async (req, res) => {
 
 router.post("/mark", verifyToken, async (req, res) => {
   try {
-    const { volunteerId, subEventId, eventId, date, status } = req.body;
+    const { volunteerId, subEventId, eventId, date, status, hours } = req.body;
 
     // Validate required fields
-    if (!volunteerId || !subEventId || !eventId || !date || !status) {
+    if (!volunteerId || !subEventId || !eventId || !date || !status || !hours) {
       return res.status(400).json({ success: false, error: "All fields are required" });
     }
 
@@ -99,6 +99,21 @@ router.post("/mark", verifyToken, async (req, res) => {
     ) {
       return res.status(400).json({ success: false, error: "Invalid ID format" });
     }
+
+    const inputDate = new Date(date);
+    inputDate.setHours(0, 0, 0, 0); // normalize input date
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize current date
+
+    if (inputDate.getTime() !== today.getTime()) {
+      return res.status(400).json({
+        success: false,
+        error: "Qr Code Was Expired !",
+        details: "Attendance can only be marked for today's date",
+      });
+    }
+
     // Ensure volunteer belongs to subEvent
     const subEvent = await SubEvent.findById(subEventId).populate("volunteers");
     if (!subEvent) {
@@ -125,10 +140,28 @@ router.post("/mark", verifyToken, async (req, res) => {
       date: normalizedDate,
     });
 
+    // if (existingAttendance) {
+    //   // Update existing record
+    //   existingAttendance.status = status;
+    //   existingAttendance.markedBy = req.user._id;
+    //   existingAttendance.hours=hours;
+    //   const updatedAttendance = await existingAttendance.save();
     if (existingAttendance) {
-      // Update existing record
-      existingAttendance.status = status;
-      existingAttendance.markedBy = req.user._id;
+      const newDate = new Date(date);
+      newDate.setHours(0, 0, 0, 0);
+
+      if (existingAttendance.date.getTime() === newDate.getTime()) {
+        // Same day → just overwrite/update
+        existingAttendance.status = status;
+        existingAttendance.markedBy = req.user._id;
+        existingAttendance.hours = Number(hours);
+      } else {
+        // Different day → add to total hours
+        existingAttendance.status = status;
+        existingAttendance.markedBy = req.user._id;
+        existingAttendance.hours = Number(existingAttendance.hours || 0) + Number(hours);
+        existingAttendance.date = newDate; // update to latest date
+      }
       const updatedAttendance = await existingAttendance.save();
       return res.json({
         success: true,
@@ -145,6 +178,7 @@ router.post("/mark", verifyToken, async (req, res) => {
       date: normalizedDate,
       status,
       markedBy: req.user._id,
+      hours
     });
 
     const savedAttendance = await newAttendance.save();
@@ -174,94 +208,70 @@ router.post("/mark", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/checkin", verifyToken, async (req, res) => {
+router.get("/:eventId/:subEventId/volunteers", async (req, res) => {
   try {
-    const { volunteerId, subEventId, eventId, date, status } = req.body;
+    const { eventId, subEventId } = req.params;
+    const { date, from, to, includeAbsent } = req.query;
 
-    // Validate required fields
-    if (!volunteerId || !subEventId || !eventId || !date || !status) {
-      return res.status(400).json({ error: "All fields are required" });
+    // Validate IDs
+    if (!mongoose.Types.ObjectId.isValid(eventId) || !mongoose.Types.ObjectId.isValid(subEventId)) {
+      return res.status(400).json({ success: false, error: "Invalid ID format" });
     }
 
-    // Validate ObjectId formats
-    if (
-      !mongoose.Types.ObjectId.isValid(volunteerId) ||
-      !mongoose.Types.ObjectId.isValid(subEventId) ||
-      !mongoose.Types.ObjectId.isValid(eventId)
-    ) {
-      return res.status(400).json({ error: "Invalid ID format" });
+    const filter = { eventId, subEventId };
+
+    // Filter by date or range
+    if (date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      filter.date = d;
+    } else if (from && to) {
+      const start = new Date(from);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(to);
+      end.setHours(23, 59, 59, 999);
+      filter.date = { $gte: start, $lte: end };
     }
 
-    // Check if subEvent exists and contains this volunteer
-    const subEvent = await SubEvent.findById(subEventId).populate("volunteers");
-    if (!subEvent) {
-      return res.status(404).json({ error: "SubEvent not found" });
+    // Get attendance records
+    const allVolunteers = await Volunteer.find({ subEvent: subEventId })
+      .select("name email roll_no year department");
+      
+    let attendanceRecords = await Attendance.find(filter)
+      .populate("volunteerId", "name email roll_no year department") // volunteer info
+      .sort({ date: -1 });
+
+    // If includeAbsent=true, show absentees also
+    if (includeAbsent === "true" && date) {
+      const attendanceVolunteerIds = attendanceRecords.map((a) =>
+        a.volunteerId?._id?.toString()
+      );
+
+      const allVolunteers = await Volunteer.find({
+        subEvent: subEventId,
+      }).select("name email roll_no year department");
+
+      const absentVolunteers = allVolunteers.filter(
+        (v) => !attendanceVolunteerIds.includes(v._id.toString())
+      );
+
+      const absentRecords = absentVolunteers.map((v) => ({
+        volunteerId: v,
+        status: "Absent",
+        date: new Date(date),
+        hours: 0,
+      }));
+
+      attendanceRecords = [...attendanceRecords, ...absentRecords];
     }
 
-    const isVolunteer = subEvent.volunteers.some(
-      (v) => v._id.toString() === volunteerId
-    );
-    if (!isVolunteer) {
-      return res
-        .status(400)
-        .json({ error: "Volunteer does not belong to this subEvent" });
-    }
-
-    // Normalize date to midnight to prevent duplicates
-    const normalizedDate = new Date(date);
-    normalizedDate.setHours(0, 0, 0, 0);
-
-    // Check if attendance already exists
-    const existingAttendance = await Attendance.findOne({
-      volunteerId,
-      subEventId,
-      date: normalizedDate,
-    });
-
-    if (existingAttendance) {
-      // Update attendance if already marked
-      existingAttendance.status = status;
-      existingAttendance.markedBy = req.user._id;
-      const updated = await existingAttendance.save();
-      return res.json({
-        message: "Attendance updated successfully",
-        attendance: updated,
-      });
-    }
-
-    // Create new attendance record
-    const newAttendance = new Attendance({
-      volunteerId,
-      subEventId,
-      eventId,
-      date: normalizedDate,
-      status,
-      markedBy: req.user._id,
-    });
-
-    const savedAttendance = await newAttendance.save();
-
-    res.json({
-      message: "Attendance marked successfully",
-      attendance: savedAttendance,
-    });
+    res.json({ success: true, volunteers: attendanceRecords });
   } catch (err) {
-    console.error("Check-in error:", err);
-
-    if (err.code === 11000) {
-      return res.status(400).json({
-        error: "Duplicate attendance record",
-        details:
-          "Attendance for this volunteer, sub-event, and date already exists",
-      });
-    }
-
-    res.status(500).json({
-      error: "Server error",
-      details: err.message,
-    });
+    console.error("Fetch volunteers error:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 
 // GET /attendance/subevent/:subEventId/volunteers
