@@ -39,24 +39,10 @@ const allowedOrigins = [
   "https://festofy.vercel.app",
 ];
 
-const corsOptions = {
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+app.use(cors({
+  origin: allowedOrigins,
   credentials: true,
-};
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
-
-// app.use(cors({
-//   origin: allowedOrigins,
-//   credentials: true,
-// }));
+}));
 
 //cookie setup
 const cookieParser = require("cookie-parser");
