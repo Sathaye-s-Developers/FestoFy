@@ -255,7 +255,7 @@ const EditableSubevent = () => {
 
                                     {/* Description */}
                                     <div>
-                                        <label className="block mt-5 text-sm font-medium text-gray-300 mb-2">Description</label>
+                                        <label className="block mt-5 text-sm font-medium text-gray-300 mb-2">Description *</label>
                                         <textarea
                                             name="description"
                                             rows={3}
@@ -393,7 +393,7 @@ const EditableSubevent = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Max Participants</label>
+                                            <label className="block text-sm font-medium text-gray-300 mb-2">Max Participants *</label>
                                             <input
                                                 type="number"
                                                 {...register("MaxParticipants", { required: "Fields Should Not be empty !" })}
@@ -405,7 +405,7 @@ const EditableSubevent = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Max Voleenters</label>
+                                            <label className="block text-sm font-medium text-gray-300 mb-2">Max Voleenters *</label>
                                             <input
                                                 type="number"
                                                 {...register("MaxVoleenters", { required: "Fields Should Not be empty !" })}
@@ -450,7 +450,7 @@ const EditableSubevent = () => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Duration</label>
+                                            <label className="block text-sm font-medium text-gray-300 mb-2">Duration *</label>
                                             <input
                                                 type="text"
                                                 {...register("Duration", { required: "Fields Should Not be empty !" })}
@@ -463,7 +463,7 @@ const EditableSubevent = () => {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Requirements</label>
+                                            <label className="block text-sm font-medium text-gray-300 mb-2">Requirements *</label>
                                             <input
                                                 type="text"
                                                 {...register("Requirements", { required: "Fields Should Not be empty !" })}
@@ -479,7 +479,7 @@ const EditableSubevent = () => {
                                     <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-6'>
 
                                         <div className="mt-6">
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Payment Mode</label>
+                                            <label className="block text-sm font-medium text-gray-300 mb-2">Payment Mode *</label>
                                             <div className="flex items-center space-x-3">
                                                 <div
                                                     onClick={() => setValue("isPaid", !watch("isPaid"))}
@@ -528,7 +528,7 @@ const EditableSubevent = () => {
                                     </div>
 
                                     {PaymentMode && <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-4">Upload Qr Scanner</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-4">Upload Qr Scanner *</label>
                                         <input className='hidden' accept="image/*" id="banner-upload" type='file' {...register("Qrimg", {
                                             validate: fileList => {
                                                 if (preview) {
@@ -571,7 +571,7 @@ const EditableSubevent = () => {
                                     </div>}
 
                                     {watch("isPaid") && <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Entry Fee</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Entry Fee *</label>
                                         <input
                                             type="number"
                                             {...register("EntryFee", { required: "Fields Should Not be empty !" })}
@@ -586,7 +586,7 @@ const EditableSubevent = () => {
                                     {/* Prizes */}
                                     {selectedCategory === 'competition' && (
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2 mt-6">Prizes</label>
+                                            <label className="block text-sm font-medium text-gray-300 mb-2 mt-6">Prize *</label>
                                             <div className="space-y-3">
                                                 {Prices.filter(p => p).map((prize, index) => (
                                                     <div key={index} className="flex items-center space-x-2">

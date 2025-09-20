@@ -189,7 +189,7 @@ const CreateSub_EventPg = () => {
                                             type="text"
                                             {...register("Location", { required: "Fields Should Not be empty !" })}
                                             className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                                            placeholder="e.g., Lab 1, Tech Building"
+                                            placeholder="e.g, location of sub-event like room no."
                                         />
                                         {errors.Location && (
                                             <p className="text-red-500 text-sm mt-1">{errors.Location.message}</p>
@@ -199,7 +199,7 @@ const CreateSub_EventPg = () => {
 
                                 {/* Description */}
                                 <div>
-                                    <label className="block mt-5 text-sm font-medium text-gray-300 mb-2">Description</label>
+                                    <label className="block mt-5 text-sm font-medium text-gray-300 mb-2">Description *</label>
                                     <textarea
                                         name="description"
                                         rows={3}
@@ -310,24 +310,24 @@ const CreateSub_EventPg = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Max Participants</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Max Participants  *</label>
                                         <input
                                             type="number"
                                             {...register("MaxParticipants", { required: "Fields Should Not be empty !" })}
                                             className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                                            placeholder="Leave empty for unlimited"
+                                            placeholder="Maximum Participants"
                                         />
                                         {errors.MaxParticipants && (
                                             <p className="text-red-500 text-sm mt-1">{errors.MaxParticipants.message}</p>
                                         )}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Max Voleenters</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Max volunteer *</label>
                                         <input
                                             type="number"
                                             {...register("MaxVoleenters", { required: "Fields Should Not be empty !" })}
                                             className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                                            placeholder="Leave empty for unlimited"
+                                            placeholder="Maximum volunteer"
                                         />
                                         {errors.MaxVoleenters && (
                                             <p className="text-red-500 text-sm mt-1">{errors.MaxVoleenters.message}</p>
@@ -339,7 +339,7 @@ const CreateSub_EventPg = () => {
                                 {/* Participants and Requirements */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Duration</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Duration *</label>
                                         <input
                                             type="text"
                                             {...register("Duration", { required: "Fields Should Not be empty !" })}
@@ -352,12 +352,12 @@ const CreateSub_EventPg = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Requirements</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Requirements *</label>
                                         <input
                                             type="text"
                                             {...register("Requirements", { required: "Fields Should Not be empty !" })}
                                             className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                                            placeholder="e.g., Basic programming knowledge"
+                                            placeholder="e.g, Eligibilty Criteria"
                                         />
                                         {errors.Requirements && (
                                             <p className="text-red-500 text-sm mt-1">{errors.Requirements.message}</p>
@@ -368,7 +368,7 @@ const CreateSub_EventPg = () => {
                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-6'>
 
                                     <div className="mt-6">
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Payment Mode</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Payment Mode *</label>
                                         <div className="flex items-center space-x-3">
                                             <div
                                                 onClick={() => setValue("isPaid", !watch("isPaid"))}
@@ -386,7 +386,7 @@ const CreateSub_EventPg = () => {
 
                                     {watch("isPaid") && <div className="mt-6">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <label className="block text-sm font-medium text-gray-300 ">Payment Method</label>
+                                            <label className="block text-sm font-medium text-gray-300 ">Payment Method </label>
                                             <div className="relative group">
                                                 <CiCircleQuestion
                                                     className='hover:cursor-pointer text-gray-400'
@@ -417,7 +417,7 @@ const CreateSub_EventPg = () => {
                                 </div>
 
                                 {watch("PaymentMode") && <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-4">Upload Qr Scanner</label>
+                                    <label className="block text-sm font-medium text-gray-300 mb-4">Upload Qr Scanner *</label>
                                     <input className='hidden' accept="image/*" id="banner-upload" type='file' {...register("Qrimg", {
                                         required: "Enter the image file !",
                                         validate: fileList =>
@@ -454,7 +454,7 @@ const CreateSub_EventPg = () => {
                                 </div>}
 
                                 {watch("isPaid") && <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Entry Fee</label>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">Entry Fee *</label>
                                     <input
                                         type="number"
                                         {...register("EntryFee", { required: "Fields Should Not be empty !" })}

@@ -54,8 +54,6 @@ const CreateEventPage = () => {
       location: data.Location,
       time:data.Time,
       organiser_name: data.Host,
-      maxVolunteers: data.MaxVoleenter,
-      maxParticipants: data.MaxAttendee,
       visibility: data.Visibility,
       bannerUrl: imageUrl,
       phone: data.ContactNo
@@ -352,9 +350,9 @@ const CreateEventPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Maximum Attendees</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Maximum Attendees *</label>
                   <input
                     type="number"
                     {...register("MaxAttendee", { required: "Fields Should Not be empty !" })}
@@ -367,7 +365,7 @@ const CreateEventPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Maximum Voleenters</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Maximum Voleenters *</label>
                   <input
                     type="number"
                     {...register("MaxVoleenter", { required: "Fields Should Not be empty !" })}
@@ -378,14 +376,14 @@ const CreateEventPage = () => {
                     <p className="text-red-500 text-sm mt-1">{errors.MaxVoleenter.message}</p>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Step 3: Additional Details */}
             <div className="space-y-8">
               <h2 className="text-2xl font-bold text-white mb-6  mt-10 text-center">Additional Details</h2>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Visibility :</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Event Visibility : *</label>
                 <div>
                   <select {...register("Visibility", { required: "Fields Should Not Be Empty !" })} className='w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300' defaultValue="">
                     <option value="">
@@ -402,7 +400,7 @@ const CreateEventPage = () => {
 
               {/* Tags */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Tags</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Event Tags *</label>
                 <div className="flex flex-wrap gap-2 mb-3 max-w-full">
                   {tags.map((tag, index) => (
                     <span
@@ -496,7 +494,7 @@ const CreateEventPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Contact Phone</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Contact Phone *</label>
                 <input
                   type="tel"
                   {...register("ContactNo", { required: "Fields Should Not be empty !" })}
