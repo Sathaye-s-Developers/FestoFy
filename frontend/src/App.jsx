@@ -17,6 +17,7 @@ import Share_Popup from './Components/Share_Popup'
 import Voleenter_Popup from './Pages/Event_Components/Components/Voleenter_Popup'
 import Participate_popup from './Pages/Event_Components/Components/Participate_popup'
 import RegisteredList from './Pages/Admin/RegisteredList'
+import Docdata from './Pages/Doc Page/Docdata'
 
 const App = () => {
   const { register, loading, options, setprogress, progress, isAuthenticated, admin, key, share, Voleenter, Participate, eventhead } = useContext(EventAppContext)
@@ -56,6 +57,7 @@ const App = () => {
         <Route path='/' element={<Home />} />
         <Route path='/Home' element={<Home />} />
         <Route path='/Event/*' element={isAuthenticated ? <Event /> : <Home />} />
+        <Route path='/Docs' element={<Docdata/>} />
         {/* <Route path='/Event' element={<Event />} /> */}
 
         <Route path='/Profile' element={isAuthenticated ? <Profilepg /> : <Home />} />

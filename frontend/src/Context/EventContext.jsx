@@ -76,8 +76,8 @@ const EventContext = (props) => {
                 Id: event._id,
                 Title: event.title,
                 Description: event.description,
-                Date: event.dateRange.start || "",
-                Time: event.dateRange.start || "",
+                startDate: event.dateRange.start || "",
+                endDate: event.dateRange.end || "",
                 Address: event.location,     //temp
                 category: event.department,
                 Attendees: "50",
@@ -89,13 +89,15 @@ const EventContext = (props) => {
                 Featured: false,                                //temp
                 EventOrganiser: event.organiser_name,
                 College: event.createdByCollege,
-                Event_Mode: event.event_mode
+                Event_Mode: event.event_mode,
+                time:event.time,
             }))
             setEventArray(FetchedArray)
         } catch (err) {
             console.log(err)
         }
     }
+    // console.log(EventArray)
 
 
 

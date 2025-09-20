@@ -38,7 +38,7 @@ const Editableevent = () => {
                 banner: [],
                 StartDate: eventData.dateRange.start.split("T")[0],
                 EndDate: eventData.dateRange.end.split("T")[0],
-                EntryFee: eventData.price,
+                Time:eventData.time,
                 Location: eventData.location,
                 MaxAttendee: eventData.maxParticipants,
                 MaxVoleenter: eventData.maxVolunteers,
@@ -91,7 +91,7 @@ const Editableevent = () => {
             },
             tags: data.Tags,
             location: data.Location,
-            price: data.EntryFee,
+            time:data.Time,
             organiser_name: data.Host,
             maxVolunteers: data.MaxVoleenter,
             maxParticipants: data.MaxAttendee,
@@ -384,15 +384,14 @@ const Editableevent = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Entry Fee</label>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">Start Time *</label>
                                     <input
-                                        type="number"
-                                        {...register("EntryFee", { required: "Fields Should Not be empty !" })}
-                                        className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
-                                        placeholder="0 for free event"
+                                        type="time"
+                                        {...register("Time", { required: "Fields Should Not be empty !" })}
+                                        className="w-full px-4 py-3 bg-slate-700/50 border border-cyan-400/30 rounded-xl text-white focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
                                     />
-                                    {errors.EntryFee && (
-                                        <p className="text-red-500 text-sm mt-1">{errors.EntryFee.message}</p>
+                                    {errors.Time && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.Time.message}</p>
                                     )}
                                 </div>
                                 <div>

@@ -3,14 +3,14 @@ import { EventAppContext } from '../Context/EventContext'
 import { Play } from 'lucide-react';
 import { useGSAP } from "@gsap/react"
 import gsap from 'gsap';
-import { useNavigate } from 'react-router';
+import { useNavigate,Link } from 'react-router';
 
 
 const Header = () => {
     const { setRegister, isAuthenticated } = useContext(EventAppContext)
     const headerRef = useRef([]);
     const { contextSafe } = useGSAP();
-    const Navigate=useNavigate()
+    const Navigate = useNavigate()
     useGSAP(
         (ctx) => {
             const anim = gsap.fromTo(
@@ -28,7 +28,7 @@ const Header = () => {
                         toggleActions: "play none none none", // only play once
                         once: true,
                         onLeave: (self) => {
-                            self.kill(true); 
+                            self.kill(true);
                         },
                     },
                 }
@@ -69,10 +69,12 @@ const Header = () => {
                     <span className="relative z-10" >Get Started</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
-                <button className="group flex items-center space-x-3 px-8 py-4 bg-transparent border-2 border-cyan-400/50 text-cyan-400 text-lg font-medium rounded-full hover:bg-cyan-400/10 hover:border-cyan-400 transform hover:scale-105 transition-all duration-300">
-                    <Play className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                    <span>Watch Demo</span>
-                </button>
+                <Link to="/Docs">
+                    <button className="group flex items-center space-x-3 px-8 py-4 bg-transparent border-2 border-cyan-400/50 text-cyan-400 text-lg font-medium rounded-full hover:bg-cyan-400/10 hover:border-cyan-400 transform hover:scale-105 transition-all duration-300">
+                        <Play className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                        <span>See Docs</span>
+                    </button>
+                </Link>
             </div>
         </div>
 

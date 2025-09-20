@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap,Clock9 } from 'lucide-react';
 import { useContext } from 'react';
 import { useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom"
@@ -30,17 +30,18 @@ const YourEvent = () => {
         { name: 'Academic', icon: BookOpen, color: 'indigo' },
         { name: 'Entertainment', icon: Mic, color: 'amber' }
     ];
-   
+
     const EventFetcher = async () => {
         try {
             const response = await api.get("/Festofy/user/event/admin-created-events", {}, { withCredentials: true, })
-
+            console.log(response.data)
             const events = [...response.data.events]
             const FetchedArray = events.map((event) => ({
                 Id: event._id,
                 Title: event.title,
                 Description: event.description,
-                Date: event.dateRange.start || "",
+                startDate: event.dateRange.start || "",
+                endDate: event.dateRange.end || "",
                 Time: event.dateRange.start || "",
                 Address: event.location,     //temp
                 category: event.department,
@@ -53,7 +54,8 @@ const YourEvent = () => {
                 Featured: false,                                //temp
                 EventOrganiser: event.organiser_name,
                 College: event.createdByCollege,
-                Event_Mode: event.event_mode
+                Event_Mode: event.event_mode,
+                time:event.time
             }))
             setEventArray(FetchedArray)
         } catch (err) {
@@ -133,7 +135,7 @@ const YourEvent = () => {
                                                     }}>
                                                         <FaEdit size={30} className='text-cyan-600 cursor-pointer' />
                                                     </button>
-                                                    <MdDelete onClick={(e)=>{
+                                                    <MdDelete onClick={(e) => {
                                                         e.preventDefault()
                                                         e.stopPropagation()
                                                         deleteEvent(EventArray[index].Id)
@@ -163,16 +165,6 @@ const YourEvent = () => {
 
                                             {/* Event Content */}
                                             <div className="p-6">
-                                                {/* Category and Rating */}
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <div className={`px-3 py-1 bg-gradient-to-r ${colorClasses} rounded-full border`}>
-                                                        <span className="text-xs font-semibold">{event.category}</span>
-                                                    </div>
-                                                    <div className="flex items-center space-x-1">
-                                                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                                        <span className="text-white text-sm font-medium">{event.Rating}</span>
-                                                    </div>
-                                                </div>
 
                                                 {/* Event Title */}
                                                 <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors duration-300">
@@ -188,7 +180,7 @@ const YourEvent = () => {
                                                 <div className="space-y-2 mb-4">
                                                     <div className="flex items-center space-x-2 text-gray-300 text-sm">
                                                         <Calendar className="w-4 h-4 text-cyan-400" />
-                                                        <span>{new Date(event.Date).toISOString().split("T")[0]}</span>
+                                                        <span>{new Date(event.startDate).toISOString().split("T")[0]} To {new Date(event.endDate).toISOString().split("T")[0]}</span>
                                                     </div>
 
                                                     <div className="flex items-center space-x-2 text-gray-300 text-sm">
@@ -196,9 +188,10 @@ const YourEvent = () => {
                                                         <span className="truncate">{event.Address}</span>
                                                     </div>
                                                     <div className="flex items-center space-x-2 text-gray-300 text-sm">
-                                                        <Users className="w-4 h-4 text-cyan-400" />
-                                                        <span>100/{event.MaxAttendess} attending</span>
+                                                        <Clock9  className="w-4 h-4 text-cyan-400" />
+                                                        <span className="truncate">{event.time}</span>
                                                     </div>
+
                                                 </div>
 
                                                 {/* Tags */}

@@ -259,27 +259,6 @@ const Admin_SubEvent = () => {
                       </div>
                     </div>
 
-                    {/* Participants Progress */}
-                    {subEvent.maxParticipants && (
-                      <div className="mb-4">
-                        <div className="flex items-center justify-between text-sm mb-2">
-                          <div className="flex items-center space-x-2 text-gray-300">
-                            <Users className="w-4 h-4 text-cyan-400" />
-                            <span>Participants</span>
-                          </div>
-                          <span className="text-white font-medium">
-                            10/{subEvent.maxParticipants}
-                          </span>
-                        </div>
-                        <div className="w-full bg-slate-600 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-cyan-500 to-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min((10 / subEvent.maxParticipants) * 100, 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-
                     {/* Requirements */}
                     {subEvent.requirements && (
                       <div className="mb-4 p-3 bg-slate-700/30 rounded-xl border border-gray-600/30">

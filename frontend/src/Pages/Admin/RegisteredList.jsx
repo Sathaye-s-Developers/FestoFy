@@ -37,9 +37,6 @@ const RegisteredList = () => {
   const onsubmithours = (e) => {
     e.preventDefault();
     setisSubmitting(true);
-
-    console.log("Worked Hours Submitted:", hours);
-
     setregisterHours(false)
     setshowQrscan(true);
     setisSubmitting(false);
@@ -49,6 +46,7 @@ const RegisteredList = () => {
     e.preventDefault();
     setisSubmitting(true);
     console.log("Worked Hours Submitted:", hours);
+    
     const payload = {
       hours: hours,
       status: "present",
@@ -200,7 +198,6 @@ const RegisteredList = () => {
       console.log(err)
     }
   }
-  console.log(volAttendancedata)
   
   const exportAttendance = () => {
     const csvContent = [
@@ -223,7 +220,7 @@ const RegisteredList = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `volunteer-attendance-${new Date().toISOString()}.csv`;
+    a.download = `volunteer-attendance-${new Date().toString()}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -395,8 +392,8 @@ const RegisteredList = () => {
                 onClick={exportAttendance}
                 className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
               >
-                <Download className="w-4 h-4" />
-                <span>Export Attendance CSV</span>
+                <Download className="w-5 h-5 sm:w-4 sm:h-4 mb-1 sm:mb-0" />
+                <span>Attendance CSV</span>
               </button>
             </div>
           </div>
@@ -582,7 +579,6 @@ const RegisteredList = () => {
                                 }
 
                                 const response = await api.post("/Festofy/user/attendance/decrypt", payload, { withCredentials: true })
-
                                 if (!response.data.success) {
                                   alert("❌ Invalid QR Code");
                                   return;
@@ -591,7 +587,7 @@ const RegisteredList = () => {
                                 const freshData = {
                                   eventId: response.data.qrData.eventId,
                                   subEventId: response.data.qrData.subEventId,
-                                  date: new Date(response.data.qrData.timestamp),
+                                  date:response.data.qrData.timestamp,
                                 };
                                 const payload1 = {
                                   volunteerId: volId,
@@ -601,6 +597,7 @@ const RegisteredList = () => {
                                   status: "present",
                                   hours: hours
                                 };
+                                console.log(payload1)
 
                                 try {
                                   const markres = await api.post("/Festofy/user/attendance/mark", payload1, { withCredentials: true })

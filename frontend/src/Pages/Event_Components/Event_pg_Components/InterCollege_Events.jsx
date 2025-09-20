@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Star, Filter, Search, ChevronDown, Heart, Share2, Bookmark, ArrowRight, Tag, Trophy, Music, Palette, Code, Gamepad2, BookOpen, Mic, Camera, Zap,Clock9 } from 'lucide-react';
 import { useContext } from 'react';
 import E_Nav_Back from '../Components/E_Nav_Back'
 import { EventAppContext } from '../../../Context/EventContext';
@@ -29,7 +29,7 @@ const colorMap = {
 };
 
 const InterCollege_Events = () => {
-    const { api } = useContext(EventAppContext)
+    const { api, share, setshare } = useContext(EventAppContext)
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -38,6 +38,7 @@ const InterCollege_Events = () => {
     const [likedEvents, setLikedEvents] = useState([]);
     const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
     const [EventArray, setEventArray] = useState([])
+    // const [share, setshare] = useState({ Isshare: false, eventId: "" })
 
     const EventFetcher = async () => {
         try {
@@ -47,8 +48,8 @@ const InterCollege_Events = () => {
                 Id: event._id,
                 Title: event.title,
                 Description: event.description,
-                Date: event.dateRange.start || "",
-                Time: event.dateRange.start || "",
+                startDate: event.dateRange.start || "",
+                endDate: event.dateRange.end || "",
                 Address: event.location,     //temp
                 category: event.department,
                 Attendees: "50",
@@ -60,7 +61,8 @@ const InterCollege_Events = () => {
                 Featured: false,                                //temp
                 EventOrganiser: event.organiser_name,
                 College: event.createdByCollege,
-                Event_Mode: event.event_mode
+                Event_Mode: event.event_mode,
+                time:event.time
             }))
             setEventArray(FetchedArray)
         } catch (err) {
@@ -219,26 +221,12 @@ const InterCollege_Events = () => {
                                         )}
 
                                         {/* Action Buttons */}
-                                        <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <button
-                                                onClick={() => toggleLike(event.Id)}
-                                                className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isLiked
-                                                    ? 'bg-red-500/80 border-red-400 text-white'
-                                                    : 'bg-black/40 border-white/20 text-white hover:bg-red-500/80'
-                                                    }`}
-                                            >
-                                                <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                                            </button>
-                                            <button
-                                                onClick={() => toggleBookmark(event.Id)}
-                                                className={`p-2 rounded-full backdrop-blur-sm border transition-all duration-300 ${isBookmarked
-                                                    ? 'bg-cyan-500/80 border-cyan-400 text-white'
-                                                    : 'bg-black/40 border-white/20 text-white hover:bg-cyan-500/80'
-                                                    }`}
-                                            >
-                                                <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                                            </button>
-                                            <button className="p-2 rounded-full bg-black/40 border border-white/20 text-white hover:bg-white/20 transition-all duration-300">
+                                        <div onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            setshare({ Isshare: true, eventId: event.Id })
+                                        }} className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <button className="p-2 rounded-full bg-black/40 border border-white/20 text-white hover:bg-white/20 transition-all duration-300" >
                                                 <Share2 className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -254,7 +242,7 @@ const InterCollege_Events = () => {
                                     {/* Event Content */}
                                     <div className="p-6">
                                         {/* Category and Rating */}
-                                        <div className="flex items-center justify-between mb-3">
+                                        {/* <div className="flex items-center justify-between mb-3">
                                             <div className={`px-3 py-1 bg-gradient-to-r ${colorClasses} rounded-full border`}>
                                                 <span className="text-xs font-semibold">{event.category}</span>
                                             </div>
@@ -262,7 +250,7 @@ const InterCollege_Events = () => {
                                                 <Star className="w-4 h-4 text-yellow-400 fill-current" />
                                                 <span className="text-white text-sm font-medium">{event.Rating}</span>
                                             </div>
-                                        </div>
+                                        </div> */}
 
                                         {/* Event Title */}
                                         <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors duration-300">
@@ -282,19 +270,15 @@ const InterCollege_Events = () => {
                                             </div>
                                             <div className="flex items-center space-x-2 text-gray-300 text-sm">
                                                 <Calendar className="w-4 h-4 text-cyan-400" />
-                                                <span>{new Date(event.Date).toISOString().split("T")[0]}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-2 text-gray-300 text-sm">
-                                                <Clock className="w-4 h-4 text-cyan-400" />
-                                                <span>{new Date(event.Time).toISOString().split("T")[1].slice(0, 5)}</span>
+                                                <span>{new Date(event.startDate).toISOString().split("T")[0]} To {new Date(event.endDate).toISOString().split("T")[0]}</span>
                                             </div>
                                             <div className="flex items-center space-x-2 text-gray-300 text-sm">
                                                 <MapPin className="w-4 h-4 text-cyan-400" />
                                                 <span className="truncate">{event.Address}</span>
                                             </div>
                                             <div className="flex items-center space-x-2 text-gray-300 text-sm">
-                                                <Users className="w-4 h-4 text-cyan-400" />
-                                                <span>100/{event.MaxAttendess} attending</span>
+                                                <Clock9  className="w-4 h-4 text-cyan-400" />
+                                                <span className="truncate">{event.time}</span>
                                             </div>
                                         </div>
 
