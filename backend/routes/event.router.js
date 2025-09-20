@@ -35,7 +35,8 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       event_mode = "free", // Default to free event
       maxVolunteers,
       maxParticipants,
-      phone
+      phone,
+      time
     } = req.body;
 
     // Validate required fields
@@ -119,7 +120,8 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       maxVolunteers,
       maxParticipants,
       createdByCollege: collegeName,
-      phone
+      phone,
+      time
     });
 
     await newEvent.save();

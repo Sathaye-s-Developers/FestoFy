@@ -234,9 +234,7 @@ router.get("/:eventId/:subEventId/volunteers", async (req, res) => {
     }
 
     // Get attendance records
-    const allVolunteers = await Volunteer.find({ subEvent: subEventId })
-      .select("name email roll_no year department");
-      
+
     let attendanceRecords = await Attendance.find(filter)
       .populate("volunteerId", "name email roll_no year department") // volunteer info
       .sort({ date: -1 });
