@@ -69,8 +69,8 @@ const subEventSchema = new mongoose.Schema({
     default: null,
   },
 
-  maxParticipants: { type: Number, default: 1000 },
-  maxVolunteers: { type: Number, default: 1000 },
+  maxParticipants: { type: Number, default: 1000000},
+  maxVolunteers: { type: Number, default: 1000000},
 
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
