@@ -33,8 +33,6 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       visibility = "college", // Default to college visibility
       price = 0,
       event_mode = "free", // Default to free event
-      maxVolunteers,
-      maxParticipants,
       phone,
       time
     } = req.body;
@@ -117,8 +115,6 @@ router.post("/create", verifyToken, isAdmin, async (req, res) => {
       visibility,
       price,
       event_mode,
-      maxVolunteers,
-      maxParticipants,
       createdByCollege: collegeName,
       phone,
       time

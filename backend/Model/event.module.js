@@ -85,8 +85,8 @@ const eventSchema = new mongoose.Schema({
     trim: true
   },
   //max limit for participants and volunteers
-  maxParticipants: { type: Number, default: 1000 }, // Event-level limit
-  maxVolunteers: { type: Number, default: 1000 }, // Event-level limit
+  // maxParticipants: { type: Number, default: 1000 }, // Event-level limit
+  // maxVolunteers: { type: Number, default: 1000 }, // Event-level limit
 
   createdByCollege: {
     type: String,
