@@ -24,6 +24,7 @@ const Docdata = () => {
                 { title: 'Tutorial 2: Special key access', href: '#Tutorial2' },
                 { title: 'Tutorial 3: Steps to become a sub-eventhead', href: '#Tutorial3' },
                 { title: 'Tutorial 4: Steps to create event & subevent', href: '#Tutorial4' },
+                { title: 'Tutorial 5: Steps to mark attendance', href: '#Tutorial5' },
             ]
         }
     ]
