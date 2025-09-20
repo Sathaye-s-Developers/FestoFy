@@ -70,10 +70,10 @@ const EventOptions = ({ popupRef }) => {
                                     </button>
                                 </Link>
 
-                                <button className="flex items-center justify-center gap-3 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
+                                {/* <button className="flex items-center justify-center gap-3 text-slate-300 hover:text-white p-3 rounded-xl hover:bg-white/5 transition-all duration-300 w-full group mb-1">
                                     <Settings className="w-4 h-4 text-pink-400 group-hover:text-pink-300 transition-colors" />
                                     <span className="font-medium">Settings</span>
-                                </button>
+                                </button> */}
 
                             </div>
                             <button className="w-full bg-gradient-to-r from-red-500/20 to-pink-500/20 hover:from-red-500/30 hover:to-pink-500/30 border border-red-400/30 hover:border-red-400/50 text-red-400 hover:text-red-300 p-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group" onClick={logout}>
