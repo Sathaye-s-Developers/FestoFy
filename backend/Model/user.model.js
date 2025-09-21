@@ -19,14 +19,17 @@ const userSchema = new mongoose.Schema({
   department: {
     type: String,
     trim: true,
+    default:null
   },
   year: {
     type: String,
     trim: true,
+    default:null
   },
   phone: {
     type: String,
-    trim: true
+    trim: true,
+    default:null
   },
   collegeName: {
     type: String,
