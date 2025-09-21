@@ -5,7 +5,7 @@ import { EventAppContext } from '../Context/EventContext';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 const SetProfile_Popup = () => {
-    const { api, setRegister, setshare,setprogress,fetchUserDetails} = useContext(EventAppContext)
+    const { api, setRegister, setshare,setprogress,fetchUserDetails,setprofile,setpopup} = useContext(EventAppContext)
     const { register, handleSubmit } = useForm()
     const [errorMsg, seterrorMsg] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,17 +20,20 @@ const SetProfile_Popup = () => {
         }
         try {
             const response = await api.post("/Festofy/user/profile/set-profile", payload, { withCredentials: true, })
+            console.log(response.data)
             if (response.data.success) {
                 setRegister(false)
                 setshare(false)
+                setprofile(false)
+                setpopup(false)
                 setprogress(100)
                 await fetchUserDetails()
                 toast.success("User Registered Successfully")
+                setIsSubmitting(false);
             }
         } catch (err) {
             if (err.response && (err.response.status === 400 || err.response.status === 404 || err.response.status === 500)) {
                 seterrorMsg(err.response.data.message);
-                setIsSubmitting(false);
             }
         }
     }

@@ -37,7 +37,7 @@ const EventContext = (props) => {
     const [ispaid,setispaid]=useState(false)
     const [toastCondition,settoastCondition]=useState(false)
     const [paymentData,setpaymentData]=useState({isPaid:false,PaymentMode:false})
-
+    const [popup,setpopup]=useState(false)
     const param = {
         luminosity: lum,
         hue: hue,
@@ -53,6 +53,11 @@ const EventContext = (props) => {
             if (response.data.isAuthenticated) {
                 setisAuthenticated(response.data.isAuthenticated)
             }
+            if(response.data.user.year===null || response.data.user.department===null || response.data.user.phone===null){
+                setpopup(true)
+            }else{
+                setpopup(false)
+            }
             const volunteers = response.data.user.volunteers
             const participations = response.data.user.participations
             setdetails({ username: response.data.user.username, email: response.data.user.email, college_code: response.data.user.college_code, role: response.data.user.role, phone: response.data.user.phone, department: response.data.user.department, year: response.data.user.year, volunteers: volunteers, participations: participations })
@@ -66,7 +71,6 @@ const EventContext = (props) => {
             setloading(false); // only stop loading after fetch completes or errors
         }
     }, [api]);
-
     const EventFetcher = async () => {
         try {
             const response = await api.get("/Festofy/user/event/my-college-events", {}, { withCredentials: true, })
@@ -116,9 +120,9 @@ const EventContext = (props) => {
     }, [fetchUserDetails]);
 
     const contextvalue = useMemo(() => ({
-        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition,paymentData,setpaymentData
+        api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading, EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition,paymentData,setpaymentData,setpopup,popup
     }), [api, register, setRegister, details, setdetails, fetchUserDetails, options, setoptions, progress, setprogress, randcolor, profileOptions, setprofileOptions, email, setemail, closePopup, otp, setotp, password, setpassword, isAuthenticated, setisAuthenticated, loading, setloading,
-        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition,paymentData,setpaymentData
+        EventArray, setEventArray, EventFetcher, key, setkey, admin, setadmin, share, setshare, Voleenter, setVoleenter, profile, setprofile, EventNo, setEventNo, subEventNo, setsubEventNo, Participate, setParticipate, eventhead, seteventhead,setispaid,ispaid,toastCondition,settoastCondition,paymentData,setpaymentData,setpopup,popup
     ]);
 
 

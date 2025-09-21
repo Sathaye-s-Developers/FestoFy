@@ -4,10 +4,11 @@ import EventOptions from "./Components/EventOptions"
 import Main_Event from './Components/Main_Event'
 import { EventAppContext } from '../../Context/EventContext'
 import MyCollege_Events from './Event_pg_Components/MyCollege_Events'
+import SetProfile_Popup from '../../Components/SetProfile_Popup'
 
 
 const Event = () => {
-    const { profileOptions, setprofileOptions } = useContext(EventAppContext)
+    const { profileOptions, setprofileOptions,popup} = useContext(EventAppContext)
     const popupRef = useRef(null);
 
     useEffect(() => {
@@ -31,8 +32,11 @@ const Event = () => {
     return (
         <div>
             <div className="min-h-screen bg-black">
+                {popup &&
+                    <SetProfile_Popup />
+                }
                 <E_Navbar />
-                <Main_Event/>
+                <Main_Event />
                 <MyCollege_Events />
                 {profileOptions && <EventOptions popupRef={popupRef} />}
             </div>
