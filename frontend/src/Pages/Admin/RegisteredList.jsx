@@ -390,7 +390,7 @@ const RegisteredList = () => {
                 <Download className="w-4 h-4" />
                 <span>Export CSV</span>
               </button>
-              {!studentData.position === "subEventHead" &&
+              {!eventhead &&
                 <button
                   onClick={exportAttendance}
                   className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
