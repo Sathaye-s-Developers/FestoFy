@@ -31,8 +31,9 @@ const RegisteredList = () => {
   const [registerHours, setregisterHours] = useState(false)
   const [registerManualHours, setregisterManualHours] = useState(false)
   const [hours, setHours] = useState("");
-  const [volAttendancedata,setvolAttendancedata]=useState([])
-  
+  const [volAttendancedata, setvolAttendancedata] = useState([])
+
+  console.log(subEventNo)
 
   const onsubmithours = (e) => {
     e.preventDefault();
@@ -46,7 +47,7 @@ const RegisteredList = () => {
     e.preventDefault();
     setisSubmitting(true);
     console.log("Worked Hours Submitted:", hours);
-    
+
     const payload = {
       hours: hours,
       status: "present",
@@ -198,10 +199,10 @@ const RegisteredList = () => {
       console.log(err)
     }
   }
-  
+
   const exportAttendance = () => {
     const csvContent = [
-      ['Date', 'Name', 'Email','Roll No','Hours Worked', 'Status','year','department'].join(','),
+      ['Date', 'Name', 'Email', 'Roll No', 'Hours Worked', 'Status', 'year', 'department'].join(','),
       ...volAttendancedata.map(p => {
         return [
           p.date,
@@ -277,6 +278,7 @@ const RegisteredList = () => {
     }
     setstudentData([...volunteers, ...participants]);
   };
+  console.log(studentData)
   useEffect(() => {
     fetchVolunteersAndParticipants();
     getvolAttendance()
@@ -388,13 +390,15 @@ const RegisteredList = () => {
                 <Download className="w-4 h-4" />
                 <span>Export CSV</span>
               </button>
-              <button
-                onClick={exportAttendance}
-                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
-              >
-                <Download className="w-5 h-5 sm:w-4 sm:h-4 mb-1 sm:mb-0" />
-                <span>Attendance CSV</span>
-              </button>
+              {!studentData.position === "subEventHead" &&
+                <button
+                  onClick={exportAttendance}
+                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105"
+                >
+                  <Download className="w-5 h-5 sm:w-4 sm:h-4 mb-1 sm:mb-0" />
+                  <span>Attendance CSV</span>
+                </button>
+              }
             </div>
           </div>
           <div className='animate-fadeInUp'>
@@ -587,7 +591,7 @@ const RegisteredList = () => {
                                 const freshData = {
                                   eventId: response.data.qrData.eventId,
                                   subEventId: response.data.qrData.subEventId,
-                                  date:response.data.qrData.timestamp,
+                                  date: response.data.qrData.timestamp,
                                 };
                                 const payload1 = {
                                   volunteerId: volId,

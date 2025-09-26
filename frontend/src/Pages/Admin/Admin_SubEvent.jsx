@@ -39,7 +39,6 @@ const Admin_SubEvent = () => {
   };
   const deletesubevent = async (subEventno) => {
     try {
-      console.log(subEventno);
 
       const response = await api.delete(
         "/Festofy/user/event/subevent/delete",
